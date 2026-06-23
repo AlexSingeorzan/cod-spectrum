@@ -2,6 +2,7 @@
 
 PYTHON := .venv/bin/python
 PYTHON_BOOTSTRAP ?= python3.12
+PORT ?= 8077
 
 setup:
 	$(PYTHON_BOOTSTRAP) -m venv .venv
@@ -15,7 +16,7 @@ test:
 	$(PYTHON) -m pytest -q
 
 serve:
-	$(PYTHON) -m uvicorn backend.app.main:app --reload
+	$(PYTHON) -m uvicorn backend.app.main:app --reload --port $(PORT)
 
 scheduler:
 	$(PYTHON) -m backend.app.workers.scheduler
