@@ -1,0 +1,30 @@
+sources:
+  - name: "Offline sample fixture"
+    platform: local
+    type: local
+    url: "data/videos/sample_hardpoint.mp4"
+    poll_minutes: 1
+    download: false
+    enabled: true
+  - name: "CDL Official (YouTube)"
+    platform: youtube
+    type: channel
+    url: "https://www.youtube.com/@CODLeague"
+    poll_minutes: 30
+    download: false
+    enabled: false
+  - name: "Challengers (playlist)"
+    platform: youtube
+    type: playlist
+    url: "https://www.youtube.com/playlist?list=REPLACE_ME"
+    poll_minutes: 60
+    download: false
+    enabled: false
+  - name: "Call of Duty League (Twitch)"
+    platform: twitch
+    type: channel
+    url: "https://www.twitch.tv/callofduty"
+    poll_minutes: 30
+    download: false
+    enabled: false
+

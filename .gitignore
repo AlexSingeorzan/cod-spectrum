@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+cod_spectrum.db
+data/frames/*
+data/crops/*
+data/clips/*
+data/reports/*
+!data/frames/.gitkeep
+!data/crops/.gitkeep
+!data/clips/.gitkeep
+!data/reports/.gitkeep
+

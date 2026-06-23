@@ -1,0 +1,22 @@
+{
+  "description": "Deterministic synthetic Hardpoint scorebar readings, one per second.",
+  "readings": [
+    {"score_a": 0, "score_b": 0, "confidence": 0.99},
+    {"score_a": 3, "score_b": 0, "confidence": 0.98},
+    {"score_a": 6, "score_b": 0, "confidence": 0.98},
+    {"score_a": 6, "score_b": 2, "confidence": 0.97},
+    {"score_a": 6, "score_b": 5, "confidence": 0.98},
+    {"score_a": 6, "score_b": 8, "confidence": 0.98},
+    {"score_a": 8, "score_b": 8, "confidence": 0.97},
+    {"score_a": 12, "score_b": 8, "confidence": 0.98},
+    {"score_a": 12, "score_b": 11, "confidence": 0.97},
+    {"score_a": 12, "score_b": 15, "confidence": 0.98},
+    {"score_a": 12, "score_b": 18, "confidence": 0.98},
+    {"score_a": 16, "score_b": 18, "confidence": 0.97},
+    {"score_a": 20, "score_b": 18, "confidence": 0.98},
+    {"score_a": 24, "score_b": 18, "confidence": 0.98},
+    {"score_a": 250, "score_b": 18, "confidence": 0.99},
+    {"score_a": 250, "score_b": 18, "confidence": 0.99}
+  ]
+}
+

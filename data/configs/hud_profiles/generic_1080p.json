@@ -1,0 +1,15 @@
+{
+  "name": "generic_1080p",
+  "base_resolution": [1920, 1080],
+  "regions": {
+    "scorebar": {"x": 0.35, "y": 0.01, "w": 0.30, "h": 0.08},
+    "match_timer": {"x": 0.46, "y": 0.09, "w": 0.08, "h": 0.04},
+    "hill_timer": {"x": 0.46, "y": 0.13, "w": 0.08, "h": 0.04},
+    "killfeed": {"x": 0.70, "y": 0.10, "w": 0.28, "h": 0.32},
+    "player_panel_left": {"x": 0.00, "y": 0.18, "w": 0.14, "h": 0.55},
+    "player_panel_right": {"x": 0.86, "y": 0.18, "w": 0.14, "h": 0.55},
+    "minimap": {"x": 0.42, "y": 0.76, "w": 0.16, "h": 0.22}
+  },
+  "ocr_hints": {"scorebar": {"whitelist": "0123456789", "invert": false}}
+}
+
