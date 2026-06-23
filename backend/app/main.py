@@ -1,19 +1,26 @@
 from __future__ import annotations
 
-import html
-
 from fastapi import Depends, FastAPI
-from fastapi.responses import HTMLResponse
-from sqlalchemy import select
+from fastapi.responses import HTMLResponse, PlainTextResponse
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from .db import get_db, init_db
-from .models import Broadcast, ProcessingJob, Report
+from .models import Broadcast, Clip, Event, ProcessingJob, Report
 from .routes.api import router
+from .routes.sim import router as sim_router
+from .ui import (
+    COACH_REPORT_SLUG,
+    render_dashboard,
+    render_featured_coach_report,
+    render_featured_coach_report_markdown,
+    render_lab,
+)
 
 
 app = FastAPI(title="cod-spectrum", version="0.1.0", description="Evidence-backed CoD broadcast analytics")
 app.include_router(router)
+app.include_router(sim_router)
 
 
 @app.on_event("startup")
@@ -24,17 +31,27 @@ def startup() -> None:
 @app.get("/", response_class=HTMLResponse)
 def dashboard(session: Session = Depends(get_db)) -> str:
     broadcasts = session.scalars(select(Broadcast).order_by(Broadcast.created_at.desc())).all()
-    rows: list[str] = []
-    for broadcast in broadcasts:
-        report = session.scalar(select(Report).where(Report.broadcast_id == broadcast.id))
-        jobs = session.scalars(select(ProcessingJob).where(ProcessingJob.broadcast_id == broadcast.id)).all()
-        job_status = ", ".join(f"{job.stage}:{job.status}" for job in jobs) or "not queued"
-        report_link = f'<a href="/reports/{report.id}">view report ({report.data_confidence:.1%})</a>' if report else "—"
-        rows.append(
-            f"<tr><td><a href='/broadcasts/{broadcast.id}'>{broadcast.id}</a></td><td>{html.escape(broadcast.title)}</td>"
-            f"<td><span class='status'>{broadcast.status.value}</span></td><td>{html.escape(job_status)}</td><td>{report_link}</td></tr>"
-        )
-    return f"""<!doctype html><html><head><meta charset="utf-8"><title>cod-spectrum</title>
-<style>body{{font-family:system-ui;max-width:1100px;margin:3rem auto;padding:0 1rem;background:#f7f8fa;color:#17202a}}table{{width:100%;border-collapse:collapse;background:white}}th,td{{padding:.75rem;border-bottom:1px solid #ddd;text-align:left}}.status{{font-family:monospace}}a{{color:#075bb5}}</style></head>
-<body><h1>cod-spectrum</h1><p>Always-on, evidence-backed broadcast analytics.</p>
-<table><thead><tr><th>ID</th><th>Broadcast</th><th>Status</th><th>Jobs</th><th>Report</th></tr></thead><tbody>{''.join(rows)}</tbody></table></body></html>"""
+    reports = session.scalars(select(Report).order_by(Report.created_at.desc())).all()
+    jobs = session.scalars(select(ProcessingJob).order_by(ProcessingJob.id)).all()
+    event_count = session.scalar(select(func.count(Event.id))) or 0
+    clip_count = session.scalar(select(func.count(Clip.id))) or 0
+    return render_dashboard(broadcasts, reports, jobs, event_count=event_count, clip_count=clip_count)
+
+
+@app.get("/lab", response_class=HTMLResponse)
+def whatif_lab() -> str:
+    return render_lab()
+
+
+@app.get(f"/coach-reports/{COACH_REPORT_SLUG}", response_class=HTMLResponse)
+def featured_coach_report() -> str:
+    return render_featured_coach_report()
+
+
+@app.get(f"/coach-reports/{COACH_REPORT_SLUG}/download", response_class=PlainTextResponse)
+def download_featured_coach_report() -> PlainTextResponse:
+    return PlainTextResponse(
+        render_featured_coach_report_markdown(),
+        media_type="text/markdown",
+        headers={"Content-Disposition": f'attachment; filename="{COACH_REPORT_SLUG}-coach-brief.md"'},
+    )
