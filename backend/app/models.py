@@ -128,8 +128,11 @@ class Clip(Base):
     map_id: Mapped[int | None] = mapped_column(ForeignKey("maps.id"))
     start_seconds: Mapped[float] = mapped_column(Float)
     end_seconds: Mapped[float] = mapped_column(Float)
+    timestamp_seconds: Mapped[float] = mapped_column(Float)
     title: Mapped[str] = mapped_column(String(300))
     file_path: Mapped[str] = mapped_column(Text)
+    confidence: Mapped[float] = mapped_column(Float)
+    evidence_frame_path: Mapped[str] = mapped_column(Text)
 
 
 class Report(Base):

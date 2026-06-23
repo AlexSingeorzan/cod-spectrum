@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from backend.app.schemas import ScoreObservation
-from backend.app.services.analytics import HeuristicV0, detect_breaks_retakes
+from backend.app.services.analytics import HeuristicV0, detect_breaks_retakes, hardpoint_summary, xmwp_timeline
 from backend.app.services.timeline import build_score_events
 
 
@@ -40,4 +40,12 @@ def test_xmwp_bounds_and_late_lead_weight():
     assert 0 < early < 1
     assert 0 < late < 1
     assert late > early > 0.5
+    points = xmwp_timeline([observation(0, 20, 10)], model)
+    assert points[0].evidence_frame_path == "0.jpg"
 
+
+def test_hardpoint_metrics_each_carry_evidence():
+    summary = hardpoint_summary([observation(0, 0, 0), observation(1, 5, 0)])
+    assert summary
+    assert all(metric["timestamp_seconds"] >= 0 for metric in summary.values())
+    assert all(metric["confidence"] > 0 and metric["evidence_frame_path"] for metric in summary.values())

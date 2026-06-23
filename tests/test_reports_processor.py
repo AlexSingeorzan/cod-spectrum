@@ -26,6 +26,9 @@ def test_offline_processor_is_idempotent_and_complete(session, sample_video):
     assert all(item.confidence is not None and item.evidence_frame_path for item in events)
     payload = json.loads(open(first.json_path).read())
     assert payload["xmwp_timeline"]
+    assert all(point["evidence_frame_path"] for point in payload["xmwp_timeline"])
+    assert all(metric["evidence_frame_path"] for metric in payload["hardpoint_summary"].values())
+    assert payload["data_confidence_evidence"]["evidence_frame_path"]
     assert payload["known_limitations"]
     assert "Known limitations" in open(first.markdown_path).read()
     assert "Known limitations" in open(first.html_path).read()

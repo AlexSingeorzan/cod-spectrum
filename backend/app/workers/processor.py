@@ -226,8 +226,8 @@ def process_local_file(
                 start, end = generate_clip(path, clip_path, moment["timestamp_seconds"])
                 clip = Clip(
                     broadcast_id=broadcast.id, match_id=match.id, map_id=game_map.id,
-                    start_seconds=start, end_seconds=end, title=f"{moment['event_type'].replace('_', ' ').title()} at {moment['timestamp_seconds']:.0f}s",
-                    file_path=str(clip_path),
+                    start_seconds=start, end_seconds=end, timestamp_seconds=moment["timestamp_seconds"], title=f"{moment['event_type'].replace('_', ' ').title()} at {moment['timestamp_seconds']:.0f}s",
+                    file_path=str(clip_path), confidence=moment["confidence"], evidence_frame_path=moment["evidence_frame_path"],
                 )
                 session.add(clip)
                 session.flush()
@@ -237,7 +237,11 @@ def process_local_file(
             _mark_stage(session, broadcast.id, current_stage, "completed", f"generated {len(unique_moments)} clips")
             session.commit()
         clips = session.scalars(select(Clip).where(Clip.broadcast_id == broadcast.id).order_by(Clip.id)).all()
-        clip_payloads = [{"id": clip.id, "title": clip.title, "start_seconds": clip.start_seconds, "end_seconds": clip.end_seconds, "file_path": clip.file_path, "url": f"/clips/{clip.id}"} for clip in clips]
+        clip_payloads = [{
+            "id": clip.id, "title": clip.title, "start_seconds": clip.start_seconds, "end_seconds": clip.end_seconds,
+            "timestamp_seconds": clip.timestamp_seconds, "confidence": clip.confidence,
+            "evidence_frame_path": clip.evidence_frame_path, "file_path": clip.file_path, "url": f"/clips/{clip.id}",
+        } for clip in clips]
         stored_events = session.scalars(select(Event).where(Event.broadcast_id == broadcast.id).order_by(Event.timestamp_seconds, Event.id)).all()
         event_payloads = [_event_payload(event) for event in stored_events]
         derived = [payload for payload in event_payloads if payload["event_type"] in {"possible_break", "possible_retake"}]
@@ -263,12 +267,17 @@ def process_local_file(
             recommended_clips=clip_payloads,
             hardpoint_summary=hardpoint_summary(observations),
             data_confidence=round(data_confidence, 4),
+            data_confidence_evidence={
+                "value": round(data_confidence, 4), "timestamp_seconds": observations[-1].timestamp_seconds,
+                "confidence": round(data_confidence, 4), "evidence_frame_path": observations[-1].evidence_frame_path,
+            },
             known_limitations=[
                 "The bundled sample uses deterministic fixture OCR; production scorebar OCR must be calibrated per HUD profile.",
                 "Map boundaries are inferred from score reset/Hardpoint target and do not yet use transition-card detection.",
                 "xMWP HeuristicV0 is uncalibrated and is explicitly a placeholder for a trained model.",
                 "Break/retake events are scoring-flow inferences, not confirmation of hill control or kills.",
                 "Deep analytics are implemented only for Hardpoint; SnD and Control are boundary-only in v0.",
+                "Hill-by-hill attribution requires stable hill-timer OCR; v0 reports scoring-flow windows without inventing hill IDs.",
             ],
             )
             paths = write_reports(report_document, settings.data_dir / "reports", f"broadcast_{broadcast.id}")

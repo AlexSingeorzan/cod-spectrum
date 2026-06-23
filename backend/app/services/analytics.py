@@ -40,6 +40,7 @@ def xmwp_timeline(observations: list[ScoreObservation], model: WinProbabilityMod
             score_b=observation.score_b,
             probability_a=model.predict(*score),
             confidence=observation.confidence,
+            evidence_frame_path=observation.evidence_frame_path,
         ))
         previous_score = score
     return points
@@ -102,20 +103,31 @@ def detect_breaks_retakes(
 
 def hardpoint_summary(observations: list[ScoreObservation]) -> dict:
     if not observations:
-        return {"final_score": None, "biggest_swing": 0, "team_a_points": 0, "team_b_points": 0}
+        return {}
     changed = [observations[0]]
     for observation in observations[1:]:
         if (observation.score_a, observation.score_b) != (changed[-1].score_a, changed[-1].score_b):
             changed.append(observation)
     leads = [observation.score_a - observation.score_b for observation in changed]
     swings = [abs(current - previous) for previous, current in zip(leads, leads[1:])]
+    biggest_index = max(range(len(swings)), key=swings.__getitem__) + 1 if swings else 0
+    biggest_observation = changed[biggest_index]
     final = changed[-1]
     return {
-        "final_score": {"team_a": final.score_a, "team_b": final.score_b},
-        "biggest_swing": max(swings, default=0),
-        "team_a_points": final.score_a,
-        "team_b_points": final.score_b,
-        "score_states": len(changed),
+        "final_score": {
+            "value": {"team_a": final.score_a, "team_b": final.score_b},
+            "timestamp_seconds": final.timestamp_seconds, "confidence": final.confidence,
+            "evidence_frame_path": final.evidence_frame_path,
+        },
+        "biggest_swing": {
+            "value": max(swings, default=0), "timestamp_seconds": biggest_observation.timestamp_seconds,
+            "confidence": biggest_observation.confidence, "evidence_frame_path": biggest_observation.evidence_frame_path,
+        },
+        "score_states": {
+            "value": len(changed), "timestamp_seconds": final.timestamp_seconds,
+            "confidence": sum(item.confidence for item in changed) / len(changed),
+            "evidence_frame_path": final.evidence_frame_path,
+        },
     }
 
 

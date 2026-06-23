@@ -22,7 +22,8 @@ def write_reports(document: ReportDocument, output_dir: Path, stem: str) -> dict
 
 
 def render_markdown(document: ReportDocument) -> str:
-    final = document.hardpoint_summary.get("final_score") or {}
+    final_metric = document.hardpoint_summary.get("final_score")
+    final = final_metric.value if final_metric else {}
     lines = [
         f"# cod-spectrum report — {document.broadcast.get('title', 'Broadcast')}",
         "",
@@ -40,7 +41,7 @@ def render_markdown(document: ReportDocument) -> str:
         lines.append(f"- {event['timestamp_seconds']:.1f}s — `{event['event_type']}`: {event.get('raw_text')} ({event['confidence']:.1%})")
     lines.extend(["", "## Recommended clips", ""])
     for clip in document.recommended_clips:
-        lines.append(f"- [{clip['title']}]({clip.get('url', clip['file_path'])}) ({clip['start_seconds']:.1f}s–{clip['end_seconds']:.1f}s)")
+        lines.append(f"- [{clip.title}]({clip.url}) ({clip.start_seconds:.1f}s–{clip.end_seconds:.1f}s; confidence {clip.confidence:.1%}; evidence: `{clip.evidence_frame_path}`)")
     lines.extend(["", "## xMWP timeline", "", "| Time | Score | P(Team A) | Confidence |", "|---:|---:|---:|---:|"])
     for point in document.xmwp_timeline:
         lines.append(f"| {point.timestamp_seconds:.1f}s | {point.score_a}–{point.score_b} | {point.probability_a:.1%} | {point.confidence:.1%} |")
@@ -58,7 +59,7 @@ def render_html(document: ReportDocument) -> str:
         for event in document.timeline
     )
     clip_items = "".join(
-        f"<li><a href=\"{html.escape(clip.get('url', clip['file_path']))}\">{html.escape(clip['title'])}</a> ({clip['start_seconds']:.1f}s–{clip['end_seconds']:.1f}s)</li>"
+        f"<li><a href=\"{html.escape(clip.url)}\">{html.escape(clip.title)}</a> ({clip.start_seconds:.1f}s–{clip.end_seconds:.1f}s; confidence {clip.confidence:.1%}; evidence <code>{html.escape(clip.evidence_frame_path)}</code>)</li>"
         for clip in document.recommended_clips
     )
     limitations = "".join(f"<li>{html.escape(item)}</li>" for item in document.known_limitations)
