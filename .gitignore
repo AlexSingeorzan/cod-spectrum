@@ -12,4 +12,7 @@ data/reports/*
 !data/crops/.gitkeep
 !data/clips/.gitkeep
 !data/reports/.gitkeep
+# large downloaded VODs stay local; verified evidence crops are tracked
+data/videos/lat_van.mp4
+!data/crops/lat_van_hp/
 

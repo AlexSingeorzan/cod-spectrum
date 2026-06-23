@@ -6,6 +6,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from .models import Broadcast, ProcessingJob, Report
+from .services import real_match
 from .services import simulation as sim
 
 
@@ -115,6 +116,7 @@ def _shell_css() -> str:
 def _nav(active: str = "overview") -> str:
     links = [
         ("overview", "grid", "/", "Overview"),
+        ("realmatch", "pulse", "/match/lat-van-hp", "LAT–VAN · live"),
         ("lab", "flask", "/lab", "What-If Lab"),
         ("reports", "report", "#reports", "Reports"),
         ("film", "film", "#film-room", "Film room"),
@@ -652,3 +654,140 @@ def render_lab() -> str:
 <script>window.__SPECTRUM__ = {data_json};</script>
 <script>{_LAB_JS}</script>
 </body></html>"""
+
+
+_MATCH_CSS = """
+  .verified-banner { display:flex; gap:13px; align-items:flex-start; padding:15px 18px; margin-bottom:16px;
+    border:1px solid rgba(214,255,63,.28); border-radius:14px; background:var(--acid-soft); }
+  .verified-banner svg { color:var(--acid); flex:none; margin-top:1px; }
+  .verified-banner strong { color:#e7f4b8; font-size:11px; letter-spacing:.03em; }
+  .verified-banner p { margin:5px 0 0; color:#b6c19a; font-size:10.5px; line-height:1.55; }
+  .verified-banner a { color:var(--acid); }
+  .rm-score { display:grid; grid-template-columns:1fr auto 1fr auto; gap:22px; align-items:center; padding:24px 30px; margin-bottom:14px; }
+  .rm-score .tn { font-size:12px; font-weight:760; letter-spacing:.04em; } .rm-score .tn.a{color:var(--acid)} .rm-score .tn.b{color:var(--blue)}
+  .rm-score .ts { font-size:50px; font-weight:780; letter-spacing:-.06em; line-height:.9; }
+  .rm-score .b-side { text-align:right; }
+  .rm-score .mid { text-align:center; color:var(--muted); font-size:9px; letter-spacing:.1em; }
+  .rm-score .mid b { display:block; color:var(--acid); font-size:13px; letter-spacing:0; margin-bottom:3px; }
+  .rm-note { grid-column:1/-1; border-top:1px solid var(--line); margin-top:6px; padding-top:14px; color:var(--muted); font-size:10.5px; line-height:1.55; }
+  .rm-note b { color:#dfe4d4; }
+  .chart-card { padding:20px 22px; margin-bottom:14px; }
+  .chart-card h3 { margin:0 0 3px; font-size:13px; letter-spacing:-.02em; }
+  .chart-card .sub { color:var(--muted); font-size:10px; margin:0 0 12px; }
+  .chart-card svg { width:100%; height:auto; display:block; }
+  .km-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .km { border:1px solid var(--line); border-radius:13px; overflow:hidden; background:rgba(17,20,23,.7); }
+  .km img { width:100%; display:block; border-bottom:1px solid var(--line); background:#000; }
+  .km .km-body { padding:13px 14px; }
+  .km .km-tag { font-size:8px; font-weight:780; letter-spacing:.08em; text-transform:uppercase; padding:3px 7px; border-radius:6px; }
+  .km .km-tag.LAT { color:var(--acid); background:var(--acid-soft); } .km .km-tag.VAN { color:var(--blue); background:rgba(113,183,255,.12); }
+  .km h4 { margin:10px 0 5px; font-size:12px; } .km p { margin:0; color:var(--muted); font-size:9.5px; line-height:1.5; }
+  @media(max-width:900px){ .km-grid{ grid-template-columns:repeat(2,1fr); } .rm-score .ts{ font-size:38px; } }
+"""
+
+
+def _rm_winprob_svg(payload: dict) -> str:
+    pts = payload["points"]
+    meta = payload["meta"]
+    W, H, pl, pr, pt, pb = 960, 270, 46, 14, 16, 24
+    w, h = W - pl - pr, H - pt - pb
+    t0, t1 = pts[0]["t"], pts[-1]["t"]
+    fx = lambda t: pl + (t - t0) / (t1 - t0) * w
+    fy = lambda p: pt + (1 - p) * h
+    grid = ""
+    for v in (0, 0.25, 0.5, 0.75, 1):
+        y = fy(v)
+        grid += f'<line x1="{pl}" y1="{y:.1f}" x2="{W - pr}" y2="{y:.1f}" stroke="{"#2e353c" if v == 0.5 else "#22282d"}" {"stroke-dasharray=\"3 4\"" if v == 0.5 else ""}/>'
+        grid += f'<text x="{pl - 8}" y="{y + 3:.1f}" text-anchor="end" fill="#5a636a" font-size="9">{int(v * 100)}%</text>'
+    shade = ""
+    if payload.get("van_lead"):
+        x0, x1 = fx(payload["van_lead"][0]), fx(payload["van_lead"][1])
+        shade = f'<rect x="{x0:.1f}" y="{pt}" width="{x1 - x0:.1f}" height="{h}" fill="rgba(113,183,255,.12)"/><text x="{(x0 + x1) / 2:.1f}" y="{pt + 13}" text-anchor="middle" fill="#8fc2ff" font-size="9">VAN ahead</text>'
+    line = " ".join(("M" if i == 0 else "L") + f"{fx(p['t']):.1f},{fy(p['prob_a']):.1f}" for i, p in enumerate(pts))
+    area = f"M{fx(t0):.1f},{fy(0):.1f} " + " ".join("L" + f"{fx(p['t']):.1f},{fy(p['prob_a']):.1f}" for p in pts) + f" L{fx(t1):.1f},{fy(0):.1f} Z"
+    marks = ""
+    for lc in payload["lead_changes"][1:]:
+        prob = next(p["prob_a"] for p in pts if p["t"] == lc["t"])
+        marks += f'<circle cx="{fx(lc["t"]):.1f}" cy="{fy(prob):.1f}" r="4" fill="{"#d6ff3f" if lc["to"] == "LAT" else "#71b7ff"}" stroke="#0b0e10" stroke-width="1.5"/>'
+    return (f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="none">{grid}{shade}'
+            f'<path d="{area}" fill="rgba(214,255,63,.08)"/>'
+            f'<path d="{line}" fill="none" stroke="#d6ff3f" stroke-width="2.4" stroke-linejoin="round"/>{marks}'
+            f'<text x="{pl}" y="11" fill="#5a636a" font-size="9">P(LAT win)</text></svg>')
+
+
+def _rm_race_svg(payload: dict) -> str:
+    pts = payload["points"]
+    target = payload["meta"]["target"]
+    W, H, pl, pr, pt, pb = 960, 230, 40, 14, 14, 22
+    w, h = W - pl - pr, H - pt - pb
+    t0, t1 = pts[0]["t"], pts[-1]["t"]
+    fx = lambda t: pl + (t - t0) / (t1 - t0) * w
+    fy = lambda s: pt + (1 - s / target) * h
+    grid = ""
+    for v in (0, 0.5, 1):
+        y = pt + (1 - v) * h
+        grid += f'<line x1="{pl}" y1="{y:.1f}" x2="{W - pr}" y2="{y:.1f}" stroke="#22282d"/><text x="{pl - 7}" y="{y + 3:.1f}" text-anchor="end" fill="#5a636a" font-size="9">{int(v * target)}</text>'
+    la = " ".join(("M" if i == 0 else "L") + f"{fx(p['t']):.1f},{fy(p['a']):.1f}" for i, p in enumerate(pts))
+    vn = " ".join(("M" if i == 0 else "L") + f"{fx(p['t']):.1f},{fy(p['b']):.1f}" for i, p in enumerate(pts))
+    return (f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="none">{grid}'
+            f'<path d="{la}" fill="none" stroke="#d6ff3f" stroke-width="2.4"/>'
+            f'<path d="{vn}" fill="none" stroke="#71b7ff" stroke-width="2.4"/></svg>')
+
+
+def _rm_flow_svg(payload: dict) -> str:
+    intervals = payload["intervals"]
+    W, H, pl, pr = 960, 150, 30, 14
+    w = W - pl - pr
+    mid = H / 2
+    peak = max(abs(i["net"]) for i in intervals) or 1
+    n = len(intervals)
+    bw = w / n * 0.7
+    bars = f'<line x1="{pl}" y1="{mid}" x2="{W - pr}" y2="{mid}" stroke="#2e353c"/>'
+    for k, it in enumerate(intervals):
+        x = pl + (k + 0.5) * w / n
+        bh = abs(it["net"]) / peak * (mid - 14)
+        if it["net"] >= 0:
+            bars += f'<rect x="{x - bw / 2:.1f}" y="{mid - bh:.1f}" width="{bw:.1f}" height="{bh:.1f}" rx="2" fill="#d6ff3f" opacity=".9"/>'
+        else:
+            bars += f'<rect x="{x - bw / 2:.1f}" y="{mid:.1f}" width="{bw:.1f}" height="{bh:.1f}" rx="2" fill="#71b7ff" opacity=".9"/>'
+    bars += f'<text x="{pl}" y="12" fill="#a9d138" font-size="9">LAT scored more ▲</text><text x="{pl}" y="{H - 4}" fill="#71b7ff" font-size="9">VAN scored more ▼</text>'
+    return f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="none">{bars}</svg>'
+
+
+def render_match_report() -> str:
+    payload = real_match.analysis()
+    meta = payload["meta"]
+    km_cards = "".join(
+        f"""<article class="km"><img src="{m['thumb']}" alt="scorebar at {m['t']}s"/>
+          <div class="km-body"><span class="km-tag {m['kind']}">{m['kind']} · t={m['t']}s</span>
+          <h4>{html.escape(m['title'])}</h4><p>{html.escape(m['detail'])}</p></div></article>"""
+        for m in payload["key_moments"]
+    )
+    van_lead = payload.get("van_lead")
+    lead_line = (f"Vancouver actually led from <b>{van_lead[0]}s to {van_lead[1]}s</b> ({van_lead[1] - van_lead[0]}s) before LAT retook the hill — a swing the box score hides."
+                 if van_lead else "LAT led wire to wire.")
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090b0d">
+<title>LAT–VAN Hardpoint · live-data analysis</title>
+<style>{_shell_css()}{_MATCH_CSS}</style></head>
+<body><div class="app-shell">{_nav('realmatch')}
+<main><header class="topbar"><div><div class="eyebrow">VOD-derived · scoreboard truth</div><div class="top-title">{html.escape(meta['map_name'])} {html.escape(meta['mode'])} · Map 1</div></div>
+<div class="top-actions"><div class="status-pill">{_icon('check',14)} {meta['samples']} verified reads</div><a class="button" href="/lab">What-If Lab</a></div></header>
+<div class="content">
+<div class="verified-banner">{_icon('check',17)}<div>
+  <strong>REAL DATA — scores visually verified from the official CDL VOD, not OCR or invention.</strong>
+  <p>Read frame-by-frame from <a href="{meta['source_url']}" target="_blank" rel="noreferrer">{html.escape(meta['source_title'])}</a> at ~28s intervals (tesseract can't read the CDL font; crops kept as evidence). Map 1 Hardpoint only — S&amp;D and Overload use different scoreboards. Win probability is the uncalibrated HeuristicV0. No kill/spawn data — this is scoreboard truth.</p>
+</div></div>
+<section class="card rm-score">
+  <div><span class="tn a">{meta['team_a']}</span><div class="ts">{meta['final_a']}</div></div>
+  <div class="mid"><b>FINAL</b>RACE TO {meta['target']}</div>
+  <div class="b-side"><span class="tn b">{meta['team_b']}</span><div class="ts">{meta['final_b']}</div></div>
+  <div></div>
+  <div class="rm-note">{lead_line}</div>
+</section>
+<section class="card chart-card"><h3>Win probability (model xMWP)</h3><p class="sub">Uncalibrated HeuristicV0 over the verified score timeline. Dots mark lead changes.</p>{_rm_winprob_svg(payload)}</section>
+<section class="card chart-card"><h3>Race to {meta['target']}</h3><p class="sub">{meta['team_a']} (acid) vs {meta['team_b']} (blue). Note VAN above LAT through the middle third.</p>{_rm_race_svg(payload)}</section>
+<section class="card chart-card"><h3>Scoring-flow momentum</h3><p class="sub">Net points per ~28s window. Up = LAT out-scored VAN; down = VAN out-scored LAT.</p>{_rm_flow_svg(payload)}</section>
+<div class="section-head"><div><h2>Key swing moments</h2><p>Evidence crops pulled straight from the broadcast scorebar</p></div></div>
+<div class="km-grid">{km_cards}</div>
+</div></main></div>{_mobile_nav()}</body></html>"""

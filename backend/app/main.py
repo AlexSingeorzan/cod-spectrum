@@ -15,6 +15,7 @@ from .ui import (
     render_featured_coach_report,
     render_featured_coach_report_markdown,
     render_lab,
+    render_match_report,
 )
 
 
@@ -41,6 +42,11 @@ def dashboard(session: Session = Depends(get_db)) -> str:
 @app.get("/lab", response_class=HTMLResponse)
 def whatif_lab() -> str:
     return render_lab()
+
+
+@app.get("/match/lat-van-hp", response_class=HTMLResponse)
+def lat_van_match_report() -> str:
+    return render_match_report()
 
 
 @app.get(f"/coach-reports/{COACH_REPORT_SLUG}", response_class=HTMLResponse)
