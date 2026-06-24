@@ -7,6 +7,7 @@ from typing import Any
 
 from .models import Broadcast, ProcessingJob, Report
 from .services import hardpoint_breakdown
+from .services import minimap as minimap_svc
 from .services import real_match
 from .services import simulation as sim
 
@@ -711,6 +712,14 @@ _MATCH_CSS = """
   .spawn-row .sev.lock{ color:var(--coral); background:rgba(255,114,94,.13);} .spawn-row .sev.pressure{ color:#ffb24a; background:rgba(255,178,74,.12);}
   .spawn-row p { margin:0; font-size:10.5px; color:#cfd5d8; } .spawn-row .conf { color:var(--muted); font-size:9px; white-space:nowrap; }
   @media(max-width:900px){ .hill-grid{ grid-template-columns:repeat(2,1fr);} .gf-wrap{ grid-template-columns:1fr;} }
+  .mm-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .mm-card { border:1px solid var(--line); border-radius:13px; padding:14px; background:rgba(17,20,23,.7); }
+  .mm-card.key { border-color:rgba(214,255,63,.3); }
+  .mm-card h4 { margin:0 0 2px; font-size:12px; } .mm-card .mm-sub { color:var(--muted); font-size:9px; margin:0 0 10px; }
+  .mm-card svg { width:100%; height:auto; display:block; border-radius:7px; }
+  .mm-legend { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:8.5px; margin-top:9px; }
+  .mm-legend i { height:6px; flex:1; border-radius:3px; background:linear-gradient(90deg,#0c0f11,#3a4a18,#d6ff3f); }
+  @media(max-width:900px){ .mm-grid{ grid-template-columns:1fr; } }
 """
 
 
@@ -861,6 +870,39 @@ def _spawn_flips_html(hb: dict) -> str:
     return f'<div class="spawn-list">{rows}</div>'
 
 
+def _heatmap_svg(grid: list) -> str:
+    n = len(grid)
+    cell = 12
+    side = n * cell
+    cells = ""
+    for gy, row in enumerate(grid):
+        for gx, v in enumerate(row):
+            if v <= 0.03:
+                continue
+            cells += f'<rect x="{gx * cell}" y="{gy * cell}" width="{cell}" height="{cell}" fill="#d6ff3f" opacity="{round(0.1 + 0.9 * v, 2)}"/>'
+    return f'<svg viewBox="0 0 {side} {side}" style="background:#0b0e10">{cells}</svg>'
+
+
+def _minimap_section_html(hb: dict) -> str:
+    heatmaps = minimap_svc.saved_heatmaps()
+    if not heatmaps:
+        return '<p class="muted" style="font-size:11px">No minimap detections available (needs the local VOD).</p>'
+    key = set(hb["key_hills"])
+    name_by_index = {h["index"]: h["name"] for h in hb["hills"]}
+    cards = ""
+    for hill_str in sorted(heatmaps, key=int):
+        idx = int(hill_str)
+        hm = heatmaps[hill_str]
+        cards += (
+            f'<div class="mm-card{" key" if idx in key else ""}">'
+            f'<h4>Hill {idx} · {html.escape(name_by_index.get(idx, ""))}</h4>'
+            f'<p class="mm-sub">{hm["detections"]} marker detections · {hm["frames"]} frames</p>'
+            f'{_heatmap_svg(hm["grid"])}'
+            f'<div class="mm-legend">low<i></i>high occupancy</div></div>'
+        )
+    return f'<div class="mm-grid">{cards}</div>'
+
+
 def render_match_report() -> str:
     payload = real_match.analysis()
     meta = payload["meta"]
@@ -910,4 +952,7 @@ def render_match_report() -> str:
 
 <div class="section-head"><div><h2>Spawn flips <span class="muted" style="font-size:11px;font-weight:400">· inferred</span></h2><p>Scoreboard heuristic (a near-unanswered hill = the loser was held off the hill). Confirming these is the minimap-detection job — see <code>MinimapDetector</code> in <code>hardpoint_breakdown.py</code>.</p></div></div>
 {_spawn_flips_html(hb)}
+
+<div class="section-head"><div><h2>Map positioning <span class="muted" style="font-size:11px;font-weight:400">· minimap detection</span></h2><p>Real player-marker occupancy from <code>ClassicalMinimapDetector</code> (color/shape CV) on the broadcast minimap. Shows the observed team + radar-visible enemies — team tint is low-confidence; per-player, team-accurate tracking is the YOLO upgrade. The key hills below corroborate the spawn reads: occupancy collapses toward one side when a team is locked out.</p></div></div>
+{_minimap_section_html(hb)}
 </div></main></div>{_mobile_nav()}</body></html>"""
