@@ -6,6 +6,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from .models import Broadcast, ProcessingJob, Report
+from .services import coach_view
 from .services import hardpoint_breakdown
 from .services import minimap as minimap_svc
 from .services import real_match
@@ -720,6 +721,27 @@ _MATCH_CSS = """
   .mm-legend { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:8.5px; margin-top:9px; }
   .mm-legend i { height:6px; flex:1; border-radius:3px; background:linear-gradient(90deg,#0c0f11,#3a4a18,#d6ff3f); }
   @media(max-width:900px){ .mm-grid{ grid-template-columns:1fr; } }
+  .story { padding:22px 24px; margin-bottom:14px; border:1px solid rgba(214,255,63,.18); }
+  .story .eyebrow { color:var(--acid); }
+  .story h2 { margin:5px 0 3px; font-size:19px; letter-spacing:-.03em; }
+  .story .lede { color:var(--muted); font-size:11px; margin:0 0 16px; max-width:760px; line-height:1.5; }
+  .story-sub { margin:22px 0 11px; font-size:12px; font-weight:700; letter-spacing:.02em; display:flex; align-items:center; gap:8px; }
+  .story-sub .tag { color:#6b747b; font-size:9px; font-weight:600; letter-spacing:.04em; }
+  .tp-list { display:flex; flex-direction:column; gap:6px; }
+  .tp-row { display:grid; grid-template-columns:24px 1fr 150px 70px; gap:11px; align-items:center; padding:9px 11px; border:1px solid var(--line); border-radius:10px; background:rgba(17,20,23,.6); }
+  .tp-row.big { border-color:rgba(214,255,63,.28); }
+  .tp-row .rk { font:11px ui-monospace,monospace; color:var(--muted); }
+  .tp-name b { font-size:12px; } .tp-name span { display:block; color:var(--muted); font-size:9.5px; margin-top:2px; }
+  .tp-bar { position:relative; height:16px; } .tp-bar .mid { position:absolute; left:50%; top:0; bottom:0; width:1px; background:#2c3239; }
+  .tp-bar i { position:absolute; top:3px; height:10px; border-radius:2px; } .tp-bar i.pos{ left:50%; background:var(--acid);} .tp-bar i.neg{ right:50%; background:var(--blue);}
+  .tp-delta { text-align:right; font-size:14px; font-weight:760; letter-spacing:-.02em; } .tp-delta.pos{color:var(--acid)} .tp-delta.neg{color:var(--blue)}
+  .tp-delta span { display:block; color:var(--muted); font-size:8.5px; font-weight:500; letter-spacing:0; }
+  .rot-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .rot-table th { color:var(--muted); font-size:8.5px; text-transform:uppercase; letter-spacing:.05em; text-align:left; padding:5px 9px; border-bottom:1px solid var(--line); }
+  .rot-table td { padding:7px 9px; border-bottom:1px solid rgba(255,255,255,.04); }
+  .rot-table .ctrlbar { height:5px; border-radius:3px; background:#71b7ff; overflow:hidden; width:90px; } .rot-table .ctrlbar i{ display:block;height:100%;background:var(--acid);}
+  .rot-table .base { color:#566069; font-style:italic; font-size:9px; }
+  .rot-note { margin-top:11px; color:#828b91; font-size:9.5px; line-height:1.5; }
 """
 
 
@@ -903,10 +925,98 @@ def _minimap_section_html(hb: dict) -> str:
     return f'<div class="mm-grid">{cards}</div>'
 
 
+def _momentum_timeline_svg(cv: dict) -> str:
+    mom, ticks, events = cv["momentum"], cv["hill_ticks"], cv["events"]
+    W, H, pl, pr, pt, pb = 960, 300, 44, 16, 42, 50
+    w, h = W - pl - pr, H - pt - pb
+    t0, t1 = mom[0]["t"], mom[-1]["t"]
+    fx = lambda t: pl + (min(max(t, t0), t1) - t0) / (t1 - t0) * w
+    fy = lambda p: pt + (1 - p) * h
+    p_at = lambda t: min(mom, key=lambda m: abs(m["t"] - t))["p"]
+    g = ""
+    for v in (0, 0.5, 1):
+        y = fy(v)
+        g += f'<line x1="{pl}" y1="{y:.1f}" x2="{W - pr}" y2="{y:.1f}" stroke="{"#2e353c" if v == 0.5 else "#22282d"}" {"stroke-dasharray=\"3 4\"" if v == 0.5 else ""}/>'
+        g += f'<text x="{pl - 7}" y="{y + 3:.1f}" text-anchor="end" fill="#5a636a" font-size="9">{int(v * 100)}%</text>'
+    # hill ticks P1..P10
+    for tk in ticks:
+        x = fx(tk["t"])
+        g += f'<line x1="{x:.1f}" y1="{pt}" x2="{x:.1f}" y2="{H - pb}" stroke="#1b2024"/>'
+        if tk["hill"]:
+            g += f'<text x="{fx((tk["t"] + (tk["t"] + 60)) / 2) if False else x + 2:.1f}" y="{H - pb + 13:.1f}" fill="#6b747b" font-size="8.5">P{tk["hill"]}</text>'
+    line = " ".join(("M" if i == 0 else "L") + f"{fx(m['t']):.1f},{fy(m['p']):.1f}" for i, m in enumerate(mom))
+    area = f"M{fx(t0):.1f},{fy(0):.1f} " + " ".join("L" + f"{fx(m['t']):.1f},{fy(m['p']):.1f}" for m in mom) + f" L{fx(t1):.1f},{fy(0):.1f} Z"
+    # event markers
+    marks, labels, lane = "", "", 0
+    for ev in sorted(events, key=lambda e: e["t"]):
+        x, y = fx(ev["t"]), fy(p_at(ev["t"]))
+        if ev["type"] == "spawn":
+            col = "#ff725e" if ev.get("sev") == "lock" else "#ffb24a"
+            marks += f'<circle cx="{x:.1f}" cy="{pt - 6:.1f}" r="3.4" fill="{col}"><title>{html.escape(ev["label"])}</title></circle>'
+        else:  # break / retake -> labelled callout
+            col = "#d6ff3f" if ev["team"] == "LAT" else "#71b7ff"
+            ly = pt + 14 + (lane % 2) * 16
+            lane += 1
+            marks += f'<line x1="{x:.1f}" y1="{y:.1f}" x2="{x:.1f}" y2="{ly + 4:.1f}" stroke="{col}" stroke-width="1" stroke-dasharray="2 2"/><circle cx="{x:.1f}" cy="{y:.1f}" r="3.2" fill="{col}"/>'
+            labels += f'<text x="{x + 5:.1f}" y="{ly:.1f}" fill="{col}" font-size="9.5" font-weight="600">{html.escape(ev["label"])}</text>'
+    return (f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="none">{g}'
+            f'<path d="{area}" fill="rgba(214,255,63,.08)"/>'
+            f'<path d="{line}" fill="none" stroke="#d6ff3f" stroke-width="2.4" stroke-linejoin="round"/>'
+            f'{marks}{labels}'
+            f'<text x="{pl}" y="12" fill="#5a636a" font-size="9">P(LAT win) · ● spawn flip · dashed = break/retake</text></svg>')
+
+
+def _turning_points_html(cv: dict) -> str:
+    tps = cv["turning_points"][:6]
+    peak = max(abs(r["dwin"]) for r in tps) or 1
+    rows = ""
+    for i, r in enumerate(tps, 1):
+        pos = r["dwin"] >= 0
+        width = abs(r["dwin"]) / peak * 48
+        rows += (
+            f'<div class="tp-row{" big" if i <= 2 else ""}"><span class="rk">{i:02d}</span>'
+            f'<span class="tp-name"><b>P{r["hill"]} · {html.escape(r["name"])}</b><span>{html.escape(r["narrative"])}</span></span>'
+            f'<span class="tp-bar"><span class="mid"></span><i class="{"pos" if pos else "neg"}" style="width:{width:.1f}%"></i></span>'
+            f'<span class="tp-delta {"pos" if pos else "neg"}">{r["dwin"]:+.1f}%<span>{r["win_before"]}→{r["win_after"]}%</span></span></div>'
+        )
+    return f'<div class="tp-list">{rows}</div>'
+
+
+def _rotation_timing_html(cv: dict) -> str:
+    rows = ""
+    for r in cv["rotation"]:
+        rows += (
+            f'<tr><td>P{r["hill"]}</td><td>{html.escape(r["name"])}</td>'
+            f'<td style="color:var(--acid)">{r["lat"]}</td><td style="color:var(--blue)">{r["van"]}</td>'
+            f'<td><div class="ctrlbar"><i style="width:{round(r["control_a"] * 100)}%"></i></div></td>'
+            f'<td>{html.escape(r["first_control"] or "even")}</td><td class="base">needs corpus</td></tr>'
+        )
+    return (
+        '<table class="rot-table"><thead><tr><th>Hill</th><th>Zone</th><th>LAT</th><th>VAN</th>'
+        '<th>Control</th><th>Won hill</th><th>League/opp</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table><p class="rot-note">{html.escape(cv["rotation_note"])}</p>'
+    )
+
+
+def _match_story_html(cv: dict) -> str:
+    return f"""<section class="card story">
+  <div class="eyebrow">Match story</div>
+  <h2>Why LAT won — and where the map actually turned</h2>
+  <p class="lede">The box score says 250–156, a blowout. The win-probability story says otherwise: VAN led for two hills, and the map turned on two LAT hill-lockouts (P3, P7), not on raw fragging.</p>
+  <div class="story-sub">Momentum timeline <span class="tag">signature · xMWP + breaks/retakes/spawn flips on one line</span></div>
+  {_momentum_timeline_svg(cv)}
+  <div class="story-sub">Turning points <span class="tag">ranked by Δ win% · why we won</span></div>
+  {_turning_points_html(cv)}
+  <div class="story-sub">Rotation timing <span class="tag">control-rate proxy · what to practise</span></div>
+  {_rotation_timing_html(cv)}
+</section>"""
+
+
 def render_match_report() -> str:
     payload = real_match.analysis()
     meta = payload["meta"]
     hb = hardpoint_breakdown.analysis()
+    cv = coach_view.analysis()
     gf = hb["gunfights"]
     cp = gf["checkpoints"].get(505, {})
     km_cards = "".join(
@@ -937,7 +1047,7 @@ def render_match_report() -> str:
   <div></div>
   <div class="rm-note">{lead_line}</div>
 </section>
-<section class="card chart-card"><h3>Win probability (model xMWP)</h3><p class="sub">Uncalibrated HeuristicV0 over the verified score timeline. Dots mark lead changes.</p>{_rm_winprob_svg(payload)}</section>
+{_match_story_html(cv)}
 <section class="card chart-card"><h3>Race to {meta['target']}</h3><p class="sub">{meta['team_a']} (acid) vs {meta['team_b']} (blue). Note VAN above LAT through the middle third.</p>{_rm_race_svg(payload)}</section>
 <section class="card chart-card"><h3>Scoring-flow momentum</h3><p class="sub">Net points per ~28s window. Up = LAT out-scored VAN; down = VAN out-scored LAT.</p>{_rm_flow_svg(payload)}</section>
 <div class="section-head"><div><h2>Key swing moments</h2><p>Evidence crops pulled straight from the broadcast scorebar</p></div></div>
@@ -953,6 +1063,6 @@ def render_match_report() -> str:
 <div class="section-head"><div><h2>Spawn flips <span class="muted" style="font-size:11px;font-weight:400">· inferred</span></h2><p>Scoreboard heuristic (a near-unanswered hill = the loser was held off the hill). Confirming these is the minimap-detection job — see <code>MinimapDetector</code> in <code>hardpoint_breakdown.py</code>.</p></div></div>
 {_spawn_flips_html(hb)}
 
-<div class="section-head"><div><h2>Map positioning <span class="muted" style="font-size:11px;font-weight:400">· minimap detection</span></h2><p>Real player-marker occupancy from <code>ClassicalMinimapDetector</code> (color/shape CV) on the broadcast minimap. Shows the observed team + radar-visible enemies — team tint is low-confidence; per-player, team-accurate tracking is the YOLO upgrade. The key hills below corroborate the spawn reads: occupancy collapses toward one side when a team is locked out.</p></div></div>
+<div class="section-head"><div><h2>Map occupancy <span class="muted" style="font-size:11px;font-weight:400">· raw positional precursor</span></h2><p>Not a finished chart — raw occupancy. The minimap is gridded 16×16; each cell brightens with how often a player marker was detected there during the hill, i.e. <b>where bodies were</b>. This is the precursor to a <b>Hill-Value / Spawn-Value map</b> (zones weighted by score gained, learned across many maps) — that's the insight version, and it needs more data. On its own it's only context; it does corroborate the spawn reads (occupancy collapses to one side on lockout hills). Detector: <code>ClassicalMinimapDetector</code>; team-accurate per-player tracking is the YOLO upgrade (scaffold added).</p></div></div>
 {_minimap_section_html(hb)}
 </div></main></div>{_mobile_nav()}</body></html>"""

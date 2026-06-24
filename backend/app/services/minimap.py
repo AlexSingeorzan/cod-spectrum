@@ -37,14 +37,17 @@ MINIMAP_REGION = {"x": 0.012, "y": 0.715, "w": 0.140, "h": 0.260}
 
 @dataclass(frozen=True)
 class Detection:
-    x: float          # normalised 0..1 within the minimap
+    x: float          # normalised box centre 0..1 within the minimap
     y: float
+    w: float          # normalised box size (for YOLO pre-labels)
+    h: float
     team: str         # "enemy" | "observed"  (low confidence)
     confidence: float
     area: int
 
     def as_dict(self) -> dict:
-        return {"x": round(self.x, 4), "y": round(self.y, 4), "team": self.team,
+        return {"x": round(self.x, 4), "y": round(self.y, 4), "w": round(self.w, 4),
+                "h": round(self.h, 4), "team": self.team,
                 "confidence": round(self.confidence, 3), "area": self.area}
 
 
@@ -93,7 +96,7 @@ class ClassicalMinimapDetector:
                 else:
                     redness = 0.0
                 team = "enemy" if (base_team == "enemy" or redness > 0.35) else "observed"
-                dets.append(Detection(cx / ww, cy / hh, team, conf, area))
+                dets.append(Detection(cx / ww, cy / hh, w / ww, h / hh, team, conf, area))
         return _dedupe(dets)
 
 

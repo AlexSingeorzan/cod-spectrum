@@ -23,7 +23,7 @@ def test_detector_returns_serialisable_dicts():
     cv2.circle(img, (40, 40), 5, (0, 0, 255), -1)
     full = {"regions": {"minimap": {"x": 0, "y": 0, "w": 1, "h": 1}}}
     out = mm.ClassicalMinimapDetector().detect(img, full)
-    assert out and set(out[0]) == {"x", "y", "team", "confidence", "area"}
+    assert out and set(out[0]) == {"x", "y", "w", "h", "team", "confidence", "area"}
     assert all(0.0 <= d["x"] <= 1.0 and 0.0 <= d["y"] <= 1.0 for d in out)
 
 

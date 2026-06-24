@@ -17,4 +17,7 @@ data/videos/lat_van.mp4
 !data/crops/lat_van_hp/
 # precomputed minimap heatmaps (need the local VOD to rebuild)
 !data/reports/lat_van_hp_minimap.json
+# YOLO dataset images/labels are regenerable; keep only data.yaml + README
+data/minimap_dataset/images/
+data/minimap_dataset/labels/
 

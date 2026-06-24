@@ -1,0 +1,14 @@
+# YOLO dataset config — CDL minimap player detection (cod-spectrum)
+# Built by scripts/build_minimap_dataset.py (model-assisted pre-labels).
+path: data/minimap_dataset
+train: images/train
+val: images/val
+names:
+  0: observed_player
+  1: enemy_player
+
+# Notes
+# - The broadcast minimap shows the OBSERVED team plus radar-visible enemies only.
+#   Never label hidden opponents — preserve observed_team / visibility honesty.
+# - imgsz 256 is ample for the small minimap crop; yolov8n is a fine starting point.
+# - Pre-labels come from ClassicalMinimapDetector; correct them, don't trust blindly.
