@@ -6,6 +6,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from .models import Broadcast, ProcessingJob, Report
+from .services import hardpoint_breakdown
 from .services import real_match
 from .services import simulation as sim
 
@@ -683,6 +684,33 @@ _MATCH_CSS = """
   .km .km-tag.LAT { color:var(--acid); background:var(--acid-soft); } .km .km-tag.VAN { color:var(--blue); background:rgba(113,183,255,.12); }
   .km h4 { margin:10px 0 5px; font-size:12px; } .km p { margin:0; color:var(--muted); font-size:9.5px; line-height:1.5; }
   @media(max-width:900px){ .km-grid{ grid-template-columns:repeat(2,1fr); } .rm-score .ts{ font-size:38px; } }
+  .hill-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:9px; }
+  .hill { border:1px solid var(--line); border-radius:11px; padding:12px 11px; background:rgba(17,20,23,.7); position:relative; }
+  .hill.key { border-color:rgba(214,255,63,.32); box-shadow:inset 0 0 0 1px rgba(214,255,63,.08); }
+  .hill .hh { display:flex; justify-content:space-between; align-items:baseline; }
+  .hill .hno { font:9px ui-monospace,monospace; color:var(--acid); } .hill .hname { color:var(--muted); font-size:9px; }
+  .hill .hdelta { margin:9px 0 6px; font-size:13px; font-weight:700; letter-spacing:-.02em; }
+  .hill .hdelta .la{color:var(--acid)} .hill .hdelta .vn{color:var(--blue)} .hill .hdelta .sl{color:#525b62; font-weight:500}
+  .hill .hbar { height:4px; border-radius:3px; background:#71b7ff; overflow:hidden; }
+  .hill .hbar i { display:block; height:100%; background:var(--acid); }
+  .hill .hwin { margin-top:8px; font-size:8.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+  .hill .flip { position:absolute; top:9px; right:10px; font-size:7.5px; font-weight:780; letter-spacing:.05em; padding:2px 5px; border-radius:5px; }
+  .hill .flip.lock { color:var(--coral); background:rgba(255,114,94,.13); } .hill .flip.pressure { color:#ffb24a; background:rgba(255,178,74,.12); }
+  .gf-wrap { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .gf-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .gf-table caption { text-align:left; font-size:10px; font-weight:760; letter-spacing:.05em; padding-bottom:9px; }
+  .gf-table caption.a{color:var(--acid)} .gf-table caption.b{color:var(--blue)}
+  .gf-table th { color:var(--muted); font-size:8.5px; font-weight:650; text-transform:uppercase; letter-spacing:.06em; text-align:right; padding:4px 7px; border-bottom:1px solid var(--line); }
+  .gf-table th:first-child{ text-align:left; }
+  .gf-table td { padding:6px 7px; text-align:right; border-bottom:1px solid rgba(255,255,255,.04); } .gf-table td:first-child{ text-align:left; font-weight:600; }
+  .gf-table td .neg{ color:var(--coral); } .gf-table td .pos{ color:var(--acid); }
+  .gf-table tr.top td:first-child::after{ content:" ★"; color:var(--acid); font-size:8px; }
+  .spawn-list { display:flex; flex-direction:column; gap:8px; }
+  .spawn-row { display:grid; grid-template-columns:auto 1fr auto; gap:11px; align-items:center; padding:11px 13px; border:1px solid var(--line); border-radius:11px; background:rgba(17,20,23,.6); }
+  .spawn-row .sev { font-size:8px; font-weight:780; letter-spacing:.05em; text-transform:uppercase; padding:3px 7px; border-radius:6px; }
+  .spawn-row .sev.lock{ color:var(--coral); background:rgba(255,114,94,.13);} .spawn-row .sev.pressure{ color:#ffb24a; background:rgba(255,178,74,.12);}
+  .spawn-row p { margin:0; font-size:10.5px; color:#cfd5d8; } .spawn-row .conf { color:var(--muted); font-size:9px; white-space:nowrap; }
+  @media(max-width:900px){ .hill-grid{ grid-template-columns:repeat(2,1fr);} .gf-wrap{ grid-template-columns:1fr;} }
 """
 
 
@@ -754,9 +782,91 @@ def _rm_flow_svg(payload: dict) -> str:
     return f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="none">{bars}</svg>'
 
 
+def _hill_bars_svg(hb: dict) -> str:
+    hills = hb["hills"]
+    key = set(hb["key_hills"])
+    W, H, pl, pr, pt, pb = 960, 210, 22, 14, 22, 44
+    w = W - pl - pr
+    half = (H - pt - pb) / 2
+    mid = pt + half
+    peak = max(abs(h["margin"]) for h in hills) or 1
+    n = len(hills)
+    slot = w / n
+    bw = slot * 0.5
+    out = f'<line x1="{pl}" y1="{mid:.1f}" x2="{W - pr}" y2="{mid:.1f}" stroke="#2e353c"/>'
+    for i, h in enumerate(hills):
+        cx = pl + (i + 0.5) * slot
+        bh = abs(h["margin"]) / peak * (half - 6)
+        up = h["margin"] >= 0
+        col = "#d6ff3f" if up else "#71b7ff"
+        y = mid - bh if up else mid
+        op = 0.95 if h["index"] in key else 0.55
+        out += f'<rect x="{cx - bw / 2:.1f}" y="{y:.1f}" width="{bw:.1f}" height="{bh:.1f}" rx="3" fill="{col}" opacity="{op}"/>'
+        ly = mid - bh - 5 if up else mid + bh + 12
+        out += f'<text x="{cx:.1f}" y="{ly:.1f}" text-anchor="middle" fill="#aeb5ba" font-size="9">{h["margin"]:+d}</text>'
+        out += f'<text x="{cx:.1f}" y="{H - 24:.1f}" text-anchor="middle" fill="#737c83" font-size="8.5">H{h["index"]}</text>'
+        out += f'<text x="{cx:.1f}" y="{H - 11:.1f}" text-anchor="middle" fill="#566069" font-size="7.5">{html.escape(h["name"])}</text>'
+        if h["spawn_flip"]:
+            mc = "#ff725e" if h["spawn_flip"]["severity"] == "lock" else "#ffb24a"
+            out += f'<circle cx="{cx:.1f}" cy="{pt - 4:.1f}" r="3.4" fill="{mc}"><title>spawn {h["spawn_flip"]["severity"]} on {h["spawn_flip"]["team_locked"]}</title></circle>'
+    out += f'<text x="{pl}" y="12" fill="#a9d138" font-size="9">LAT won hill ▲</text><text x="{W - pr}" y="12" text-anchor="end" fill="#71b7ff" font-size="9">▼ VAN won hill</text>'
+    return f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="none">{out}</svg>'
+
+
+def _hill_cards_html(hb: dict) -> str:
+    a, b = hb["team_a"], hb["team_b"]
+    key = set(hb["key_hills"])
+    cards = []
+    for h in hb["hills"]:
+        flip = ""
+        if h["spawn_flip"]:
+            sev = h["spawn_flip"]["severity"]
+            flip = f'<span class="flip {sev}">{html.escape(h["spawn_flip"]["team_locked"])} {sev}</span>'
+        winner = h["winner"] or "EVEN"
+        cards.append(
+            f'<div class="hill{" key" if h["index"] in key else ""}">{flip}'
+            f'<div class="hh"><span class="hno">HILL {h["index"]:02d}</span><span class="hname">{html.escape(h["name"])}</span></div>'
+            f'<div class="hdelta"><span class="la">+{h["da"]}</span> <span class="sl">/</span> <span class="vn">+{h["db"]}</span></div>'
+            f'<div class="hbar"><i style="width:{round(h["control_a"] * 100)}%"></i></div>'
+            f'<div class="hwin">{html.escape(winner)} hill · {h["margin"]:+d}</div></div>'
+        )
+    return "".join(cards)
+
+
+def _gunfight_tables_html(hb: dict) -> str:
+    top_names = {p for _, p, _, _ in hb["gunfights"]["top_fraggers"]}
+
+    def table(team: str, cls: str) -> str:
+        rows = ""
+        for name, (k, d) in sorted(hb["gunfights"]["players"][team].items(), key=lambda kv: kv[1][0], reverse=True):
+            diff = k - d
+            dcls = "pos" if diff > 0 else "neg" if diff < 0 else ""
+            rows += (f'<tr{" class=\"top\"" if name in top_names else ""}><td>{html.escape(name)}</td>'
+                     f'<td>{k}</td><td>{d}</td><td><span class="{dcls}">{diff:+d}</span></td></tr>')
+        kills = hb["gunfights"]["team_kills"][team]
+        return (f'<table class="gf-table"><caption class="{cls}">{html.escape(team)} · {kills} kills</caption>'
+                f'<thead><tr><th>Player</th><th>K</th><th>D</th><th>+/−</th></tr></thead><tbody>{rows}</tbody></table>')
+
+    return f'<div class="gf-wrap">{table(hb["team_a"], "a")}{table(hb["team_b"], "b")}</div>'
+
+
+def _spawn_flips_html(hb: dict) -> str:
+    if not hb["spawn_flips"]:
+        return '<p class="muted" style="font-size:11px">No spawn flips inferred.</p>'
+    rows = ""
+    for f in hb["spawn_flips"]:
+        rows += (f'<div class="spawn-row"><span class="sev {f["severity"]}">{html.escape(f["team_locked"])} {f["severity"]}</span>'
+                 f'<p>Hill {f["hill_index"]} — {html.escape(f["basis"])}</p>'
+                 f'<span class="conf">~{round(f["confidence"] * 100)}% · inferred</span></div>')
+    return f'<div class="spawn-list">{rows}</div>'
+
+
 def render_match_report() -> str:
     payload = real_match.analysis()
     meta = payload["meta"]
+    hb = hardpoint_breakdown.analysis()
+    gf = hb["gunfights"]
+    cp = gf["checkpoints"].get(505, {})
     km_cards = "".join(
         f"""<article class="km"><img src="{m['thumb']}" alt="scorebar at {m['t']}s"/>
           <div class="km-body"><span class="km-tag {m['kind']}">{m['kind']} · t={m['t']}s</span>
@@ -790,4 +900,14 @@ def render_match_report() -> str:
 <section class="card chart-card"><h3>Scoring-flow momentum</h3><p class="sub">Net points per ~28s window. Up = LAT out-scored VAN; down = VAN out-scored LAT.</p>{_rm_flow_svg(payload)}</section>
 <div class="section-head"><div><h2>Key swing moments</h2><p>Evidence crops pulled straight from the broadcast scorebar</p></div></div>
 <div class="km-grid">{km_cards}</div>
+
+<div class="section-head"><div><h2>Hill-by-hill · 60-second rotations</h2><p>Each Hardpoint hill is 60s. Bars show who won each rotation; ● marks an inferred spawn flip.</p></div></div>
+<section class="card chart-card">{_hill_bars_svg(hb)}</section>
+<div class="hill-grid">{_hill_cards_html(hb)}</div>
+
+<div class="section-head"><div><h2>Gunfights</h2><p>Per-player K/D from the post-game card (verified). LAT won the kill battle {gf['team_kills'][meta['team_a']]}–{gf['team_kills'][meta['team_b']]}; at the midpoint it was {cp.get(meta['team_a'],'?')}–{cp.get(meta['team_b'],'?')}. ★ = top fragger.</p></div></div>
+{_gunfight_tables_html(hb)}
+
+<div class="section-head"><div><h2>Spawn flips <span class="muted" style="font-size:11px;font-weight:400">· inferred</span></h2><p>Scoreboard heuristic (a near-unanswered hill = the loser was held off the hill). Confirming these is the minimap-detection job — see <code>MinimapDetector</code> in <code>hardpoint_breakdown.py</code>.</p></div></div>
+{_spawn_flips_html(hb)}
 </div></main></div>{_mobile_nav()}</body></html>"""

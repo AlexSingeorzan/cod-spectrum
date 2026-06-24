@@ -9,6 +9,8 @@ EventType = Literal[
     "map_start", "map_end", "score_update", "lead_change", "hill_change",
     "possible_break", "possible_retake", "killfeed_event_placeholder",
     "timeout_or_pause", "high_value_moment",
+    # 60s hill-rotation pipeline (hardpoint_breakdown):
+    "hill_summary", "gunfight", "spawn_flip",
 ]
 
 
