@@ -94,7 +94,8 @@ Tables: `sources`, `broadcasts`, `processing_jobs`, `matches`, `maps`, `game_eve
 - Real: fractional HUD cropping, sampling cadence, crop-change gating, score-event construction, map boundary heuristics, lead changes, scoring-flow break/retake inference with debounce, xMWP HeuristicV0, evidence persistence, FFmpeg clips, reports, scheduler, retry records, API, and dashboard.
 - Stubbed: bundled scorebar OCR reads `data/fixtures/sample_scores.json` and marks its dependent events `is_placeholder=true`. It exists to make the complete flow deterministic and offline.
 - Evaluated scorebar OCR baseline: `--ocr-engine cdl` uses `CdlScorebarOcrEngine`, a CPU k-NN digit-gallery model trained from human-verified LAT/VAN scorebar crops. It is versioned (`0.1.0-knn`) and confidence-capped by leave-one-crop-out evaluation. Current result: 21/21 operational gallery self-check, but only 10/21 leave-one-out exact score matches (`0.4762`) and 11/21 with temporal decoding (`0.5238`). This is not production-ready OCR.
-- Killfeed detection baseline (Phase 4, deliverable 1): `KillfeedDetector` (`killfeed_classical@0.1.0`) localises kill-notification rows in the killfeed region (verified against the real VOD — the HUD profile's original top-right "killfeed" box was actually the opponent stats panel), and a positional tracker collapses the per-frame flicker into candidate kill onsets. Each is emitted as a `KillEvent` fact with evidence + confidence and `identity_unread` — it reports kill **timing/count**, and does **not** read attacker/victim/weapon. `scripts/build_killfeed_dataset.py` turns it into an annotation scaffold; `scripts/eval_killfeed.py` reports detection precision/recall once rows are human-labelled (honest "no claim" until then). See **Killfeed detection** below.
+- **Scoreboard kill counter (Phase 4, the kill spine)** — `PanelKillCounter` (`panel_kill_counter@0.1.0`) reads each player's running kills/deaths from the top team panels and emits `KillEvent` (attacker) + `DeathEvent` (victim) facts from **monotonic** increments. Scored against the **human-verified post-game card** it is **exact: 8/8 players, 0.0 mean kill error, team totals 106/79, and the 505 s checkpoint 73/61** (`make panel-eval`, offline from the cached readings). Tesseract reads the clean panel font reliably. This is the authoritative kill count + who; see **Scoreboard kill counter** below.
+- Killfeed detection baseline (Phase 4, deliverable 1): `KillfeedDetector` (`killfeed_classical@0.1.0`) localises kill-notification rows in the killfeed region (verified against the real VOD — the HUD profile's original top-right "killfeed" box was actually the opponent stats panel), and a positional tracker collapses the per-frame flicker into candidate kill onsets — `KillEvent` facts with evidence, confidence, and `identity_unread`. It is the **corroboration/weapon layer**, not the count: measured against the panel-counter ground truth it runs at **~56% precision / ~80% recall**. `scripts/build_killfeed_dataset.py` turns it into an annotation scaffold for the future name/weapon reader. See **Killfeed detection** below.
 - Optional OCR experiment: `TesseractOcrEngine` is wired behind `--ocr-engine tesseract`. Install the Tesseract binary and run `.venv/bin/pip install -r requirements-ocr.txt`, then calibrate the scorebar profile before trusting output. It is intentionally not in the base environment.
 - Deferred: killfeed **name/weapon reading** (→ `DeathEvent`/`WeaponEvent`/`TradeEvent`; the detection scaffold above is the bridge to it), transition-card/mode classification, deep SnD/Control analytics, and minimap object detection.
 
@@ -147,6 +148,30 @@ The committed dataset (`data/killfeed_dataset/`, 245 unlabelled candidates from 
 LAT/VAN Hardpoint) ships with empty label slots and a labelling guide in its README;
 no kill identities are invented. `eval_killfeed.py` prints "no accuracy claim" until a
 person labels `valid_kill` and adds missed kills as `detector="manual_added"`.
+
+## Scoreboard kill counter
+
+`PanelKillCounter` is the **kill spine**. The broadcast's top team panels show each
+player's running kills/deaths — a clean, **monotonic** counter — so it answers *how
+many kills, and who* with far more reliability than the semi-transparent feed:
+
+- a player's `kills +N` → N `KillEvent`s by that player (attacker); `deaths +1` → a
+  `DeathEvent` (victim). A kill and a death in the same step on opposite teams are paired.
+- Reads use Tesseract (the clean panel font, not the stylised scorebar). The monotonic
+  constraint is a strong error-corrector: a read is accepted only when it does not
+  decrease, and an implausible jump must be confirmed by a second frame — a one-frame
+  OCR glitch cannot invent a kill. It never counts kills from before it starts watching.
+
+```bash
+make panel-counter   # OCR both panels over the local VOD -> readings cache + events
+make panel-eval      # score vs the verified post-game card + reconcile with the killfeed
+```
+
+Measured against the human-verified post-game card (`PLAYER_MAP_STATS`): **0.0 mean
+kill error, 8/8 players exact, team totals 106/79, 505 s checkpoint 73/61.** The slow
+OCR is cached to `data/panel_counter/readings.jsonl`, so `make panel-eval` re-scores
+offline. The counter is also the ground truth that measures the killfeed detector
+(above) at ~56% precision / ~80% recall via `reconcile_with_killfeed`.
 
 ## YOLO minimap next step
 

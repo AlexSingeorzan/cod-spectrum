@@ -1,0 +1,34 @@
+{
+  "detector": "panel_kill_counter@0.1.0",
+  "ocr_backend": "tesseract",
+  "source_url": "https://youtu.be/6pyPLwdrzq4",
+  "map": "Hacienda",
+  "team_a": "LAT",
+  "team_b": "VAN",
+  "names": {
+    "a1": "Scrap",
+    "a2": "HyDra",
+    "a3": "aBeZy",
+    "a4": "Nium",
+    "b1": "Craze",
+    "b2": "Mamba",
+    "b3": "Lunarz",
+    "b4": "Nero"
+  },
+  "window_seconds": [
+    80.0,
+    690.0
+  ],
+  "sample_fps": 1.0,
+  "frames": 611,
+  "kill_events": 172,
+  "death_events": 172,
+  "counter_total_kills": 185,
+  "reconciliation": {
+    "confirmed": 124,
+    "panel_only": 48,
+    "killfeed_only": 79,
+    "killfeed_precision_estimate": 0.6108,
+    "note": "panel scoreboard is the kill ground truth here; killfeed_only are likely false positives, panel_only are kills the killfeed detector missed"
+  }
+}

@@ -103,11 +103,17 @@ currently in this repository: **91 tests passing**.
   human-verified LAT/VAN scorebar crops. It reads the labeled gallery, but honest
   leave-one-crop-out evaluation is only `10/21` exact scores (`0.4762`) and
   temporal decoding is `11/21` (`0.5238`), so the stub remains the default.
-- **Killfeed: detection baseline only.** `KillfeedDetector` (`killfeed_classical@0.1.0`)
-  localises kill rows in the (re-verified) killfeed region and tracks them into candidate
-  kill onsets — `KillEvent` facts carrying timing + evidence + confidence, tagged
-  `identity_unread`. It does **not** read attacker/victim/weapon yet; an annotation
-  scaffold (`data/killfeed_dataset/`) + `eval_killfeed.py` exist to label and measure it.
+- **Kills: a verified spine + a corroboration layer.** `PanelKillCounter`
+  (`panel_kill_counter@0.1.0`) reads each player's scoreboard kills/deaths and emits
+  `KillEvent`/`DeathEvent` facts from monotonic increments — **exact against the
+  human-verified post-game card (8/8 players, team totals 106/79, 505 s checkpoint
+  73/61)**. Separately, `KillfeedDetector` (`killfeed_classical@0.1.0`) localises kill
+  rows in the (re-verified) killfeed region into candidate onsets tagged
+  `identity_unread`; measured against the panel ground truth it runs at ~56% precision /
+  ~80% recall, and an annotation scaffold (`data/killfeed_dataset/`) exists to train a
+  name/weapon reader from it.
+- **Still unread from the killfeed: attacker/victim/weapon identity** (the panel gives
+  the count + slot/gamertag; the killfeed will add weapon + headshot once labelled).
 - **No weapon, position, spawn, or objective extraction from pixels** beyond the above.
 - **No audio pipeline at all** — caster/desk/player-comms intelligence is greenfield.
 - **xMWP is uncalibrated**; break/retake are scoring-flow inferences, not kill/hill-control confirmation.
@@ -147,7 +153,8 @@ Each module is **independent and loosely coupled** — models are never entangle
 | Module | Status | Emits (facts) | Coach question it serves |
 |---|---|---|---|
 | Score OCR | 🟡 stub + evaluated CDL baseline | `ScoreUpdateEvent` | What is the score over time? |
-| Killfeed OCR | 🟡 detection + scaffold | `KillEvent` (timing); `DeathEvent`/`WeaponEvent`/`TradeEvent` pending content reader | Who traded, who got isolated? |
+| Kill counting (scoreboard) | ✅ exact vs verified card | `KillEvent`, `DeathEvent` | How many kills, and who? |
+| Killfeed OCR | 🟡 detection + scaffold | `KillEvent` (corroboration); `WeaponEvent`/`TradeEvent` pending content reader | Who traded, who got isolated, with what? |
 | Weapon recognition | ⬜ | `WeaponEvent` | What archetypes/swaps were used? |
 | Minimap detection | 🟡 classical | `PositionEvent` | Where was everyone? |
 | Player tracking | 🔬 dataset only | `PositionEvent` (player-resolved) | Routes, crossfires, space created |
@@ -266,7 +273,7 @@ never skip tests; never invent data.
 | **1** ✅ | Universal event schema (envelope, fact/insight, provenance, evidence, typed payloads) + adapter | done — schema + tests + docs + sample output; suite green |
 | **2** ✅ | Emit pipeline: score/break outputs persist as `GameEvent`s in `game_events`; report + API + dashboard read the unified stream; flat `events` table retired | done — byte-for-byte report parity (JSON/MD/HTML) vs pre-migration baseline |
 | **3** ✅ | Score OCR baseline on labelled CDL scorebars (`CdlScorebarOcrEngine`) | done for baseline — dataset, eval, tests, docs, sample output; not promoted to default because LOO exact score accuracy is `0.4762` |
-| **4** 🟡 | Killfeed OCR → `KillEvent`/`DeathEvent`/`WeaponEvent`/`TradeEvent` | **deliverable 1 done**: `KillfeedDetector` + positional onset tracking + annotation scaffold + eval harness + tests + docs + sample output. Detection precision/recall awaits human labels; **deliverable 2** (content reader → names/weapons → Death/Weapon/Trade) pending |
+| **4** 🟢 | Kills → `KillEvent`/`DeathEvent` (+ killfeed `WeaponEvent`/`TradeEvent`) | **kill spine done + ground-truth-verified**: `PanelKillCounter` is exact vs the post-game card (8/8, 106/79); `KillfeedDetector` + onset tracking + annotation scaffold + eval done (corroboration, ~56% prec / ~80% recall). **Remaining d2**: killfeed name/weapon reader → `WeaponEvent`/`TradeEvent` + headshots, trained from the labelled scaffold |
 | **5** | Minimap → player-resolved `PositionEvent` (YOLO) with visibility discipline | mAP on labelled minimap set |
 | **6** | Objective/spawn tracking → `ObjectiveEvent`/`SpawnFlipEvent` from pixels | agreement with verified hill timeline |
 | **7** | Audio pipeline + listen-in → `CommunicationEvent` | diarisation + transcription eval |

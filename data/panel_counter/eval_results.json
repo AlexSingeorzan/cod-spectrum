@@ -1,0 +1,108 @@
+{
+  "dataset": {
+    "path": "data/panel_counter",
+    "detector": "panel_kill_counter@0.1.0",
+    "frames": 611,
+    "source_url": "https://youtu.be/6pyPLwdrzq4"
+  },
+  "metrics": {
+    "per_player_kills": [
+      {
+        "slot": "a1",
+        "player": "Scrap",
+        "predicted_kills": 25,
+        "verified_kills": 25,
+        "error": 0
+      },
+      {
+        "slot": "a2",
+        "player": "HyDra",
+        "predicted_kills": 32,
+        "verified_kills": 32,
+        "error": 0
+      },
+      {
+        "slot": "a3",
+        "player": "aBeZy",
+        "predicted_kills": 31,
+        "verified_kills": 31,
+        "error": 0
+      },
+      {
+        "slot": "a4",
+        "player": "Nium",
+        "predicted_kills": 18,
+        "verified_kills": 18,
+        "error": 0
+      },
+      {
+        "slot": "b1",
+        "player": "Craze",
+        "predicted_kills": 15,
+        "verified_kills": 15,
+        "error": 0
+      },
+      {
+        "slot": "b2",
+        "player": "Mamba",
+        "predicted_kills": 19,
+        "verified_kills": 19,
+        "error": 0
+      },
+      {
+        "slot": "b3",
+        "player": "Lunarz",
+        "predicted_kills": 20,
+        "verified_kills": 20,
+        "error": 0
+      },
+      {
+        "slot": "b4",
+        "player": "Nero",
+        "predicted_kills": 25,
+        "verified_kills": 25,
+        "error": 0
+      }
+    ],
+    "mean_abs_error_kills": 0.0,
+    "exact_player_matches": "8/8",
+    "team_totals": {
+      "predicted": {
+        "LAT": 106,
+        "VAN": 79
+      },
+      "verified": {
+        "LAT": 106,
+        "VAN": 79
+      },
+      "error": {
+        "LAT": 0,
+        "VAN": 0
+      }
+    },
+    "checkpoint_505s": {
+      "t": 505,
+      "predicted": {
+        "LAT": 73,
+        "VAN": 61
+      },
+      "verified": {
+        "LAT": 73,
+        "VAN": 61
+      }
+    },
+    "kill_events_emitted": 172,
+    "killfeed_reconciliation": {
+      "confirmed": 137,
+      "panel_only": 35,
+      "killfeed_only": 108,
+      "killfeed_precision_estimate": 0.5592,
+      "note": "panel scoreboard is the kill ground truth here; killfeed_only are likely false positives, panel_only are kills the killfeed detector missed"
+    }
+  },
+  "notes": [
+    "Per-player/team kills are scored against the human-verified post-game card.",
+    "The counter only counts increments it observes from the start of the window; it never invents pre-watch kills.",
+    "killfeed_reconciliation treats the panel counter as kill ground truth to estimate the killfeed detector's precision (confirmed / killfeed onsets)."
+  ]
+}
