@@ -4,6 +4,21 @@ Always-on, evidence-backed analytics for CDL/Challengers broadcasts. The v0 pipe
 
 Every stored event is schema-validated with a timestamp, confidence, and evidence crop. CPU-only processing is the default. The included fixture is fully offline and deterministic.
 
+## Roadmap and the universal event schema
+
+The platform's direction and every planned subsystem are mapped in
+[`docs/ROADMAP.md`](docs/ROADMAP.md). Its foundation is the **universal event
+schema** ([`docs/EVENT_SCHEMA.md`](docs/EVENT_SCHEMA.md), `backend/app/events/`):
+one `GameEvent` envelope carrying provenance, evidence, and confidence, wrapping a
+typed payload, with **detected facts kept structurally separate from derived
+insights** — an insight must cite the facts it came from, and a fact must carry
+evidence. The schema and its adapter are implemented and tested; wiring the pipeline
+to emit it is the next phase. See a real sample stream:
+
+```bash
+.venv/bin/python scripts/sample_events.py   # writes data/fixtures/sample_events.jsonl + an evaluation report
+```
+
 ## Reproduce the vertical slice (under five minutes)
 
 Prerequisites: Python 3.12 (3.11+ supported) and FFmpeg on `PATH`.
