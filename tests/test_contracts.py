@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from pydantic import ValidationError
 
-from backend.app.schemas import EventCreate
+from backend.app.events import Evidence, GameEvent, Provenance, ScoreUpdateEvent, SourceKind
 from backend.app.services.hud import crop_region, load_hud_profile, region_pixels
 from backend.app.services.ocr import OcrEngine, StubOcrEngine
 
@@ -30,12 +30,13 @@ def test_stub_ocr_is_deterministic_and_conforms_to_protocol():
 
 
 def test_event_evidence_invariant():
-    payload = dict(
-        broadcast_id=1, timestamp_seconds=1, event_type="score_update", team_a="A", team_b="B",
-        score_a=1, score_b=0, confidence=0.9,
+    base = dict(
+        broadcast_id=1, video_timestamp_seconds=1.0, confidence=0.9,
+        provenance=Provenance(source=SourceKind.HEURISTIC),
+        payload=ScoreUpdateEvent(team_a="A", team_b="B", score_a=1, score_b=0),
     )
     with pytest.raises(ValidationError):
-        EventCreate(**payload, evidence_frame_path="")
-    event = EventCreate(**payload, evidence_frame_path="crop.jpg")
-    assert event.evidence_frame_path == "crop.jpg"
+        GameEvent(**base, evidence=Evidence(video_timestamp_seconds=1.0))  # fact with no frame/crop
+    event = GameEvent(**base, evidence=Evidence(video_timestamp_seconds=1.0, frame_path="crop.jpg"))
+    assert event.evidence.frame_path == "crop.jpg"
 

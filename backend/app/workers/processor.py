@@ -13,10 +13,12 @@ from sqlalchemy.orm import Session
 
 from ..config import get_settings
 from ..db import SessionLocal, init_db
-from ..models import Broadcast, BroadcastStatus, Clip, Event, Map, Match, ModelOutput, ProcessingJob, Report
-from ..schemas import EventCreate, ReportDocument, ScoreObservation, XmwpPoint
+from ..events import from_legacy_event
+from ..models import Broadcast, BroadcastStatus, Clip, GameEventRecord, Map, Match, ModelOutput, ProcessingJob, Report
+from ..schemas import ReportDocument, ScoreObservation, XmwpPoint
 from ..services.analytics import HeuristicV0, choose_key_moments, detect_breaks_retakes, hardpoint_summary, xmwp_timeline
 from ..services.clips import generate_clip
+from ..services.event_store import delete_game_events, load_game_event_records, store_game_events, to_report_row
 from ..services.hud import load_hud_profile
 from ..services.ocr import build_ocr_engine
 from ..services.reports import write_reports
@@ -76,19 +78,8 @@ def _stage_completed(session: Session, broadcast_id: int, stage: str) -> bool:
     return bool(job and job.status == "completed")
 
 
-def _event_payload(event: Event) -> dict:
-    return {
-        "timestamp_seconds": event.timestamp_seconds, "event_type": event.event_type,
-        "team_a": event.team_a, "team_b": event.team_b, "player": event.player,
-        "opposing_player": event.opposing_player, "score_a": event.score_a, "score_b": event.score_b,
-        "hill_id": event.hill_id, "confidence": event.confidence, "raw_text": event.raw_text,
-        "evidence_frame_path": event.evidence_frame_path, "clip_id": event.clip_id,
-        "is_placeholder": event.is_placeholder,
-    }
-
-
 def _clear_incomplete_outputs(session: Session, broadcast_id: int) -> None:
-    session.execute(delete(Event).where(Event.broadcast_id == broadcast_id))
+    delete_game_events(session, broadcast_id)
     session.execute(delete(Clip).where(Clip.broadcast_id == broadcast_id))
     session.execute(delete(ModelOutput).where(ModelOutput.broadcast_id == broadcast_id))
     session.execute(delete(Report).where(Report.broadcast_id == broadcast_id))
@@ -172,11 +163,10 @@ def process_local_file(
             _mark_stage(session, broadcast.id, current_stage, "running", "building score timeline")
             session.commit()
             core_payloads = build_score_events(observations, match.team_a, match.team_b, settings.hardpoint_target)
-            for payload in core_payloads:
-                payload["is_placeholder"] = ocr_engine == "stub"
-                validated = EventCreate(broadcast_id=broadcast.id, match_id=match.id, map_id=game_map.id, **payload)
-                session.add(Event(**validated.model_dump()))
-            _mark_stage(session, broadcast.id, current_stage, "completed", f"created {len(core_payloads)} core events")
+            ids = {"broadcast_id": broadcast.id, "match_id": match.id, "map_id": game_map.id}
+            core_events = [from_legacy_event({**payload, "is_placeholder": ocr_engine == "stub", **ids}) for payload in core_payloads]
+            store_game_events(session, core_events)
+            _mark_stage(session, broadcast.id, current_stage, "completed", f"created {len(core_events)} core events")
             session.commit()
 
         current_stage = "analytics"
@@ -184,10 +174,9 @@ def process_local_file(
             _mark_stage(session, broadcast.id, current_stage, "running", "running hardpoint analytics")
             session.commit()
             derived = detect_breaks_retakes(observations, match.team_a, match.team_b, settings.break_debounce_seconds) if game_map.mode == "hardpoint" else []
-            for payload in derived:
-                payload["is_placeholder"] = ocr_engine == "stub"
-                validated = EventCreate(broadcast_id=broadcast.id, match_id=match.id, map_id=game_map.id, **payload)
-                session.add(Event(**validated.model_dump()))
+            ids = {"broadcast_id": broadcast.id, "match_id": match.id, "map_id": game_map.id}
+            derived_events = [from_legacy_event({**payload, "is_placeholder": ocr_engine == "stub", **ids}) for payload in derived]
+            store_game_events(session, derived_events)
             xmwp = xmwp_timeline(observations, HeuristicV0(settings.hardpoint_target, settings.xmwp_k)) if game_map.mode == "hardpoint" else []
             if xmwp:
                 session.add(ModelOutput(
@@ -203,8 +192,8 @@ def process_local_file(
             ModelOutput.broadcast_id == broadcast.id, ModelOutput.output_type == "xmwp_timeline",
         ))
         xmwp = [XmwpPoint(**item) for item in xmwp_output.payload["points"]] if xmwp_output else []
-        stored_events = session.scalars(select(Event).where(Event.broadcast_id == broadcast.id).order_by(Event.timestamp_seconds, Event.id)).all()
-        event_payloads = [_event_payload(event) for event in stored_events]
+        stored_records = load_game_event_records(session, broadcast.id)
+        event_payloads = [to_report_row(record) for record in stored_records]
         derived = [payload for payload in event_payloads if payload["event_type"] in {"possible_break", "possible_retake"}]
         key_moments = choose_key_moments(event_payloads)
         current_stage = "clips"
@@ -231,9 +220,9 @@ def process_local_file(
                 )
                 session.add(clip)
                 session.flush()
-                for event in stored_events:
-                    if event.timestamp_seconds == moment["timestamp_seconds"] and event.clip_id is None:
-                        event.clip_id = clip.id
+                for record in stored_records:
+                    if record.video_timestamp_seconds == moment["timestamp_seconds"] and record.clip_id is None:
+                        record.clip_id = clip.id
             _mark_stage(session, broadcast.id, current_stage, "completed", f"generated {len(unique_moments)} clips")
             session.commit()
         clips = session.scalars(select(Clip).where(Clip.broadcast_id == broadcast.id).order_by(Clip.id)).all()
@@ -242,8 +231,8 @@ def process_local_file(
             "timestamp_seconds": clip.timestamp_seconds, "confidence": clip.confidence,
             "evidence_frame_path": clip.evidence_frame_path, "file_path": clip.file_path, "url": f"/clips/{clip.id}",
         } for clip in clips]
-        stored_events = session.scalars(select(Event).where(Event.broadcast_id == broadcast.id).order_by(Event.timestamp_seconds, Event.id)).all()
-        event_payloads = [_event_payload(event) for event in stored_events]
+        stored_records = load_game_event_records(session, broadcast.id)
+        event_payloads = [to_report_row(record) for record in stored_records]
         derived = [payload for payload in event_payloads if payload["event_type"] in {"possible_break", "possible_retake"}]
         key_moments = choose_key_moments(event_payloads)
 

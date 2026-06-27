@@ -4,7 +4,7 @@ import enum
 from datetime import datetime, timezone
 from typing import Any
 
-from sqlalchemy import JSON, CheckConstraint, DateTime, Enum, Float, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, CheckConstraint, DateTime, Enum, Float, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base
@@ -90,34 +90,32 @@ class Map(Base):
     mode: Mapped[str] = mapped_column(String(30), default="unknown")
     map_name: Mapped[str] = mapped_column(String(100), default="unknown")
     match: Mapped[Match] = relationship(back_populates="maps")
-    events: Mapped[list["Event"]] = relationship(back_populates="map", cascade="all, delete-orphan")
 
 
-class Event(Base):
-    __tablename__ = "events"
+class GameEventRecord(Base):
+    """Persistence for a universal ``GameEvent`` (see backend/app/events/).
+
+    The full validated envelope is stored as JSON; the columns are a denormalised
+    index for querying. This is the single source of truth for events — it replaces
+    the old flat, score-only ``events`` table.
+    """
+
+    __tablename__ = "game_events"
     __table_args__ = (
-        CheckConstraint("confidence >= 0 AND confidence <= 1", name="ck_event_confidence"),
-        CheckConstraint("length(evidence_frame_path) > 0", name="ck_event_evidence"),
+        CheckConstraint("confidence >= 0 AND confidence <= 1", name="ck_game_event_confidence"),
     )
     id: Mapped[int] = mapped_column(primary_key=True)
-    broadcast_id: Mapped[int] = mapped_column(ForeignKey("broadcasts.id"))
+    event_id: Mapped[str] = mapped_column(String(64), index=True)
+    broadcast_id: Mapped[int] = mapped_column(ForeignKey("broadcasts.id"), index=True)
     match_id: Mapped[int | None] = mapped_column(ForeignKey("matches.id"))
     map_id: Mapped[int | None] = mapped_column(ForeignKey("maps.id"))
-    timestamp_seconds: Mapped[float] = mapped_column(Float)
-    event_type: Mapped[str] = mapped_column(String(80))
-    team_a: Mapped[str] = mapped_column(String(100))
-    team_b: Mapped[str] = mapped_column(String(100))
-    player: Mapped[str | None] = mapped_column(String(100))
-    opposing_player: Mapped[str | None] = mapped_column(String(100))
-    score_a: Mapped[int | None] = mapped_column(Integer)
-    score_b: Mapped[int | None] = mapped_column(Integer)
-    hill_id: Mapped[str | None] = mapped_column(String(50))
+    video_timestamp_seconds: Mapped[float] = mapped_column(Float)
+    event_type: Mapped[str] = mapped_column(String(40), index=True)
+    kind: Mapped[str] = mapped_column(String(10))
     confidence: Mapped[float] = mapped_column(Float)
-    raw_text: Mapped[str | None] = mapped_column(Text)
-    evidence_frame_path: Mapped[str] = mapped_column(Text, nullable=False)
-    clip_id: Mapped[int | None] = mapped_column(ForeignKey("clips.id"))
     is_placeholder: Mapped[bool] = mapped_column(default=False)
-    map: Mapped[Map | None] = relationship(back_populates="events")
+    clip_id: Mapped[int | None] = mapped_column(ForeignKey("clips.id"))
+    envelope: Mapped[dict[str, Any]] = mapped_column(JSON)
 
 
 class Clip(Base):

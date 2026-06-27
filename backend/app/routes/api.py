@@ -8,9 +8,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..db import get_db
-from ..models import Broadcast, Clip, Event, Map, ProcessingJob, Report, Source
+from ..models import Broadcast, Clip, Map, ProcessingJob, Report, Source
 from ..queue import DatabaseQueue
 from ..schemas import BroadcastRead, SourceCreate, SourceRead
+from ..services.event_store import load_game_event_records, to_report_row
 
 
 router = APIRouter()
@@ -53,13 +54,18 @@ def get_broadcast(broadcast_id: int, session: Session = Depends(get_db)):
         raise HTTPException(404, "broadcast not found")
     jobs = session.scalars(select(ProcessingJob).where(ProcessingJob.broadcast_id == broadcast_id)).all()
     maps = session.scalars(select(Map).where(Map.broadcast_id == broadcast_id)).all()
-    events = session.scalars(select(Event).where(Event.broadcast_id == broadcast_id).order_by(Event.timestamp_seconds)).all()
+    event_records = load_game_event_records(session, broadcast_id)
     return {
         "broadcast": BroadcastRead.model_validate(broadcast).model_dump(mode="json"),
         "status_history": broadcast.status_history,
         "jobs": [{"id": job.id, "stage": job.stage, "status": job.status, "attempt_count": job.attempt_count, "next_retry_at": job.next_retry_at, "logs": job.logs} for job in jobs],
         "maps": [{"id": item.id, "ordinal": item.ordinal, "mode": item.mode, "map_name": item.map_name} for item in maps],
-        "events": [{"id": event.id, "timestamp_seconds": event.timestamp_seconds, "event_type": event.event_type, "score_a": event.score_a, "score_b": event.score_b, "confidence": event.confidence, "evidence_frame_path": event.evidence_frame_path, "clip_id": event.clip_id} for event in events],
+        "events": [
+            {"id": record.id, "timestamp_seconds": row["timestamp_seconds"], "event_type": row["event_type"],
+             "score_a": row["score_a"], "score_b": row["score_b"], "confidence": row["confidence"],
+             "evidence_frame_path": row["evidence_frame_path"], "clip_id": row["clip_id"]}
+            for record, row in ((rec, to_report_row(rec)) for rec in event_records)
+        ],
     }
 
 

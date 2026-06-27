@@ -4,9 +4,10 @@
 > envelope, one typed payload, with provenance, evidence, and confidence built in.
 > This is the spine every vision/audio/tactical module emits into.
 
-Module: `backend/app/events/` · Schema version: **1.0** · Status: **implemented,
-not yet wired into the pipeline** (that is Phase 2, by design — one major system at a
-time).
+Module: `backend/app/events/` · Schema version: **1.0** · Status: **wired into the
+pipeline (Phase 2)** — events persist to the `game_events` table and the reports,
+dashboard, and API read them, with byte-for-byte report parity against the retired
+flat `events` table. Persistence bridge: `backend/app/services/event_store.py`.
 
 ---
 
@@ -161,14 +162,24 @@ Helpers: `events.to_jsonl(iterable)` / `events.from_jsonl(text)` for streams, an
 
 ---
 
-## 7. Scope boundary (what Phase 1 is *not*)
+## 7. What is wired, and what is not yet
 
-- It does **not** modify `models.py`, the processor, routes, or the DB. Detectors and
-  storage migrate in Phase 2+.
-- It does **not** add new detectors — payloads for Kill/Position/Communication exist
-  as the contract those future modules will fill.
-- The adapter is a one-way lift (legacy → envelope) to prove totality and seed Phase 2.
+Wired in Phase 2:
 
-Evaluation of the schema is `tests/test_event_schema.py` plus
-`scripts/sample_events.py`, which emits a realistic fact+insight stream and prints an
-evidence/citation coverage report.
+- `models.GameEventRecord` (`game_events` table) persists the full envelope as JSON
+  plus denormalised columns for querying.
+- The processor emits `GameEvent`s (via `events.from_legacy_event` over the score
+  timeline / break-retake dicts) and stores them; the report, dashboard, and
+  `/broadcasts/{id}` API read them back through `event_store.to_report_row`.
+- The flat `events` table and `EventCreate` schema are removed — `game_events` is the
+  single source of truth.
+
+Not yet (later phases):
+
+- **No new detectors.** Payloads for Kill/Position/Communication exist as the
+  contract those future modules will fill; nothing emits them in the pipeline yet.
+- xMWP still persists separately in `model_outputs` (not as events).
+
+Evaluation of the schema is `tests/test_event_schema.py` and
+`tests/test_event_store.py`, plus `scripts/sample_events.py`. Report parity is proven
+by diffing the regenerated JSON/Markdown/HTML against the pre-migration baseline.

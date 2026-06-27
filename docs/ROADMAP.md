@@ -252,9 +252,9 @@ never skip tests; never invent data.
 
 | Phase | Deliverable | Gate to exit |
 |---|---|---|
-| **0** | This roadmap | ✅ exists and audited |
-| **1** | Universal event schema (envelope, fact/insight, provenance, evidence, typed payloads) + adapter | schema + tests + docs + sample output; legacy suite still green |
-| **2** | Emit pipeline: wire the existing score/break/hill outputs through `GameEvent`; storage + API read the unified stream | parity with current reports, evidenced |
+| **0** ✅ | This roadmap | done — exists and audited |
+| **1** ✅ | Universal event schema (envelope, fact/insight, provenance, evidence, typed payloads) + adapter | done — schema + tests + docs + sample output; suite green |
+| **2** ✅ | Emit pipeline: score/break outputs persist as `GameEvent`s in `game_events`; report + API + dashboard read the unified stream; flat `events` table retired | done — byte-for-byte report parity (JSON/MD/HTML) vs pre-migration baseline |
 | **3** | Real Score OCR (trained digit model on labelled CDL scorebars) replacing the stub | eval: digit + score accuracy, temporal stability |
 | **4** | Killfeed OCR → `KillEvent`/`DeathEvent`/`WeaponEvent`/`TradeEvent` | precision/recall on labelled killfeed set |
 | **5** | Minimap → player-resolved `PositionEvent` (YOLO) with visibility discipline | mAP on labelled minimap set |

@@ -49,6 +49,8 @@ class MapStartEvent(EventPayload):
     map_name: str = "unknown"
     team_a: str
     team_b: str
+    score_a: int | None = Field(default=None, ge=0)   # score when sampling begins
+    score_b: int | None = Field(default=None, ge=0)
 
 
 class MapEndEvent(EventPayload):

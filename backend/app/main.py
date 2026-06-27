@@ -6,9 +6,10 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from .db import get_db, init_db
-from .models import Broadcast, Clip, Event, ProcessingJob, Report
+from .models import Broadcast, Clip, ProcessingJob, Report
 from .routes.api import router
 from .routes.sim import router as sim_router
+from .services.event_store import count_game_events
 from .ui import (
     COACH_REPORT_SLUG,
     render_dashboard,
@@ -34,7 +35,7 @@ def dashboard(session: Session = Depends(get_db)) -> str:
     broadcasts = session.scalars(select(Broadcast).order_by(Broadcast.created_at.desc())).all()
     reports = session.scalars(select(Report).order_by(Report.created_at.desc())).all()
     jobs = session.scalars(select(ProcessingJob).order_by(ProcessingJob.id)).all()
-    event_count = session.scalar(select(func.count(Event.id))) or 0
+    event_count = count_game_events(session)
     clip_count = session.scalar(select(func.count(Clip.id))) or 0
     return render_dashboard(broadcasts, reports, jobs, event_count=event_count, clip_count=clip_count)
 

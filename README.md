@@ -12,8 +12,9 @@ schema** ([`docs/EVENT_SCHEMA.md`](docs/EVENT_SCHEMA.md), `backend/app/events/`)
 one `GameEvent` envelope carrying provenance, evidence, and confidence, wrapping a
 typed payload, with **detected facts kept structurally separate from derived
 insights** — an insight must cite the facts it came from, and a fact must carry
-evidence. The schema and its adapter are implemented and tested; wiring the pipeline
-to emit it is the next phase. See a real sample stream:
+evidence. The pipeline emits these events: they persist to the `game_events` table
+and the reports, dashboard, and API all read them (Phase 2, with byte-for-byte
+report parity against the retired flat `events` table). See a real sample stream:
 
 ```bash
 .venv/bin/python scripts/sample_events.py   # writes data/fixtures/sample_events.jsonl + an evaluation report
@@ -78,13 +79,13 @@ source
     ├── processing_jobs
     ├── match (one series)
     │   └── map (one game: hardpoint/snd/control/unknown)
-    │       ├── events
+    │       ├── game_events  (universal GameEvent envelopes)
     │       ├── clips
     │       └── model_outputs
     └── report
 ```
 
-Tables: `sources`, `broadcasts`, `processing_jobs`, `matches`, `maps`, `events`, `clips`, `reports`, and `model_outputs`. SQLite is the default; set `COD_SPECTRUM_DATABASE_URL` to a SQLAlchemy Postgres URL without changing application code.
+Tables: `sources`, `broadcasts`, `processing_jobs`, `matches`, `maps`, `game_events`, `clips`, `reports`, and `model_outputs`. Events are stored as universal `GameEvent` envelopes (see [`docs/EVENT_SCHEMA.md`](docs/EVENT_SCHEMA.md)). SQLite is the default; set `COD_SPECTRUM_DATABASE_URL` to a SQLAlchemy Postgres URL without changing application code.
 
 ## What is real and what is stubbed
 
