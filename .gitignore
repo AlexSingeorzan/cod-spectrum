@@ -21,3 +21,6 @@ data/videos/lat_van.mp4
 # YOLO dataset images/labels are regenerable; keep only data.yaml + README
 data/minimap_dataset/images/
 data/minimap_dataset/labels/
+# killfeed dataset: bulky region-context crops rebuild from the VOD; keep the small
+# row crops to label + manifest + annotations
+data/killfeed_dataset/regions/

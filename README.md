@@ -94,8 +94,9 @@ Tables: `sources`, `broadcasts`, `processing_jobs`, `matches`, `maps`, `game_eve
 - Real: fractional HUD cropping, sampling cadence, crop-change gating, score-event construction, map boundary heuristics, lead changes, scoring-flow break/retake inference with debounce, xMWP HeuristicV0, evidence persistence, FFmpeg clips, reports, scheduler, retry records, API, and dashboard.
 - Stubbed: bundled scorebar OCR reads `data/fixtures/sample_scores.json` and marks its dependent events `is_placeholder=true`. It exists to make the complete flow deterministic and offline.
 - Evaluated scorebar OCR baseline: `--ocr-engine cdl` uses `CdlScorebarOcrEngine`, a CPU k-NN digit-gallery model trained from human-verified LAT/VAN scorebar crops. It is versioned (`0.1.0-knn`) and confidence-capped by leave-one-crop-out evaluation. Current result: 21/21 operational gallery self-check, but only 10/21 leave-one-out exact score matches (`0.4762`) and 11/21 with temporal decoding (`0.5238`). This is not production-ready OCR.
+- Killfeed detection baseline (Phase 4, deliverable 1): `KillfeedDetector` (`killfeed_classical@0.1.0`) localises kill-notification rows in the killfeed region (verified against the real VOD — the HUD profile's original top-right "killfeed" box was actually the opponent stats panel), and a positional tracker collapses the per-frame flicker into candidate kill onsets. Each is emitted as a `KillEvent` fact with evidence + confidence and `identity_unread` — it reports kill **timing/count**, and does **not** read attacker/victim/weapon. `scripts/build_killfeed_dataset.py` turns it into an annotation scaffold; `scripts/eval_killfeed.py` reports detection precision/recall once rows are human-labelled (honest "no claim" until then). See **Killfeed detection** below.
 - Optional OCR experiment: `TesseractOcrEngine` is wired behind `--ocr-engine tesseract`. Install the Tesseract binary and run `.venv/bin/pip install -r requirements-ocr.txt`, then calibrate the scorebar profile before trusting output. It is intentionally not in the base environment.
-- Deferred: real killfeed parsing, transition-card/mode classification, deep SnD/Control analytics, and minimap object detection.
+- Deferred: killfeed **name/weapon reading** (→ `DeathEvent`/`WeaponEvent`/`TradeEvent`; the detection scaffold above is the bridge to it), transition-card/mode classification, deep SnD/Control analytics, and minimap object detection.
 
 No analytics are silently invented. Unknown-mode files skip Hardpoint break/retake and xMWP analytics. The sample is identified as Hardpoint by its filename; production runs should pass `--mode hardpoint` only when known or add a mode detector.
 
@@ -118,6 +119,34 @@ Rebuild and evaluate the current scorebar OCR baseline:
 make scorebar-ocr-dataset
 make scorebar-ocr-eval
 ```
+
+## Killfeed detection
+
+`KillfeedDetector` is a classical, training-free localiser for the broadcast killfeed
+(`attacker → weapon → victim` rows). It is honest about the split between what classical
+CV can do and what needs a labelled model:
+
+- **Detects** kill-notification rows in the verified killfeed region and tracks them
+  positionally across frames into candidate **kill onsets** (timing/count), each a
+  `KillEvent` fact with evidence + confidence and the tag `identity_unread`. The feed is
+  semi-transparent over a moving scene, so per-frame detection flickers; positional
+  tracking (not content-hashing) is what makes onset counting robust. It is a baseline —
+  it over- and under-counts, which is why every onset is a labelable candidate, not a
+  claimed kill.
+- **Does not read** attacker/victim/weapon. That is a content reader trained from the
+  annotation scaffold (deliverable 2), and it is what unlocks `DeathEvent` /
+  `WeaponEvent` / `TradeEvent`.
+
+```bash
+make killfeed-dataset   # build the annotation scaffold from the local VOD (2 fps)
+make killfeed-eval      # detection precision/recall once annotations.jsonl is labelled
+make killfeed-sample    # deterministic synthetic candidate-KillEvent stream
+```
+
+The committed dataset (`data/killfeed_dataset/`, 245 unlabelled candidates from the
+LAT/VAN Hardpoint) ships with empty label slots and a labelling guide in its README;
+no kill identities are invented. `eval_killfeed.py` prints "no accuracy claim" until a
+person labels `valid_kill` and adds missed kills as `detector="manual_added"`.
 
 ## YOLO minimap next step
 

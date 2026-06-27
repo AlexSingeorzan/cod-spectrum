@@ -1,4 +1,4 @@
-.PHONY: setup fixture scorebar-ocr-dataset scorebar-ocr-eval test serve scheduler process clean-data
+.PHONY: setup fixture scorebar-ocr-dataset scorebar-ocr-eval killfeed-dataset killfeed-eval killfeed-sample test serve scheduler process clean-data
 
 PYTHON := .venv/bin/python
 PYTHON_BOOTSTRAP ?= python3.12
@@ -17,6 +17,15 @@ scorebar-ocr-dataset:
 
 scorebar-ocr-eval:
 	$(PYTHON) scripts/eval_scorebar_ocr.py --write-json data/fixtures/scorebar_ocr/lat_van_hp/eval_results.json
+
+killfeed-dataset:
+	$(PYTHON) scripts/build_killfeed_dataset.py --vod data/videos/lat_van.mp4
+
+killfeed-eval:
+	$(PYTHON) scripts/eval_killfeed.py --dataset data/killfeed_dataset
+
+killfeed-sample:
+	$(PYTHON) scripts/sample_killfeed.py
 
 test:
 	$(PYTHON) -m pytest -q

@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "kind": "killfeed_detection_dataset",
+  "detector": "killfeed_classical@0.1.0",
+  "source_url": "https://www.youtube.com/watch?v=lat-van-hacienda-hp",
+  "video": "data/videos/lat_van.mp4",
+  "window_seconds": [
+    80.0,
+    690.0
+  ],
+  "sample_fps": 2.0,
+  "frames_sampled": 1221,
+  "onsets": 245,
+  "label_status": "unlabeled",
+  "labeled_by": null,
+  "honesty_note": "Detections are unverified classical-CV candidates. attacker/victim/weapon are NOT read by the detector \u2014 every label starts null. Fill labels by hand (valid_kill true/false + identities), and add any MISSED kills as rows with detector='manual_added' so recall is measurable, before making any accuracy claim.",
+  "label_schema": {
+    "valid_kill": "true=real kill, false=false positive (required for detection eval)",
+    "attacker/victim": "gamertag as shown (feeds DeathEvent / content reader)",
+    "attacker_team/victim_team": "team tag e.g. LAT/VAN",
+    "weapon": "weapon name or icon class (feeds WeaponEvent)",
+    "headshot": "bool if a headshot marker is shown",
+    "is_trade": "bool if this kill traded a recent teammate death (feeds TradeEvent)"
+  }
+}
