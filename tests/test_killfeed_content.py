@@ -35,6 +35,7 @@ def _annotation(
     attacker_team="LAT",
     victim="Lunarz",
     victim_team="VAN",
+    kill_type="gun",
     weapon="SMG",
     headshot=False,
     is_trade=False,
@@ -56,6 +57,7 @@ def _annotation(
             "attacker_team": attacker_team,
             "victim": victim,
             "victim_team": victim_team,
+            "kill_type": kill_type,
             "weapon": weapon,
             "headshot": headshot,
             "is_trade": is_trade,
@@ -115,6 +117,7 @@ def test_content_reader_reads_gallery_from_labeled_rows(tmp_path):
     assert read is not None
     assert read.attacker == "HyDra"
     assert read.victim == "Lunarz"
+    assert read.kill_type == "gun"
     assert read.weapon == "SMG"
     assert read.source == "model"
     assert read.confidence == 1.0
@@ -134,6 +137,8 @@ def test_manual_reads_emit_kill_death_weapon_and_trade_events(tmp_path):
         "kill", "death", "weapon", "kill", "death", "weapon", "trade",
     ]
     trade = events[-1]
+    kill_type_events = [event for event in events if event.event_type == "weapon"]
+    assert [event.payload.kill_type for event in kill_type_events] == ["gun", "gun"]
     assert trade.payload.dead_player == "Lunarz"
     assert trade.payload.trading_player == "Mamba"
     assert trade.payload.trade_window_seconds == 3.0

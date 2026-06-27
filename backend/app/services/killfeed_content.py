@@ -2,7 +2,8 @@
 
 The panel counter is the kill spine: it owns kill count and player totals. This
 module is the enrichment layer for the killfeed row itself: attacker/victim text,
-weapon icon class, headshot marker, and trade relationships.
+coarse kill type, optional exact weapon metadata, headshot marker, and trade
+relationships.
 
 The real LAT/VAN killfeed scaffold is currently unlabelled. That is intentional
 and enforced here: no label means no read. Once ``data/killfeed_dataset/
@@ -25,6 +26,7 @@ from ..events import (
     Evidence,
     GameEvent,
     KillEvent,
+    KillType,
     Provenance,
     SourceKind,
     TradeEvent,
@@ -46,6 +48,7 @@ class KillfeedContentLabel:
     attacker_team: str | None
     victim: str
     victim_team: str | None
+    kill_type: KillType | None
     weapon: str | None
     headshot: bool | None
     is_trade: bool | None
@@ -62,6 +65,7 @@ class KillfeedContentRead:
     attacker_team: str | None
     victim: str | None
     victim_team: str | None
+    kill_type: KillType | None
     weapon: str | None
     headshot: bool | None
     is_trade: bool | None
@@ -78,8 +82,8 @@ class KillfeedContentRead:
         return bool(self.attacker and self.victim)
 
     @property
-    def has_weapon(self) -> bool:
-        return bool(self.weapon)
+    def has_kill_type(self) -> bool:
+        return bool(self.kill_type)
 
 
 def default_dataset_dir() -> Path:
@@ -124,6 +128,7 @@ def label_from_row(dataset_dir: Path, row: dict[str, Any]) -> KillfeedContentLab
         attacker_team=label.get("attacker_team"),
         victim=str(label["victim"]),
         victim_team=label.get("victim_team"),
+        kill_type=label.get("kill_type"),
         weapon=label.get("weapon"),
         headshot=label.get("headshot"),
         is_trade=label.get("is_trade"),
@@ -234,6 +239,7 @@ class KillfeedContentReader:
             attacker_team=label.attacker_team,
             victim=label.victim,
             victim_team=label.victim_team,
+            kill_type=label.kill_type,
             weapon=label.weapon,
             headshot=label.headshot,
             is_trade=label.is_trade,
@@ -273,6 +279,7 @@ def manual_read_from_row(dataset_dir: Path, row: dict[str, Any]) -> KillfeedCont
         attacker_team=label.attacker_team,
         victim=label.victim,
         victim_team=label.victim_team,
+        kill_type=label.kill_type,
         weapon=label.weapon,
         headshot=label.headshot,
         is_trade=label.is_trade,
@@ -325,7 +332,7 @@ def events_from_content_reads(reads: list[KillfeedContentRead], *, trade_window_
         evidence = _evidence_for_read(read)
         provenance = _provenance_for_read(
             read,
-            "killfeed row content read: attacker/victim/weapon labels from row crop",
+            "killfeed row content read: attacker/victim/kill_type labels from row crop",
         )
         kill = GameEvent(
             video_timestamp_seconds=read.video_timestamp_seconds,
@@ -337,6 +344,7 @@ def events_from_content_reads(reads: list[KillfeedContentRead], *, trade_window_
                 attacker_team=read.attacker_team,
                 victim=read.victim,
                 victim_team=read.victim_team,
+                kill_type=read.kill_type,
                 weapon=read.weapon,
                 headshot=read.headshot,
                 is_trade=read.is_trade,
@@ -356,6 +364,7 @@ def events_from_content_reads(reads: list[KillfeedContentRead], *, trade_window_
                     player=read.victim or "",
                     team=read.victim_team,
                     killer=read.attacker,
+                    kill_type=read.kill_type,
                     weapon=read.weapon,
                     attributes={"source": "killfeed_content", "sample_id": read.sample_id},
                 ),
@@ -363,7 +372,7 @@ def events_from_content_reads(reads: list[KillfeedContentRead], *, trade_window_
             )
         )
 
-        if read.has_weapon:
+        if read.has_kill_type:
             events.append(
                 GameEvent(
                     video_timestamp_seconds=read.video_timestamp_seconds,
@@ -373,7 +382,8 @@ def events_from_content_reads(reads: list[KillfeedContentRead], *, trade_window_
                     payload=WeaponEvent(
                         player=read.attacker or "",
                         team=read.attacker_team,
-                        weapon=read.weapon or "",
+                        kill_type=read.kill_type,
+                        weapon=read.weapon,
                         action="use",
                         attributes={"source": "killfeed_content", "sample_id": read.sample_id},
                     ),

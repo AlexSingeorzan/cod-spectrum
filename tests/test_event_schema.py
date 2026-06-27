@@ -44,9 +44,9 @@ SAMPLE_PAYLOADS = [
     LeadChangeEvent(team_a="LAT", team_b="VAN", score_a=85, score_b=63, new_leader_side="a"),
     MapStartEvent(team_a="LAT", team_b="VAN"),
     MapEndEvent(team_a="LAT", team_b="VAN", score_a=250, score_b=156, winner_side="a"),
-    KillEvent(attacker="Envoy", attacker_team="LAT", victim="Pred", victim_team="VAN", weapon="SMG"),
-    DeathEvent(player="Pred", team="VAN", killer="Envoy"),
-    WeaponEvent(player="Envoy", team="LAT", weapon="SMG", action="swap"),
+    KillEvent(attacker="Envoy", attacker_team="LAT", victim="Pred", victim_team="VAN", kill_type="gun", weapon="SMG"),
+    DeathEvent(player="Pred", team="VAN", killer="Envoy", kill_type="gun"),
+    WeaponEvent(player="Envoy", team="LAT", kill_type="gun", weapon="SMG", action="swap"),
     TradeEvent(dead_player="Pred", trading_player="Cellium", trade_window_seconds=1.5),
     ObjectiveEvent(objective_type="hardpoint_hill", action="hill_contested", hill_id="P3"),
     SpawnFlipEvent(side="b", from_region="north", to_region="south"),
@@ -190,9 +190,9 @@ def test_payload_is_source_of_truth_over_spoofed_top_level_type():
 
 
 def test_event_id_is_deterministic_and_content_sensitive():
-    a = make_event(KillEvent(attacker="Envoy", victim="Pred", weapon="SMG"))
-    b = make_event(KillEvent(attacker="Envoy", victim="Pred", weapon="SMG"))
-    c = make_event(KillEvent(attacker="Envoy", victim="Pred", weapon="AR"))
+    a = make_event(KillEvent(attacker="Envoy", victim="Pred", kill_type="gun", weapon="SMG"))
+    b = make_event(KillEvent(attacker="Envoy", victim="Pred", kill_type="gun", weapon="SMG"))
+    c = make_event(KillEvent(attacker="Envoy", victim="Pred", kill_type="grenade", weapon=None))
     assert a.event_id == b.event_id
     assert a.event_id != c.event_id
 

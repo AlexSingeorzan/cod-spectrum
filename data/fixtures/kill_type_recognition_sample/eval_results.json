@@ -1,0 +1,386 @@
+{
+  "dataset": {
+    "path": "data/fixtures/kill_type_recognition_sample",
+    "dataset_id": "synthetic_kill_type_icons_v0",
+    "icon_count": 10,
+    "labelled_kill_type_icons": 10,
+    "label_counts": {
+      "gun": 2,
+      "grenade": 2,
+      "melee": 2,
+      "killstreak": 2,
+      "environment": 2
+    },
+    "unknown_labels": 0,
+    "unclear_labels": 0,
+    "categories": [
+      "gun",
+      "grenade",
+      "melee",
+      "fall_damage",
+      "suicide",
+      "environment",
+      "objective",
+      "killstreak",
+      "unknown"
+    ],
+    "label_status": "labeled"
+  },
+  "models": {
+    "template": {
+      "model": "kill_type_icon_template_nn@0.2.0",
+      "status": "labeled",
+      "operational_gallery": {
+        "samples": 10,
+        "exact_matches": 10,
+        "top1_accuracy": 1.0,
+        "macro_f1": 1.0,
+        "abstentions": 0,
+        "abstention_rate": 0.0,
+        "mean_confidence": 1.0,
+        "mean_latency_ms": 0.0377,
+        "per_class": {
+          "environment": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "grenade": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "gun": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "killstreak": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "melee": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "gun": {
+            "gun": 2
+          },
+          "grenade": {
+            "grenade": 2
+          },
+          "melee": {
+            "melee": 2
+          },
+          "killstreak": {
+            "killstreak": 2
+          },
+          "environment": {
+            "environment": 2
+          }
+        },
+        "failures": [],
+        "training_samples": 10,
+        "classes": [
+          "environment",
+          "grenade",
+          "gun",
+          "killstreak",
+          "melee"
+        ]
+      },
+      "leave_one_out": {
+        "samples": 10,
+        "exact_matches": 5,
+        "top1_accuracy": 0.5,
+        "macro_f1": 0.5333,
+        "abstentions": 5,
+        "abstention_rate": 0.5,
+        "mean_confidence": 0.6809,
+        "mean_latency_ms": 0.0336,
+        "per_class": {
+          "environment": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6667
+          },
+          "grenade": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "gun": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "killstreak": {
+            "support": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "melee": {
+            "support": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        },
+        "confusion": {
+          "gun": {
+            "gun": 2
+          },
+          "grenade": {
+            "grenade": 2
+          },
+          "melee": {
+            "NULL": 2
+          },
+          "killstreak": {
+            "NULL": 2
+          },
+          "environment": {
+            "environment": 1,
+            "NULL": 1
+          }
+        },
+        "failures": [
+          {
+            "id": "kill_type_melee_0",
+            "expected": "melee",
+            "predicted": null,
+            "confidence": 0.6017,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_melee_0.png"
+          },
+          {
+            "id": "kill_type_melee_1",
+            "expected": "melee",
+            "predicted": null,
+            "confidence": 0.6014,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_melee_1.png"
+          },
+          {
+            "id": "kill_type_killstreak_0",
+            "expected": "killstreak",
+            "predicted": null,
+            "confidence": 0.5718,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_killstreak_0.png"
+          },
+          {
+            "id": "kill_type_killstreak_1",
+            "expected": "killstreak",
+            "predicted": null,
+            "confidence": 0.5714,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_killstreak_1.png"
+          },
+          {
+            "id": "kill_type_environment_1",
+            "expected": "environment",
+            "predicted": null,
+            "confidence": 0.6151,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_environment_1.png"
+          }
+        ]
+      }
+    },
+    "histogram": {
+      "model": "kill_type_icon_histogram_nn@0.2.0",
+      "status": "labeled",
+      "operational_gallery": {
+        "samples": 10,
+        "exact_matches": 10,
+        "top1_accuracy": 1.0,
+        "macro_f1": 1.0,
+        "abstentions": 0,
+        "abstention_rate": 0.0,
+        "mean_confidence": 1.0,
+        "mean_latency_ms": 0.0529,
+        "per_class": {
+          "environment": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "grenade": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "gun": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "killstreak": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "melee": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "gun": {
+            "gun": 2
+          },
+          "grenade": {
+            "grenade": 2
+          },
+          "melee": {
+            "melee": 2
+          },
+          "killstreak": {
+            "killstreak": 2
+          },
+          "environment": {
+            "environment": 2
+          }
+        },
+        "failures": [],
+        "training_samples": 10,
+        "classes": [
+          "environment",
+          "grenade",
+          "gun",
+          "killstreak",
+          "melee"
+        ]
+      },
+      "leave_one_out": {
+        "samples": 10,
+        "exact_matches": 5,
+        "top1_accuracy": 0.5,
+        "macro_f1": 0.5333,
+        "abstentions": 5,
+        "abstention_rate": 0.5,
+        "mean_confidence": 0.8513,
+        "mean_latency_ms": 0.0516,
+        "per_class": {
+          "environment": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6667
+          },
+          "grenade": {
+            "support": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "gun": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "killstreak": {
+            "support": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "melee": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "gun": {
+            "gun": 2
+          },
+          "grenade": {
+            "NULL": 2
+          },
+          "melee": {
+            "melee": 2
+          },
+          "killstreak": {
+            "NULL": 2
+          },
+          "environment": {
+            "NULL": 1,
+            "environment": 1
+          }
+        },
+        "failures": [
+          {
+            "id": "kill_type_grenade_0",
+            "expected": "grenade",
+            "predicted": null,
+            "confidence": 0.5359,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_grenade_0.png"
+          },
+          {
+            "id": "kill_type_grenade_1",
+            "expected": "grenade",
+            "predicted": null,
+            "confidence": 0.2441,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_grenade_1.png"
+          },
+          {
+            "id": "kill_type_killstreak_0",
+            "expected": "killstreak",
+            "predicted": null,
+            "confidence": 0.512,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_killstreak_0.png"
+          },
+          {
+            "id": "kill_type_killstreak_1",
+            "expected": "killstreak",
+            "predicted": null,
+            "confidence": 0.4309,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_killstreak_1.png"
+          },
+          {
+            "id": "kill_type_environment_0",
+            "expected": "environment",
+            "predicted": null,
+            "confidence": 0.6164,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/kill_type_environment_0.png"
+          }
+        ]
+      }
+    }
+  },
+  "notes": [
+    "Kill-type recognition is independent from player-name OCR.",
+    "Downstream analytics consume kill_type, not exact weapon names.",
+    "No real accuracy is reported until kill-type icons are human-labelled.",
+    "Operational gallery is a regression check; leave-one-out is the honest small-data estimate.",
+    "Low-confidence predictions return kill_type=null."
+  ]
+}

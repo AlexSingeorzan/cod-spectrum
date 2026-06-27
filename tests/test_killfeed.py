@@ -158,13 +158,22 @@ def _write_labeled_dataset(tmp_path, rows) -> Path:
     return d
 
 
-def _ann(i, valid, detector="killfeed_classical@0.1.0", attacker=None, victim=None, weapon=None):
+def _ann(
+    i,
+    valid,
+    detector="killfeed_classical@0.1.0",
+    attacker=None,
+    victim=None,
+    kill_type=None,
+    weapon=None,
+):
     return {
         "id": f"kf_{i}", "video_timestamp_seconds": float(i), "row_image": f"rows/kf_{i}.png",
         "region_image": None, "box": [0, 0, 0, 0], "detector": detector, "detector_confidence": 0.6,
         "color_hint": {}, "label_source": "manual_label", "labeled_by": "alex", "source_url": "u",
         "label": {"valid_kill": valid, "attacker": attacker, "attacker_team": None, "victim": victim,
-                  "victim_team": None, "weapon": weapon, "headshot": None, "is_trade": None},
+                  "victim_team": None, "kill_type": kill_type, "weapon": weapon,
+                  "headshot": None, "is_trade": None},
     }
 
 
@@ -181,7 +190,7 @@ def test_eval_reports_unlabeled_when_no_labels(tmp_path):
 
 def test_eval_computes_detection_precision_recall(tmp_path):
     rows = [
-        _ann(0, True, attacker="ENVOY", victim="PRED", weapon="SMG"),
+        _ann(0, True, attacker="ENVOY", victim="PRED", kill_type="gun", weapon="SMG"),
         _ann(1, True, attacker="ABEZY", victim="LUNARZ"),
         _ann(2, False), _ann(3, False),                 # two false positives
         _ann(4, True, detector="manual_added", attacker="CELLIUM", victim="MAMBA"),  # one missed kill
@@ -191,4 +200,6 @@ def test_eval_computes_detection_precision_recall(tmp_path):
     assert (det["true_positives"], det["false_positives"], det["false_negatives"]) == (2, 2, 1)
     assert det["precision"] == 0.5 and det["recall"] == round(2 / 3, 4)
     content = result["metrics"]["content_readiness"]
-    assert content["valid_kills"] == 3 and content["with_weapon"] == 1
+    assert content["valid_kills"] == 3
+    assert content["with_kill_type"] == 1
+    assert content["with_weapon"] == 1

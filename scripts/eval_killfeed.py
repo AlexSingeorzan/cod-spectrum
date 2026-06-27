@@ -13,7 +13,7 @@ Two separate metrics, never conflated:
 
   * detection — onset-level kill-detection precision / recall / F1. This is what the
     classical detector is judged on.
-  * content_readiness — how many rows carry attacker/victim/weapon labels, i.e. how
+  * content_readiness — how many rows carry attacker/victim/kill_type labels, i.e. how
     ready the set is for ``scripts/eval_killfeed_content.py`` and the Phase-4
     content reader (which unlocks DeathEvent / WeaponEvent / TradeEvent). This
     reports readiness, not content accuracy — we never fabricate a number.
@@ -84,6 +84,7 @@ def _content_readiness(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "valid_kills": len(valid),
         "with_attacker": have("attacker"),
         "with_victim": have("victim"),
+        "with_kill_type": have("kill_type"),
         "with_weapon": have("weapon"),
         "note": ("counts of human-read fields on real kills; these train the future "
                  "content reader. Use eval_killfeed_content.py for reader accuracy once labelled."),
@@ -118,7 +119,7 @@ def evaluate(dataset_dir: Path) -> dict[str, Any]:
             "it is a baseline, not production OCR.",
             "Recall requires the labeller to add missed kills as detector='manual_added'.",
             "content_readiness is not accuracy — run eval_killfeed_content.py once "
-            "attacker/victim/weapon labels exist.",
+            "attacker/victim/kill_type labels exist.",
         ],
     }
 
@@ -141,8 +142,9 @@ def print_report(result: dict[str, Any]) -> None:
         print(f"- precision: {det['precision']}  recall: {det['recall']}  F1: {det['f1']}")
     print()
     print("## content readiness (not accuracy)")
-    print(f"- valid kills: {content['valid_kills']}  | with attacker/victim/weapon: "
-          f"{content['with_attacker']}/{content['with_victim']}/{content['with_weapon']}")
+    print(f"- valid kills: {content['valid_kills']}  | with attacker/victim/kill_type/weapon: "
+          f"{content['with_attacker']}/{content['with_victim']}/"
+          f"{content['with_kill_type']}/{content['with_weapon']}")
     print()
     print("Notes:")
     for note in result["notes"]:

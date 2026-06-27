@@ -3,7 +3,7 @@
 Turns the classical ``KillfeedDetector`` into a *pre-labeller*: it runs over a VOD,
 finds candidate kill onsets, saves the row crop (and a region crop for context) for
 each, and writes an ``annotations.jsonl`` with EMPTY label slots plus full source
-metadata. A human then fills attacker / victim / weapon and marks each row
+metadata. A human then fills attacker / victim / kill_type and marks each row
 ``valid_kill`` true/false — and adds any kills the detector MISSED as rows with
 ``detector="manual_added"`` so recall is measurable.
 
@@ -47,7 +47,7 @@ EMPTY_LABEL = {
     "valid_kill": None,        # True = real kill, False = false positive
     "attacker": None, "attacker_team": None,
     "victim": None, "victim_team": None,
-    "weapon": None, "headshot": None, "is_trade": None,
+    "kill_type": None, "weapon": None, "headshot": None, "is_trade": None,
 }
 
 
@@ -130,7 +130,7 @@ def build_killfeed_dataset(
         "label_status": "unlabeled",
         "labeled_by": None,
         "honesty_note": (
-            "Detections are unverified classical-CV candidates. attacker/victim/weapon "
+            "Detections are unverified classical-CV candidates. attacker/victim/kill_type "
             "are NOT read by the detector — every label starts null. Fill labels by hand "
             "(valid_kill true/false + identities), and add any MISSED kills as rows with "
             "detector='manual_added' so recall is measurable, before making any accuracy claim."
@@ -139,7 +139,8 @@ def build_killfeed_dataset(
             "valid_kill": "true=real kill, false=false positive (required for detection eval)",
             "attacker/victim": "gamertag as shown (feeds DeathEvent / content reader)",
             "attacker_team/victim_team": "team tag e.g. LAT/VAN",
-            "weapon": "weapon name or icon class (feeds WeaponEvent)",
+            "kill_type": "coarse kill cause: gun/grenade/melee/fall_damage/suicide/environment/objective/killstreak/unknown",
+            "weapon": "optional exact weapon metadata; downstream analytics must not require it",
             "headshot": "bool if a headshot marker is shown",
             "is_trade": "bool if this kill traded a recent teammate death (feeds TradeEvent)",
         },

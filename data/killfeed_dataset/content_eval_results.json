@@ -12,6 +12,7 @@
     "content_readiness": {
       "valid_kills_with_identity": 0,
       "with_weapon": 0,
+      "with_kill_type": 0,
       "with_headshot": 0,
       "with_trade": 0
     },
@@ -24,6 +25,6 @@
   "notes": [
     "No content accuracy is reported until annotations.jsonl has human labels.",
     "Operational gallery is a regression check; leave-one-out is the honest small-data estimate.",
-    "Panel counter remains the kill-count spine; killfeed content is the weapon/headshot/trade enrichment layer."
+    "Panel counter remains the kill-count spine; killfeed content is the kill_type/headshot/trade enrichment layer."
   ]
 }

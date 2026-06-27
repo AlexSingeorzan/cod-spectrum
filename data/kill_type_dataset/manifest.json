@@ -1,223 +1,234 @@
 {
   "version": 1,
-  "kind": "weapon_icon_dataset",
-  "dataset_id": "lat_van_hp_weapon_icons_v0",
+  "kind": "kill_type_icon_dataset",
+  "dataset_id": "lat_van_hp_kill_type_icons_v0",
   "source_dataset": "data/killfeed_dataset",
   "source_segments": "data/killfeed_dataset/segments.jsonl",
   "icon_count": 120,
   "skipped_count": 125,
   "label_status": "unlabeled",
+  "categories": [
+    "gun",
+    "grenade",
+    "melee",
+    "fall_damage",
+    "suicide",
+    "environment",
+    "objective",
+    "killstreak",
+    "unknown"
+  ],
   "label_fields": {
-    "valid_weapon": "true/false after human review",
-    "weapon": "weapon class, or unknown for visible-but-unidentifiable",
-    "weapon_family": "optional AR/SMG/SNIPER/PISTOL/etc.",
+    "valid_kill_type": "true/false after human review",
+    "kill_type": "one of categories; unknown means reviewed visible cause outside/indistinguishable from supported classes",
+    "exact_weapon": "optional future metadata such as MCW/Jackal PDW/C9/AMES",
     "unclear": "true when crop is too ambiguous for training/eval"
   },
-  "honesty_note": "Weapon icons are cropped evidence only. No classifier accuracy is claimed until these rows are human-labelled.",
+  "honesty_note": "Icon crops are evidence only. No kill-type classifier accuracy is claimed until these rows are human-labelled.",
   "evaluation_metrics": {
     "real_labelled_accuracy": null,
-    "reason": "0 labelled real weapon icons"
+    "reason": "0 labelled real kill-type icons"
   },
   "skipped": [
     {
       "sample_id": "kf_0004_84",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0011_95",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0012_101",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0013_101",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0014_101",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0015_102",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0017_108",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0019_108",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0023_118",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0026_128",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0029_138",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0031_150",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0032_151",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0033_157",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0034_157",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0035_164",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0037_172",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0041_184",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0044_187",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0046_200",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0049_206",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0050_210",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0051_211",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0052_214",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0054_216",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0055_216",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0056_220",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0058_236",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0061_239",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0062_240",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0063_242",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0064_250",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0065_250",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0066_252",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0072_270",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0077_280",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0078_282",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0080_282",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0081_282",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0087_301",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0088_301",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0089_302",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0090_302",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0092_312",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0093_314",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0095_326",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0096_326",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0098_328",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0099_332",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     },
     {
       "sample_id": "kf_0100_332",
-      "reason": "no_weapon_segment"
+      "reason": "no_icon_segment"
     }
   ]
 }

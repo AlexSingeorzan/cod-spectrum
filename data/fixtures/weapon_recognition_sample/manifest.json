@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "kind": "weapon_icon_dataset",
-  "dataset_id": "synthetic_weapon_icons_v0",
-  "icon_count": 6,
-  "label_status": "labeled",
-  "content": "weapon_icon_template_nn@0.1.0",
-  "honesty_note": "Synthetic fixture for event-contract verification only."
-}

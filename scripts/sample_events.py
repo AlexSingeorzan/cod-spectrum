@@ -136,7 +136,7 @@ def build_stream() -> list[GameEvent]:
     demo_evidence = Evidence(video_timestamp_seconds=258.0, frame_path=ILLUSTRATIVE_FRAME)
     demo = [
         KillEvent(attacker="Envoy", attacker_team=TEAM_A, victim="Pred", victim_team=TEAM_B,
-                  weapon="SMG", headshot=False),
+                  kill_type="gun", weapon="SMG", headshot=False),
         CommunicationEvent(transcript="they flipped us, rotate P4 now", speaker="Envoy", team=TEAM_A,
                            callout_type="rotate", targets=["P4"], audio_source="player"),
         PositionEvent(x=0.42, y=0.71, player="Envoy", team=TEAM_A, observed_team=TEAM_A, detector="minimap"),

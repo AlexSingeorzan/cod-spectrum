@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "kind": "kill_type_icon_dataset",
+  "dataset_id": "synthetic_kill_type_icons_v0",
+  "icon_count": 10,
+  "label_status": "labeled",
+  "categories": [
+    "gun",
+    "grenade",
+    "melee",
+    "fall_damage",
+    "suicide",
+    "environment",
+    "objective",
+    "killstreak",
+    "unknown"
+  ],
+  "content": "kill_type_icon_template_nn@0.2.0",
+  "honesty_note": "Synthetic fixture for event-contract verification only."
+}

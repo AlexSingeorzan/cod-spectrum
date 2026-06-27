@@ -2,8 +2,8 @@
 
 The real LAT/VAN killfeed dataset is still unlabelled, so this script uses a small
 synthetic labelled fixture to show the event contract: killfeed content reads can
-emit KillEvent, DeathEvent, WeaponEvent and TradeEvent. It also prints the real
-dataset's current label/readiness status.
+emit KillEvent, DeathEvent, kill-type WeaponEvent and TradeEvent. It also prints
+the real dataset's current label/readiness status.
 """
 from __future__ import annotations
 
@@ -39,6 +39,7 @@ SAMPLE_ROWS = [
         "victim": "Lunarz",
         "victim_team": "VAN",
         "weapon": "SMG",
+        "kill_type": "gun",
         "headshot": False,
         "is_trade": False,
     },
@@ -50,6 +51,7 @@ SAMPLE_ROWS = [
         "victim": "HyDra",
         "victim_team": "LAT",
         "weapon": "AR",
+        "kill_type": "gun",
         "headshot": True,
         "is_trade": True,
     },
@@ -61,6 +63,7 @@ SAMPLE_ROWS = [
         "victim": "Nero",
         "victim_team": "VAN",
         "weapon": "SMG",
+        "kill_type": "gun",
         "headshot": False,
         "is_trade": False,
     },
@@ -104,6 +107,7 @@ def build_sample_dataset() -> Path:
                 "victim": row["victim"],
                 "victim_team": row["victim_team"],
                 "weapon": row["weapon"],
+                "kill_type": row["kill_type"],
                 "headshot": row["headshot"],
                 "is_trade": row["is_trade"],
             },
@@ -148,11 +152,11 @@ def main() -> int:
     for event in events:
         p = event.payload
         if event.event_type == "kill":
-            detail = f"{p.attacker} -> {p.victim} ({p.weapon})"
+            detail = f"{p.attacker} -> {p.victim} kill_type={p.kill_type} weapon={p.weapon}"
         elif event.event_type == "death":
-            detail = f"{p.player} killed_by={p.killer} weapon={p.weapon}"
+            detail = f"{p.player} killed_by={p.killer} kill_type={p.kill_type} weapon={p.weapon}"
         elif event.event_type == "weapon":
-            detail = f"{p.player} used {p.weapon}"
+            detail = f"{p.player} kill_type={p.kill_type} weapon={p.weapon}"
         else:
             detail = f"{p.trading_player} traded {p.dead_player} in {p.trade_window_seconds}s"
         print(f"~ {event.video_timestamp_seconds:5.1f}s  {event.kind.value:<4} {event.event_type:<7} "
@@ -169,7 +173,7 @@ def main() -> int:
         print(f"candidates: {real['dataset']['candidates']}")
         print(f"content-labelled rows: {real['dataset']['content_labeled_rows']}")
         print(f"reader status: {real['metrics']['reader']['status']}")
-        print("next: label attacker/victim/weapon fields in data/killfeed_dataset/annotations.jsonl")
+        print("next: label attacker/victim/kill_type fields in data/killfeed_dataset/annotations.jsonl")
     else:
         print("not built yet — run `make killfeed-dataset` with the local VOD.")
     return 0

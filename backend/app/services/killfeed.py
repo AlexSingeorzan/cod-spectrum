@@ -15,13 +15,14 @@ model — and it never crosses that line.
   * What this explicitly does NOT do: it does not read the attacker, victim, or
     weapon. Those are stylised, team-coloured names + weapon icons that need a
     labelled dataset and a trained reader (Phase 4, deliverable 2). Emitted
-    ``KillEvent``s therefore carry ``attacker=victim=weapon=None`` and the tag
+    ``KillEvent``s therefore carry ``attacker=victim=kill_type=weapon=None`` and the tag
     ``identity_unread``. We never invent a name we did not read.
 
 Upgrade path (documented, not claimed done): the dataset scaffold
 (``scripts/build_killfeed_dataset.py``) turns these detections into an annotation
-set; once rows are human-labelled, a content reader fills attacker/victim/weapon and
-the same onsets unlock ``DeathEvent`` / ``WeaponEvent`` / ``TradeEvent``. The
+set; once rows are human-labelled, a content reader fills attacker/victim/kill_type
+and optional exact weapon metadata, and the same onsets unlock ``DeathEvent`` /
+``WeaponEvent`` / ``TradeEvent``. The
 detector interface, evidence persistence and onset tracking stay identical.
 """
 from __future__ import annotations
@@ -301,8 +302,8 @@ def onset_to_kill_event(
 ) -> GameEvent:
     """Wrap a kill onset as a candidate ``KillEvent`` fact.
 
-    Identity is unread on purpose: attacker/victim/weapon stay ``None`` and the
-    event is tagged ``identity_unread``. Evidence (the row crop) is required by the
+    Identity is unread on purpose: attacker/victim/kill_type/weapon stay ``None``
+    and the event is tagged ``identity_unread``. Evidence (the row crop) is required by the
     envelope, so a candidate kill can never exist without something to look at.
     """
     row = onset.row
@@ -327,7 +328,7 @@ def onset_to_kill_event(
             source=SourceKind.HEURISTIC,
             model_name=MODEL_NAME, model_version=MODEL_VERSION,
             producer="killfeed-detector",
-            note="killfeed row localised; attacker/victim/weapon not read",
+            note="killfeed row localised; attacker/victim/kill_type/weapon not read",
         ),
         evidence=Evidence(
             video_timestamp_seconds=onset.video_timestamp_seconds,

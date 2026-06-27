@@ -67,8 +67,20 @@ class MapEndEvent(EventPayload):
 
 
 # ---------------------------------------------------------------------------
-# Combat domain (facts) — killfeed / weapon vision targets
+# Combat domain (facts) — killfeed / kill-type / weapon vision targets
 # ---------------------------------------------------------------------------
+
+KillType = Literal[
+    "gun",
+    "grenade",
+    "melee",
+    "fall_damage",
+    "suicide",
+    "environment",
+    "objective",
+    "killstreak",
+    "unknown",
+]
 
 
 class KillEvent(EventPayload):
@@ -81,6 +93,7 @@ class KillEvent(EventPayload):
     victim: str | None = None
     victim_team: str | None = None
     victim_side: Side | None = None
+    kill_type: KillType | None = None
     weapon: str | None = None
     headshot: bool | None = None
     is_trade: bool | None = None
@@ -94,6 +107,7 @@ class DeathEvent(EventPayload):
     team: str | None = None
     side: Side | None = None
     killer: str | None = None
+    kill_type: KillType | None = None
     weapon: str | None = None
 
 
@@ -101,9 +115,10 @@ class WeaponEvent(EventPayload):
     EVENT_TYPE: ClassVar[str] = "weapon"
     KIND: ClassVar[EventKind] = EventKind.FACT
 
-    player: str
+    player: str | None = None
     team: str | None = None
-    weapon: str
+    kill_type: KillType
+    weapon: str | None = None
     action: Literal["pickup", "swap", "use"] = "use"
 
 
@@ -239,7 +254,7 @@ class InsightEvent(EventPayload):
 
 __all__ = [
     "ScoreUpdateEvent", "LeadChangeEvent", "MapStartEvent", "MapEndEvent",
-    "KillEvent", "DeathEvent", "WeaponEvent", "TradeEvent",
+    "KillType", "KillEvent", "DeathEvent", "WeaponEvent", "TradeEvent",
     "ObjectiveEvent", "SpawnFlipEvent", "PositionEvent", "RotationEvent",
     "CommunicationEvent", "TimelineEvent", "InsightEvent",
 ]

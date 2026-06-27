@@ -12,6 +12,7 @@
     "content_readiness": {
       "valid_kills_with_identity": 3,
       "with_weapon": 3,
+      "with_kill_type": 3,
       "with_headshot": 3,
       "with_trade": 3
     },
@@ -28,6 +29,7 @@
         "field_accuracy": {
           "attacker": 1.0,
           "victim": 1.0,
+          "kill_type": 1.0,
           "weapon": 1.0,
           "headshot": 1.0,
           "is_trade": 1.0
@@ -44,6 +46,7 @@
         "field_accuracy": {
           "attacker": 0.0,
           "victim": 0.0,
+          "kill_type": 0.0,
           "weapon": 0.0,
           "headshot": 0.0,
           "is_trade": 0.0
@@ -57,6 +60,7 @@
             "expected": {
               "attacker": "HyDra",
               "victim": "Lunarz",
+              "kill_type": "gun",
               "weapon": "SMG",
               "headshot": false,
               "is_trade": false
@@ -69,6 +73,7 @@
             "expected": {
               "attacker": "Mamba",
               "victim": "HyDra",
+              "kill_type": "gun",
               "weapon": "AR",
               "headshot": true,
               "is_trade": true
@@ -81,6 +86,7 @@
             "expected": {
               "attacker": "aBeZy",
               "victim": "Nero",
+              "kill_type": "gun",
               "weapon": "SMG",
               "headshot": false,
               "is_trade": false
@@ -94,6 +100,6 @@
   "notes": [
     "No content accuracy is reported until annotations.jsonl has human labels.",
     "Operational gallery is a regression check; leave-one-out is the honest small-data estimate.",
-    "Panel counter remains the kill-count spine; killfeed content is the weapon/headshot/trade enrichment layer."
+    "Panel counter remains the kill-count spine; killfeed content is the kill_type/headshot/trade enrichment layer."
   ]
 }

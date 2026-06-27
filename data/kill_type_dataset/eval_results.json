@@ -1,0 +1,44 @@
+{
+  "dataset": {
+    "path": "data/kill_type_dataset",
+    "dataset_id": "lat_van_hp_kill_type_icons_v0",
+    "icon_count": 120,
+    "labelled_kill_type_icons": 0,
+    "label_counts": {},
+    "unknown_labels": 0,
+    "unclear_labels": 0,
+    "categories": [
+      "gun",
+      "grenade",
+      "melee",
+      "fall_damage",
+      "suicide",
+      "environment",
+      "objective",
+      "killstreak",
+      "unknown"
+    ],
+    "label_status": "unlabeled"
+  },
+  "models": {
+    "template": {
+      "model": "kill_type_icon_template_nn@0.2.0",
+      "status": "unlabeled - no kill-type accuracy claim",
+      "operational_gallery": null,
+      "leave_one_out": null
+    },
+    "histogram": {
+      "model": "kill_type_icon_histogram_nn@0.2.0",
+      "status": "unlabeled - no kill-type accuracy claim",
+      "operational_gallery": null,
+      "leave_one_out": null
+    }
+  },
+  "notes": [
+    "Kill-type recognition is independent from player-name OCR.",
+    "Downstream analytics consume kill_type, not exact weapon names.",
+    "No real accuracy is reported until kill-type icons are human-labelled.",
+    "Operational gallery is a regression check; leave-one-out is the honest small-data estimate.",
+    "Low-confidence predictions return kill_type=null."
+  ]
+}

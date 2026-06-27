@@ -110,9 +110,9 @@ All fact bodies; `InsightEvent` is the only insight.
 | `LeadChangeEvent` | `lead_change` | `new_leader_side`, `team_a/b`, `score_a/b` |
 | `MapStartEvent` | `map_start` | `mode`, `map_name`, `team_a/b` |
 | `MapEndEvent` | `map_end` | `mode`, `map_name`, `winner_side`, `score_a/b` |
-| `KillEvent` | `kill` | `attacker`, `victim`, `*_team`, `weapon?`, `headshot?`, `is_trade?` |
-| `DeathEvent` | `death` | `player`, `team`, `killer?`, `weapon?` |
-| `WeaponEvent` | `weapon` | `player`, `team`, `weapon`, `action` (pickup/swap/use) |
+| `KillEvent` | `kill` | `attacker`, `victim`, `*_team`, `kill_type?`, `weapon?`, `headshot?`, `is_trade?` |
+| `DeathEvent` | `death` | `player`, `team`, `killer?`, `kill_type?`, `weapon?` |
+| `WeaponEvent` | `weapon` | `player?`, `team?`, `kill_type`, `weapon?`, `action` (pickup/swap/use) |
 | `TradeEvent` | `trade` | `dead_player`, `trading_player`, `*_team`, `trade_window_seconds`, kill ids |
 | `ObjectiveEvent` | `objective` | `objective_type`, `action`, `hill_id?`, `side?`, `progress?` |
 | `SpawnFlipEvent` | `spawn_flip` | `side`, `from_region?`, `to_region?`, `inferred`, `method?` |
@@ -141,7 +141,14 @@ kill = GameEvent(
     broadcast_id=1, map_id=1, video_timestamp_seconds=258.0, confidence=0.91,
     provenance=Provenance(source=SourceKind.MODEL, model_name="killfeed-ocr", model_version="0.1.0"),
     evidence=Evidence(video_timestamp_seconds=258.0, crop_path="data/crops/k_258.png"),
-    payload=KillEvent(attacker="Envoy", attacker_team="LAT", victim="Pred", victim_team="VAN", weapon="SMG"),
+    payload=KillEvent(
+        attacker="Envoy",
+        attacker_team="LAT",
+        victim="Pred",
+        victim_team="VAN",
+        kill_type="gun",
+        weapon="SMG",
+    ),
 )
 
 insight = GameEvent(

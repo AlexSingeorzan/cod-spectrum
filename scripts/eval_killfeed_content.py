@@ -1,6 +1,6 @@
 """Evaluate the Phase 4 killfeed content reader.
 
-This evaluates attacker/victim/weapon reading from ``annotations.jsonl``. The real
+This evaluates attacker/victim/kill_type reading from ``annotations.jsonl``. The real
 LAT/VAN dataset is currently unlabelled, so this script reports that state without
 claiming accuracy. Once rows are human-labelled, it reports both:
 
@@ -41,6 +41,7 @@ def _expected(row: dict[str, Any]) -> dict[str, Any]:
     return {
         "attacker": label.get("attacker"),
         "victim": label.get("victim"),
+        "kill_type": label.get("kill_type"),
         "weapon": label.get("weapon"),
         "headshot": label.get("headshot"),
         "is_trade": label.get("is_trade"),
@@ -53,6 +54,7 @@ def _predicted(read) -> dict[str, Any] | None:
     return {
         "attacker": read.attacker,
         "victim": read.victim,
+        "kill_type": read.kill_type,
         "weapon": read.weapon,
         "headshot": read.headshot,
         "is_trade": read.is_trade,
@@ -61,7 +63,7 @@ def _predicted(read) -> dict[str, Any] | None:
 
 def _score_rows(rows: list[dict[str, Any]], reads: list) -> dict[str, Any]:
     n = len(rows)
-    fields = ["attacker", "victim", "weapon", "headshot", "is_trade"]
+    fields = ["attacker", "victim", "kill_type", "weapon", "headshot", "is_trade"]
     correct = {field: 0 for field in fields}
     totals = {field: 0 for field in fields}
     exact = 0
@@ -142,6 +144,7 @@ def evaluate(dataset_dir: Path) -> dict[str, Any]:
             "content_readiness": {
                 "valid_kills_with_identity": len(labeled),
                 "with_weapon": sum(1 for row in labeled if row["label"].get("weapon")),
+                "with_kill_type": sum(1 for row in labeled if row["label"].get("kill_type")),
                 "with_headshot": sum(1 for row in labeled if row["label"].get("headshot") is not None),
                 "with_trade": sum(1 for row in labeled if row["label"].get("is_trade") is not None),
             }
@@ -149,7 +152,7 @@ def evaluate(dataset_dir: Path) -> dict[str, Any]:
         "notes": [
             "No content accuracy is reported until annotations.jsonl has human labels.",
             "Operational gallery is a regression check; leave-one-out is the honest small-data estimate.",
-            "Panel counter remains the kill-count spine; killfeed content is the weapon/headshot/trade enrichment layer.",
+            "Panel counter remains the kill-count spine; killfeed content is the kill_type/headshot/trade enrichment layer.",
         ],
     }
     if not labeled:
@@ -185,7 +188,9 @@ def print_report(result: dict[str, Any]) -> None:
     print()
     print("## readiness")
     print(f"- valid kills with identity: {readiness['valid_kills_with_identity']}")
-    print(f"- with weapon/headshot/trade fields: {readiness['with_weapon']}/{readiness['with_headshot']}/{readiness['with_trade']}")
+    print(f"- with kill_type/weapon/headshot/trade fields: "
+          f"{readiness['with_kill_type']}/{readiness['with_weapon']}/"
+          f"{readiness['with_headshot']}/{readiness['with_trade']}")
     print()
     print("## reader")
     print(f"- status: {reader['status']}")
