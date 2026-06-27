@@ -14,6 +14,8 @@ Build and evaluate:
 ```bash
 make kill-type-dataset
 make kill-type-eval
+make kill-type-review
+make kill-type-contact-sheet
 ```
 
 The dataset intentionally starts with empty labels:
@@ -28,3 +30,10 @@ The dataset intentionally starts with empty labels:
 ```
 
 Only human-reviewed rows with `valid_kill_type=true`, a non-null `kill_type`, and `label_source != "unlabeled"` are used for training/evaluation. Use `unknown` only when a reviewer can see a valid kill cause but cannot assign one of the named classes; use `unclear=true` for ambiguous crops. `exact_weapon` is optional future metadata; downstream analytics consume `kill_type`.
+
+Apply labels through the review CLI instead of editing JSONL by hand:
+
+```bash
+.venv/bin/python scripts/review_kill_type_dataset.py --dataset data/kill_type_dataset list --status unreviewed --limit 20
+.venv/bin/python scripts/review_kill_type_dataset.py --dataset data/kill_type_dataset set-label --id kf_0000_80 --reviewed-by alex --valid true --kill-type gun
+```

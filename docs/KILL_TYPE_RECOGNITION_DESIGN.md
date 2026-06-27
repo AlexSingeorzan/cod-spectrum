@@ -50,15 +50,17 @@ No classifier should be trained or promoted until kill-type labels exist.
 ## Recommended Path
 
 1. Build a kill-type dataset from Stage B icon crops. **Done.**
-2. Human-label visible kill types, use `unknown` only for reviewed valid causes
+2. Validate the dataset and create a contact sheet with
+   `scripts/review_kill_type_dataset.py`. **Done.**
+3. Human-label visible kill types, use `unknown` only for reviewed valid causes
    outside/indistinguishable from the named classes, and mark ambiguous crops
    `unclear=true`.
-3. Evaluate template/histogram nearest-neighbour baselines on the same labelled
+4. Evaluate template/histogram nearest-neighbour baselines on the same labelled
    split. **Wired, blocked by real labels.**
-4. Train a lightweight CNN once there are enough labels per category.
-5. Promote only the model with the best accuracy/latency/maintenance tradeoff on
+5. Train a lightweight CNN once there are enough labels per category.
+6. Promote only the model with the best accuracy/latency/maintenance tradeoff on
    held-out labelled crops.
-6. Add exact weapon classification later as optional metadata only.
+7. Add exact weapon classification later as optional metadata only.
 
 ## Required Model Contract
 
@@ -121,6 +123,8 @@ Minimum metrics before promotion:
 
 - `data/kill_type_dataset/` exists with icon crops and source metadata. **Done.**
 - The category list includes `killstreak`. **Done.**
+- Review tooling can validate JSONL, summarize readiness, list rows, apply one
+  reviewed label, and generate a contact sheet. **Done.**
 - At least two approaches are evaluated on the same split. **Wired for template
   and histogram baselines; real split is blocked by labels.**
 - Low-confidence outputs return `kill_type=null`.

@@ -1,4 +1,4 @@
-.PHONY: setup fixture scorebar-ocr-dataset scorebar-ocr-eval killfeed-dataset killfeed-eval killfeed-segments killfeed-segment-eval killfeed-segment-sample killfeed-content-eval killfeed-sample killfeed-content-sample kill-type-dataset kill-type-eval kill-type-sample weapon-dataset weapon-eval weapon-sample panel-counter panel-eval test serve scheduler process clean-data
+.PHONY: setup fixture scorebar-ocr-dataset scorebar-ocr-eval killfeed-dataset killfeed-eval killfeed-segments killfeed-segment-eval killfeed-segment-sample killfeed-content-eval killfeed-sample killfeed-content-sample kill-type-dataset kill-type-eval kill-type-review kill-type-contact-sheet kill-type-sample weapon-dataset weapon-eval weapon-sample panel-counter panel-eval test serve scheduler process clean-data
 
 PYTHON := .venv/bin/python
 PYTHON_BOOTSTRAP ?= python3.12
@@ -47,6 +47,12 @@ kill-type-dataset:
 
 kill-type-eval:
 	$(PYTHON) scripts/eval_kill_type_recognition.py --dataset data/kill_type_dataset --write-json data/kill_type_dataset/eval_results.json
+
+kill-type-review:
+	$(PYTHON) scripts/review_kill_type_dataset.py --dataset data/kill_type_dataset summary --write-json data/kill_type_dataset/review_summary.json
+
+kill-type-contact-sheet:
+	$(PYTHON) scripts/review_kill_type_dataset.py --dataset data/kill_type_dataset contact-sheet --out data/kill_type_dataset/review_contact_sheet.png
 
 kill-type-sample:
 	$(PYTHON) scripts/sample_kill_type_recognition.py

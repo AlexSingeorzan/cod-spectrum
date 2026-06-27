@@ -185,6 +185,8 @@ Two CPU baselines are wired for comparison:
 ```bash
 make kill-type-dataset  # build data/kill_type_dataset from Stage B segment crops
 make kill-type-eval     # real dataset readiness; no accuracy claim until labelled
+make kill-type-review   # validate/summarize annotation readiness
+make kill-type-contact-sheet
 make kill-type-sample   # synthetic kill_type event contract sample
 ```
 
@@ -192,6 +194,10 @@ Current real status: `120` icon crops, `0` labelled kill-type classes, no real
 accuracy claim. The synthetic sample writes
 `data/fixtures/kill_type_recognition_sample/` and demonstrates the `kill_type`
 payload path with `weapon=null`.
+
+Use `scripts/review_kill_type_dataset.py` for safe labelling instead of editing
+JSONL directly. It can validate labels, list unreviewed crops, apply one reviewed
+label, and write a contact sheet for visual review.
 
 ## Scoreboard kill counter
 

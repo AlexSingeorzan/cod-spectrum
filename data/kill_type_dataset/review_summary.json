@@ -1,0 +1,26 @@
+{
+  "dataset": "data/kill_type_dataset",
+  "total_rows": 120,
+  "reviewed_rows": 0,
+  "unreviewed_rows": 120,
+  "labelled_training_rows": 0,
+  "unclear_rows": 0,
+  "missing_crops": 0,
+  "kill_type_counts": {},
+  "categories": [
+    "gun",
+    "grenade",
+    "melee",
+    "fall_damage",
+    "suicide",
+    "environment",
+    "objective",
+    "killstreak",
+    "unknown"
+  ],
+  "validation": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  }
+}
