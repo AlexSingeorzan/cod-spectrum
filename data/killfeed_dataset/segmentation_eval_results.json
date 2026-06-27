@@ -1,0 +1,37 @@
+{
+  "dataset": {
+    "path": "data/killfeed_dataset",
+    "segments": "data/killfeed_dataset/segments.jsonl",
+    "rows": 245
+  },
+  "metrics": {
+    "complete_core_segments": 120,
+    "complete_core_rate": 0.4898,
+    "mean_segmentation_confidence": 0.3527,
+    "field_box_counts": {
+      "attacker": 120,
+      "weapon": 120,
+      "victim": 120,
+      "headshot": 23,
+      "assist": 0,
+      "special": 0
+    },
+    "field_crop_counts": {
+      "attacker": 120,
+      "weapon": 120,
+      "victim": 120,
+      "headshot": 23,
+      "assist": 0,
+      "special": 0
+    },
+    "failure_reasons": {
+      "weapon_icon_layout_not_detected": 375,
+      "missing_core_segments:attacker,weapon,victim": 125
+    }
+  },
+  "notes": [
+    "Segmentation readiness is not OCR or weapon-classification accuracy.",
+    "Missing or low-confidence fields stay null; no boxes are guessed from fixed layout.",
+    "PanelKillCounter remains the kill spine; killfeed segments are enrichment evidence."
+  ]
+}

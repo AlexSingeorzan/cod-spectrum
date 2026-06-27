@@ -1,0 +1,85 @@
+{
+  "sample_id": "segmentation_sample_0001",
+  "row_width": 360,
+  "row_height": 38,
+  "model_name": "killfeed_segmenter_classical",
+  "model_version": "0.1.0",
+  "training_dataset": "none-classical-cv",
+  "confidence": 0.72,
+  "latency_ms": 0.349,
+  "fallback_used": false,
+  "failure_reason": null,
+  "evaluation_metrics": {
+    "real_labelled_accuracy": null,
+    "reason": "segmentation has no labelled real field boxes yet; readiness only"
+  },
+  "segments": {
+    "attacker": {
+      "field": "attacker",
+      "box": [
+        0.0167,
+        0.2368,
+        0.1639,
+        0.5526
+      ],
+      "confidence": 0.72,
+      "crop_path": "data/fixtures/killfeed_segmentation_sample/segments/segmentation_sample_0001_attacker.png",
+      "failure_reason": null
+    },
+    "weapon": {
+      "field": "weapon",
+      "box": [
+        0.3694,
+        0.2632,
+        0.125,
+        0.5263
+      ],
+      "confidence": 0.72,
+      "crop_path": "data/fixtures/killfeed_segmentation_sample/segments/segmentation_sample_0001_weapon.png",
+      "failure_reason": null
+    },
+    "victim": {
+      "field": "victim",
+      "box": [
+        0.6889,
+        0.2105,
+        0.1917,
+        0.5526
+      ],
+      "confidence": 0.72,
+      "crop_path": "data/fixtures/killfeed_segmentation_sample/segments/segmentation_sample_0001_victim.png",
+      "failure_reason": null
+    },
+    "headshot": {
+      "field": "headshot",
+      "box": [
+        0.5889,
+        0.2368,
+        0.0583,
+        0.5526
+      ],
+      "confidence": 0.45,
+      "crop_path": "data/fixtures/killfeed_segmentation_sample/segments/segmentation_sample_0001_headshot.png",
+      "failure_reason": null
+    },
+    "assist": {
+      "field": "assist",
+      "box": null,
+      "confidence": 0.0,
+      "crop_path": null,
+      "failure_reason": "not_detected_by_classical_stage_b"
+    },
+    "special": {
+      "field": "special",
+      "box": null,
+      "confidence": 0.0,
+      "crop_path": null,
+      "failure_reason": "not_detected_by_classical_stage_b"
+    }
+  },
+  "row_image": "data/fixtures/killfeed_segmentation_sample/row.png",
+  "notes": [
+    "Synthetic sample verifies the Stage B field-box contract only.",
+    "It is not real broadcast segmentation accuracy."
+  ]
+}

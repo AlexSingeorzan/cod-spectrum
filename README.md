@@ -95,7 +95,7 @@ Tables: `sources`, `broadcasts`, `processing_jobs`, `matches`, `maps`, `game_eve
 - Stubbed: bundled scorebar OCR reads `data/fixtures/sample_scores.json` and marks its dependent events `is_placeholder=true`. It exists to make the complete flow deterministic and offline.
 - Evaluated scorebar OCR baseline: `--ocr-engine cdl` uses `CdlScorebarOcrEngine`, a CPU k-NN digit-gallery model trained from human-verified LAT/VAN scorebar crops. It is versioned (`0.1.0-knn`) and confidence-capped by leave-one-crop-out evaluation. Current result: 21/21 operational gallery self-check, but only 10/21 leave-one-out exact score matches (`0.4762`) and 11/21 with temporal decoding (`0.5238`). This is not production-ready OCR.
 - **Scoreboard kill counter (Phase 4, the kill spine)** — `PanelKillCounter` (`panel_kill_counter@0.1.0`) reads each player's running kills/deaths from the top team panels and emits `KillEvent` (attacker) + `DeathEvent` (victim) facts from **monotonic** increments. Scored against the **human-verified post-game card** it is **exact: 8/8 players, 0.0 mean kill error, team totals 106/79, and the 505 s checkpoint 73/61** (`make panel-eval`, offline from the cached readings). Tesseract reads the clean panel font reliably. This is the authoritative kill count + who; see **Scoreboard kill counter** below.
-- Killfeed detection/content baseline (Phase 4): `KillfeedDetector` (`killfeed_classical@0.1.0`) localises kill-notification rows and a positional tracker collapses flicker into candidate kill onsets — `KillEvent` facts with evidence, confidence, and `identity_unread`. It is the **corroboration/weapon layer**, not the kill-count source: measured against panel-counter ground truth it runs at **~56% precision / ~80% recall**. `KillfeedContentReader` (`killfeed_content_knn@0.1.0`) is wired to train from labelled row crops and emit `KillEvent`/`DeathEvent`/`WeaponEvent`/`TradeEvent`, but the real LAT/VAN scaffold still has **0 content-labelled rows**, so it makes **no real content accuracy claim** yet. See **Killfeed detection and content** below.
+- Killfeed detection/content baseline (Phase 4): `KillfeedDetector` (`killfeed_classical@0.1.0`) localises kill-notification rows and a positional tracker collapses flicker into candidate kill onsets — `KillEvent` facts with evidence, confidence, and `identity_unread`. It is the **corroboration/weapon layer**, not the kill-count source: measured against panel-counter ground truth it runs at **~56% precision / ~80% recall**. `KillfeedSegmenter` (`killfeed_segmenter_classical@0.1.0`) now separates row crops into attacker/weapon/victim/headshot evidence regions when the layout is clear; current readiness is **120/245** rows with all core boxes. `KillfeedContentReader` (`killfeed_content_knn@0.1.0`) is wired to train from labelled row crops and emit `KillEvent`/`DeathEvent`/`WeaponEvent`/`TradeEvent`, but the real LAT/VAN scaffold still has **0 content-labelled rows**, so it makes **no real content accuracy claim** yet. See **Killfeed detection and content** below.
 - Optional OCR experiment: `TesseractOcrEngine` is wired behind `--ocr-engine tesseract`. Install the Tesseract binary and run `.venv/bin/pip install -r requirements-ocr.txt`, then calibrate the scorebar profile before trusting output. It is intentionally not in the base environment.
 - Deferred: real-labelled killfeed content accuracy, transition-card/mode classification, deep SnD/Control analytics, and minimap object detection.
 
@@ -138,10 +138,16 @@ CV can do and what needs a labelled model:
   victim, weapon, headshot, and trade fields from labelled row crops and expands them
   into `KillEvent`, `DeathEvent`, `WeaponEvent`, and `TradeEvent`. With no labels it
   abstains; it never fills names/weapons from empty annotation slots.
+- `KillfeedSegmenter` is the Stage B field splitter. It creates separate crop evidence
+  for attacker text, weapon icon, victim text, and optional indicators. If the layout
+  is not clear it returns `null` for that field instead of using fixed-layout guesses.
 
 ```bash
 make killfeed-dataset   # build the annotation scaffold from the local VOD (2 fps)
 make killfeed-eval      # detection precision/recall once annotations.jsonl is labelled
+make killfeed-segments
+make killfeed-segment-eval
+make killfeed-segment-sample
 make killfeed-content-eval
 make killfeed-sample    # deterministic synthetic candidate-KillEvent stream
 make killfeed-content-sample
@@ -154,7 +160,11 @@ person labels `valid_kill` and adds missed kills as `detector="manual_added"`.
 `eval_killfeed_content.py` separately reports `0` content-labelled rows and no
 content-reader accuracy until attacker/victim/weapon labels exist. The synthetic
 fixture at `data/fixtures/killfeed_content_sample/` is only an event-contract sample,
-not real broadcast accuracy.
+not real broadcast accuracy. `eval_killfeed_segments.py` reports Stage B readiness:
+`120/245` real row crops currently have attacker+weapon+victim segment boxes, which
+is enough to start weapon-icon dataset work but not enough to claim OCR or classifier
+accuracy. The Phase 5 recognizer design is in
+[`docs/WEAPON_RECOGNITION_DESIGN.md`](docs/WEAPON_RECOGNITION_DESIGN.md).
 
 ## Scoreboard kill counter
 
