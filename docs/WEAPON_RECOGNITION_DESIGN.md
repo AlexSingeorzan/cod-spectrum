@@ -1,6 +1,6 @@
 # Weapon Recognition Design
 
-Status: design only, no production classifier yet.
+Status: Phase 5 scaffold implemented, no production classifier yet.
 
 ## Goal
 
@@ -20,6 +20,7 @@ Phase 4 Stage B now produces weapon-icon crops from killfeed rows:
 - source: `data/killfeed_dataset/segments.jsonl`
 - crop directory: `data/killfeed_dataset/segments/`
 - current readiness: `120/245` rows have attacker+weapon+victim core boxes
+- weapon dataset: `data/weapon_dataset/` with `120` copied icon crops
 - current labelled weapon classes: `0`
 
 No classifier should be trained or promoted until weapon labels exist.
@@ -36,9 +37,10 @@ No classifier should be trained or promoted until weapon labels exist.
 
 ## Recommended Path
 
-1. Build a weapon-icon dataset from Stage B crops.
+1. Build a weapon-icon dataset from Stage B crops. **Done.**
 2. Human-label visible weapon classes and mark unclear crops as `unknown`.
-3. Evaluate template matching as the minimum baseline.
+3. Evaluate template/histogram nearest-neighbour baselines as the minimum
+   transparent baselines. **Wired, blocked by real labels.**
 4. Train a lightweight CNN once there are enough labels per weapon class.
 5. Evaluate CLIP/few-shot embeddings as optional experiments, not default.
 6. Promote only the model with the best accuracy/latency/maintenance tradeoff on
@@ -92,10 +94,13 @@ Minimum metrics before promotion:
 
 ## Exit Criteria For Phase 5
 
-- `data/weapon_dataset/` exists with labelled icon crops and source metadata.
-- At least two approaches are evaluated on the same split.
+- `data/weapon_dataset/` exists with icon crops and source metadata. **Done.**
+- At least two approaches are evaluated on the same split. **Wired for template
+  and histogram baselines; real split is blocked by labels.**
 - Low-confidence outputs return `null`.
 - `WeaponEvent` sample output exists.
 - Tests cover dataset loading, classifier abstention, and event construction.
 - Documentation includes metrics, CLI usage, known limitations, and failure
   examples.
+
+The remaining promotion gate is labelled real data, not code structure.

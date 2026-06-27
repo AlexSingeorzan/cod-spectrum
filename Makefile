@@ -1,4 +1,4 @@
-.PHONY: setup fixture scorebar-ocr-dataset scorebar-ocr-eval killfeed-dataset killfeed-eval killfeed-segments killfeed-segment-eval killfeed-segment-sample killfeed-content-eval killfeed-sample killfeed-content-sample panel-counter panel-eval test serve scheduler process clean-data
+.PHONY: setup fixture scorebar-ocr-dataset scorebar-ocr-eval killfeed-dataset killfeed-eval killfeed-segments killfeed-segment-eval killfeed-segment-sample killfeed-content-eval killfeed-sample killfeed-content-sample weapon-dataset weapon-eval weapon-sample panel-counter panel-eval test serve scheduler process clean-data
 
 PYTHON := .venv/bin/python
 PYTHON_BOOTSTRAP ?= python3.12
@@ -41,6 +41,15 @@ killfeed-sample:
 
 killfeed-content-sample:
 	$(PYTHON) scripts/sample_killfeed_content.py
+
+weapon-dataset:
+	$(PYTHON) scripts/build_weapon_dataset.py --killfeed-dataset data/killfeed_dataset --out data/weapon_dataset
+
+weapon-eval:
+	$(PYTHON) scripts/eval_weapon_recognition.py --dataset data/weapon_dataset --write-json data/weapon_dataset/eval_results.json
+
+weapon-sample:
+	$(PYTHON) scripts/sample_weapon_recognition.py
 
 panel-counter:
 	$(PYTHON) scripts/run_panel_counter.py --vod data/videos/lat_van.mp4

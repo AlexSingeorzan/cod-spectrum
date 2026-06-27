@@ -1,0 +1,32 @@
+{
+  "dataset": {
+    "path": "data/weapon_dataset",
+    "dataset_id": "lat_van_hp_weapon_icons_v0",
+    "icon_count": 120,
+    "labelled_weapon_icons": 0,
+    "label_counts": {},
+    "unknown_labels": 0,
+    "unclear_labels": 0,
+    "label_status": "unlabeled"
+  },
+  "models": {
+    "template": {
+      "model": "weapon_icon_template_nn@0.1.0",
+      "status": "unlabeled - no weapon-recognition accuracy claim",
+      "operational_gallery": null,
+      "leave_one_out": null
+    },
+    "histogram": {
+      "model": "weapon_icon_histogram_nn@0.1.0",
+      "status": "unlabeled - no weapon-recognition accuracy claim",
+      "operational_gallery": null,
+      "leave_one_out": null
+    }
+  },
+  "notes": [
+    "Weapon recognition is independent from player-name OCR.",
+    "No real accuracy is reported until weapon icons are human-labelled.",
+    "Operational gallery is a regression check; leave-one-out is the honest small-data estimate.",
+    "Low-confidence predictions return weapon=null."
+  ]
+}

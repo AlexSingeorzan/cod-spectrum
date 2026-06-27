@@ -1,0 +1,294 @@
+{
+  "dataset": {
+    "path": "data/fixtures/weapon_recognition_sample",
+    "dataset_id": "synthetic_weapon_icons_v0",
+    "icon_count": 6,
+    "labelled_weapon_icons": 6,
+    "label_counts": {
+      "AR": 2,
+      "SMG": 2,
+      "SNIPER": 2
+    },
+    "unknown_labels": 0,
+    "unclear_labels": 0,
+    "label_status": "labeled"
+  },
+  "models": {
+    "template": {
+      "model": "weapon_icon_template_nn@0.1.0",
+      "status": "labeled",
+      "operational_gallery": {
+        "samples": 6,
+        "exact_matches": 6,
+        "top1_accuracy": 1.0,
+        "macro_f1": 1.0,
+        "abstentions": 0,
+        "abstention_rate": 0.0,
+        "mean_confidence": 1.0,
+        "mean_latency_ms": 0.0326,
+        "per_class": {
+          "AR": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "SMG": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "SNIPER": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "AR": {
+            "AR": 2
+          },
+          "SMG": {
+            "SMG": 2
+          },
+          "SNIPER": {
+            "SNIPER": 2
+          }
+        },
+        "failures": [],
+        "training_samples": 6,
+        "classes": [
+          "AR",
+          "SMG",
+          "SNIPER"
+        ]
+      },
+      "leave_one_out": {
+        "samples": 6,
+        "exact_matches": 0,
+        "top1_accuracy": 0.0,
+        "macro_f1": 0.0,
+        "abstentions": 6,
+        "abstention_rate": 1.0,
+        "mean_confidence": 0.0,
+        "mean_latency_ms": 0.0257,
+        "per_class": {
+          "AR": {
+            "support": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "SMG": {
+            "support": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "SNIPER": {
+            "support": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        },
+        "confusion": {
+          "AR": {
+            "NULL": 2
+          },
+          "SMG": {
+            "NULL": 2
+          },
+          "SNIPER": {
+            "NULL": 2
+          }
+        },
+        "failures": [
+          {
+            "id": "weapon_ar_0",
+            "expected": "AR",
+            "predicted": null,
+            "confidence": 0.3062,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_ar_0.png"
+          },
+          {
+            "id": "weapon_ar_1",
+            "expected": "AR",
+            "predicted": null,
+            "confidence": 0.3222,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_ar_1.png"
+          },
+          {
+            "id": "weapon_smg_0",
+            "expected": "SMG",
+            "predicted": null,
+            "confidence": 0.4078,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_smg_0.png"
+          },
+          {
+            "id": "weapon_smg_1",
+            "expected": "SMG",
+            "predicted": null,
+            "confidence": 0.381,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_smg_1.png"
+          },
+          {
+            "id": "weapon_sniper_0",
+            "expected": "SNIPER",
+            "predicted": null,
+            "confidence": 0.2333,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_sniper_0.png"
+          },
+          {
+            "id": "weapon_sniper_1",
+            "expected": "SNIPER",
+            "predicted": null,
+            "confidence": 0.2158,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_sniper_1.png"
+          }
+        ]
+      }
+    },
+    "histogram": {
+      "model": "weapon_icon_histogram_nn@0.1.0",
+      "status": "labeled",
+      "operational_gallery": {
+        "samples": 6,
+        "exact_matches": 6,
+        "top1_accuracy": 1.0,
+        "macro_f1": 1.0,
+        "abstentions": 0,
+        "abstention_rate": 0.0,
+        "mean_confidence": 1.0,
+        "mean_latency_ms": 0.038,
+        "per_class": {
+          "AR": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "SMG": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "SNIPER": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "AR": {
+            "AR": 2
+          },
+          "SMG": {
+            "SMG": 2
+          },
+          "SNIPER": {
+            "SNIPER": 2
+          }
+        },
+        "failures": [],
+        "training_samples": 6,
+        "classes": [
+          "AR",
+          "SMG",
+          "SNIPER"
+        ]
+      },
+      "leave_one_out": {
+        "samples": 6,
+        "exact_matches": 2,
+        "top1_accuracy": 0.3333,
+        "macro_f1": 0.3333,
+        "abstentions": 4,
+        "abstention_rate": 0.6667,
+        "mean_confidence": 0.902,
+        "mean_latency_ms": 0.0368,
+        "per_class": {
+          "AR": {
+            "support": 2,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "SMG": {
+            "support": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "SNIPER": {
+            "support": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        },
+        "confusion": {
+          "AR": {
+            "AR": 2
+          },
+          "SMG": {
+            "NULL": 2
+          },
+          "SNIPER": {
+            "NULL": 2
+          }
+        },
+        "failures": [
+          {
+            "id": "weapon_smg_0",
+            "expected": "SMG",
+            "predicted": null,
+            "confidence": 0.3388,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_smg_0.png"
+          },
+          {
+            "id": "weapon_smg_1",
+            "expected": "SMG",
+            "predicted": null,
+            "confidence": 0.3157,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_smg_1.png"
+          },
+          {
+            "id": "weapon_sniper_0",
+            "expected": "SNIPER",
+            "predicted": null,
+            "confidence": 0.3223,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_sniper_0.png"
+          },
+          {
+            "id": "weapon_sniper_1",
+            "expected": "SNIPER",
+            "predicted": null,
+            "confidence": 0.4827,
+            "failure_reason": "below_confidence_threshold",
+            "icon_image": "icons/weapon_sniper_1.png"
+          }
+        ]
+      }
+    }
+  },
+  "notes": [
+    "Weapon recognition is independent from player-name OCR.",
+    "No real accuracy is reported until weapon icons are human-labelled.",
+    "Operational gallery is a regression check; leave-one-out is the honest small-data estimate.",
+    "Low-confidence predictions return weapon=null."
+  ]
+}
