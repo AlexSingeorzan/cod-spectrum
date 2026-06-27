@@ -139,8 +139,9 @@ def process_local_file(
             _mark_stage(session, broadcast.id, current_stage, "running", "sampling scorebar")
             session.commit()
             profile = load_hud_profile(hud_profile)
+            engine = build_ocr_engine(ocr_engine)
             observations, sampling_stats = extract_score_observations(
-                path, profile, build_ocr_engine(ocr_engine), settings.data_dir / "crops" / f"broadcast_{broadcast.id}",
+                path, profile, engine, settings.data_dir / "crops" / f"broadcast_{broadcast.id}",
                 sample_fps=sample_fps, change_threshold=settings.region_change_threshold, debug_crops=debug_crops,
             )
             if not observations:
@@ -150,7 +151,8 @@ def process_local_file(
             ))
             session.add(ModelOutput(
                 broadcast_id=broadcast.id, match_id=match.id, map_id=game_map.id,
-                model_name=f"{ocr_engine}_scorebar", output_type="score_observations",
+                model_name=f"{sampling_stats.get('model_name', ocr_engine)}@{sampling_stats.get('model_version', 'unknown')}",
+                output_type="score_observations",
                 payload={"observations": [item.model_dump() for item in observations], "sampling_stats": sampling_stats},
                 confidence=sum(item.confidence for item in observations) / len(observations),
                 evidence_frame_path=observations[0].evidence_frame_path, is_placeholder=ocr_engine == "stub",
@@ -324,7 +326,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--hud-profile", default="CDL_2026_1080p")
     parser.add_argument("--fps", type=float, default=1.0)
     parser.add_argument("--debug-crops", action="store_true")
-    parser.add_argument("--ocr-engine", choices=("stub", "tesseract"), default="stub")
+    parser.add_argument("--ocr-engine", choices=("stub", "cdl", "tesseract"), default="stub")
     parser.add_argument("--mode", choices=("auto", "hardpoint", "snd", "control", "unknown"), default="auto")
     args = parser.parse_args(argv)
     init_db()

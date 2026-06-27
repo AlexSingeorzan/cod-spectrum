@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import cv2
 
@@ -18,12 +19,18 @@ def extract_score_observations(
     sample_fps: float = 1.0,
     change_threshold: float = 2.0,
     debug_crops: bool = False,
-) -> tuple[list[ScoreObservation], dict[str, int]]:
+) -> tuple[list[ScoreObservation], dict[str, Any]]:
     output_dir.mkdir(parents=True, exist_ok=True)
     previous_crop = None
     previous_observation: ScoreObservation | None = None
     observations: list[ScoreObservation] = []
-    stats = {"samples": 0, "ocr_calls": 0, "stable_reuses": 0}
+    stats = {
+        "samples": 0,
+        "ocr_calls": 0,
+        "stable_reuses": 0,
+        "model_name": getattr(ocr, "name", type(ocr).__name__),
+        "model_version": getattr(ocr, "model_version", "unknown"),
+    }
     region = profile.regions["scorebar"]
     hints = profile.ocr_hints.get("scorebar", {})
     for sample in iter_video_samples(video_path, sample_fps):
@@ -111,4 +118,3 @@ def _event(event_type: str, observation: ScoreObservation, team_a: str, team_b: 
         "evidence_frame_path": observation.evidence_frame_path,
         "is_placeholder": False,
     }
-

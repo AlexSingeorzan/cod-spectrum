@@ -29,6 +29,9 @@ class OcrEngine(Protocol):
 class StubOcrEngine:
     """Deterministic fixture-backed OCR for offline tests and the sample flow."""
 
+    name = "stub_scorebar"
+    model_version = "fixture"
+
     def __init__(self, fixture_path: Path | None = None):
         path = fixture_path or get_settings().data_dir / "fixtures" / "sample_scores.json"
         self.readings = json.loads(path.read_text())["readings"] if path.exists() else []
@@ -49,6 +52,9 @@ class StubOcrEngine:
 
 class TesseractOcrEngine:
     """Optional CPU OCR backend. Requires the tesseract binary and pytesseract extra."""
+
+    name = "tesseract_scorebar"
+    model_version = "external"
 
     def read(self, image: np.ndarray, hints: dict | None = None) -> OcrResult:
         # TODO(model): Calibrate preprocessing and confidence thresholds against labeled CDL scorebars.
@@ -76,6 +82,10 @@ def parse_score(result: OcrResult) -> tuple[int, int] | None:
 def build_ocr_engine(name: str) -> OcrEngine:
     if name == "stub":
         return StubOcrEngine()
+    if name == "cdl":
+        from .scorebar_ocr import CdlScorebarOcrEngine
+
+        return CdlScorebarOcrEngine()
     if name == "tesseract":
         return TesseractOcrEngine()
     raise ValueError(f"unknown OCR engine: {name}")

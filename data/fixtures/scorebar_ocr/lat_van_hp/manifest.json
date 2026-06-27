@@ -1,0 +1,229 @@
+{
+  "version": 1,
+  "model_family": "cdl_scorebar_knn",
+  "description": "Human-verified LAT/VAN scorebar crops for Phase 3 OCR evaluation.",
+  "source_url": "https://youtu.be/6pyPLwdrzq4",
+  "label_source": "human_verified",
+  "labeled_by": "alex",
+  "samples": [
+    {
+      "sample_id": "lat_van_hp_0090",
+      "timestamp_seconds": 90.0,
+      "image_path": "crops/lat_van_hp_0090.png",
+      "score_a": 16,
+      "score_b": 11,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0118",
+      "timestamp_seconds": 118.0,
+      "image_path": "crops/lat_van_hp_0118.png",
+      "score_a": 34,
+      "score_b": 12,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0146",
+      "timestamp_seconds": 146.0,
+      "image_path": "crops/lat_van_hp_0146.png",
+      "score_a": 34,
+      "score_b": 38,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0174",
+      "timestamp_seconds": 174.0,
+      "image_path": "crops/lat_van_hp_0174.png",
+      "score_a": 39,
+      "score_b": 47,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0202",
+      "timestamp_seconds": 202.0,
+      "image_path": "crops/lat_van_hp_0202.png",
+      "score_a": 52,
+      "score_b": 58,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0230",
+      "timestamp_seconds": 230.0,
+      "image_path": "crops/lat_van_hp_0230.png",
+      "score_a": 61,
+      "score_b": 63,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0258",
+      "timestamp_seconds": 258.0,
+      "image_path": "crops/lat_van_hp_0258.png",
+      "score_a": 85,
+      "score_b": 63,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0286",
+      "timestamp_seconds": 286.0,
+      "image_path": "crops/lat_van_hp_0286.png",
+      "score_a": 99,
+      "score_b": 64,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0314",
+      "timestamp_seconds": 314.0,
+      "image_path": "crops/lat_van_hp_0314.png",
+      "score_a": 104,
+      "score_b": 71,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0342",
+      "timestamp_seconds": 342.0,
+      "image_path": "crops/lat_van_hp_0342.png",
+      "score_a": 120,
+      "score_b": 71,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0370",
+      "timestamp_seconds": 370.0,
+      "image_path": "crops/lat_van_hp_0370.png",
+      "score_a": 120,
+      "score_b": 95,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0398",
+      "timestamp_seconds": 398.0,
+      "image_path": "crops/lat_van_hp_0398.png",
+      "score_a": 129,
+      "score_b": 102,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0426",
+      "timestamp_seconds": 426.0,
+      "image_path": "crops/lat_van_hp_0426.png",
+      "score_a": 138,
+      "score_b": 109,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0454",
+      "timestamp_seconds": 454.0,
+      "image_path": "crops/lat_van_hp_0454.png",
+      "score_a": 150,
+      "score_b": 117,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0482",
+      "timestamp_seconds": 482.0,
+      "image_path": "crops/lat_van_hp_0482.png",
+      "score_a": 164,
+      "score_b": 121,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0510",
+      "timestamp_seconds": 510.0,
+      "image_path": "crops/lat_van_hp_0510.png",
+      "score_a": 190,
+      "score_b": 121,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0538",
+      "timestamp_seconds": 538.0,
+      "image_path": "crops/lat_van_hp_0538.png",
+      "score_a": 201,
+      "score_b": 128,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0566",
+      "timestamp_seconds": 566.0,
+      "image_path": "crops/lat_van_hp_0566.png",
+      "score_a": 215,
+      "score_b": 132,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0594",
+      "timestamp_seconds": 594.0,
+      "image_path": "crops/lat_van_hp_0594.png",
+      "score_a": 223,
+      "score_b": 132,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0622",
+      "timestamp_seconds": 622.0,
+      "image_path": "crops/lat_van_hp_0622.png",
+      "score_a": 232,
+      "score_b": 141,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    },
+    {
+      "sample_id": "lat_van_hp_0650",
+      "timestamp_seconds": 650.0,
+      "image_path": "crops/lat_van_hp_0650.png",
+      "score_a": 239,
+      "score_b": 156,
+      "source_url": "https://youtu.be/6pyPLwdrzq4",
+      "label_source": "human_verified",
+      "labeled_by": "alex"
+    }
+  ],
+  "excluded": [
+    {
+      "sample_id": "lat_van_hp_0685",
+      "timestamp_seconds": 685,
+      "reason": "evidence_crop_missing",
+      "score_a": 250,
+      "score_b": 156
+    }
+  ]
+}

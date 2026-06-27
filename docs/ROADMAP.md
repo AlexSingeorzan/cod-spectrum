@@ -57,8 +57,9 @@ Supporting invariants (already the discipline in the v0 code, now made universal
 
 ## 3. Current repository state (audit, 2026-06-27)
 
-FastAPI + SQLAlchemy + SQLite, CPU-only, Python 3.12. `main` branch, **no git
-remote** (commit-only). Baseline: **39 tests passing.**
+FastAPI + SQLAlchemy + SQLite, CPU-only, Python 3.12.13 in the local virtualenv.
+`main` branch, **no git remote configured**. Baseline after the Phase 0/1/2 work
+currently in this repository: **91 tests passing**.
 
 ### 3.1 What exists and is real
 
@@ -97,8 +98,11 @@ remote** (commit-only). Baseline: **39 tests passing.**
 
 - **Score OCR is not production-ready.** Default `StubOcrEngine` reads
   `data/fixtures/sample_scores.json`. `TesseractOcrEngine` is wired but **cannot
-  read the stylised CDL scorebar font** — recognition fails even per-character.
-  Real scores to date are **human-verified**, not auto-OCR'd.
+  read the stylised CDL scorebar font** reliably. Phase 3 adds
+  `CdlScorebarOcrEngine` (`0.1.0-knn`), a CPU digit-gallery baseline trained from
+  human-verified LAT/VAN scorebar crops. It reads the labeled gallery, but honest
+  leave-one-crop-out evaluation is only `10/21` exact scores (`0.4762`) and
+  temporal decoding is `11/21` (`0.5238`), so the stub remains the default.
 - **No killfeed, weapon, position, spawn, or objective extraction from pixels.**
 - **No audio pipeline at all** — caster/desk/player-comms intelligence is greenfield.
 - **xMWP is uncalibrated**; break/retake are scoring-flow inferences, not kill/hill-control confirmation.
@@ -123,7 +127,8 @@ identity, provenance, evidence, and confidence, wrapping exactly one **typed
 payload**. Detectors emit facts; analytics emit insights that cite facts. Storage,
 reports, API, and dashboards all consume the same stream. Full spec in
 [`EVENT_SCHEMA.md`](EVENT_SCHEMA.md). This is the contract every subsystem below
-emits into — it is built first, on purpose, because it is the spine of the platform.
+emits into — it was built first, on purpose, because it is the spine of the
+platform.
 
 ---
 
@@ -136,7 +141,7 @@ Each module is **independent and loosely coupled** — models are never entangle
 
 | Module | Status | Emits (facts) | Coach question it serves |
 |---|---|---|---|
-| Score OCR | 🟡 stub + human-verified | `ScoreUpdateEvent` | What is the score over time? |
+| Score OCR | 🟡 stub + evaluated CDL baseline | `ScoreUpdateEvent` | What is the score over time? |
 | Killfeed OCR | ⬜ | `KillEvent`, `DeathEvent`, `WeaponEvent`, `TradeEvent` | Who traded, who got isolated? |
 | Weapon recognition | ⬜ | `WeaponEvent` | What archetypes/swaps were used? |
 | Minimap detection | 🟡 classical | `PositionEvent` | Where was everyone? |
@@ -255,7 +260,7 @@ never skip tests; never invent data.
 | **0** ✅ | This roadmap | done — exists and audited |
 | **1** ✅ | Universal event schema (envelope, fact/insight, provenance, evidence, typed payloads) + adapter | done — schema + tests + docs + sample output; suite green |
 | **2** ✅ | Emit pipeline: score/break outputs persist as `GameEvent`s in `game_events`; report + API + dashboard read the unified stream; flat `events` table retired | done — byte-for-byte report parity (JSON/MD/HTML) vs pre-migration baseline |
-| **3** | Real Score OCR (trained digit model on labelled CDL scorebars) replacing the stub | eval: digit + score accuracy, temporal stability |
+| **3** ✅ | Score OCR baseline on labelled CDL scorebars (`CdlScorebarOcrEngine`) | done for baseline — dataset, eval, tests, docs, sample output; not promoted to default because LOO exact score accuracy is `0.4762` |
 | **4** | Killfeed OCR → `KillEvent`/`DeathEvent`/`WeaponEvent`/`TradeEvent` | precision/recall on labelled killfeed set |
 | **5** | Minimap → player-resolved `PositionEvent` (YOLO) with visibility discipline | mAP on labelled minimap set |
 | **6** | Objective/spawn tracking → `ObjectiveEvent`/`SpawnFlipEvent` from pixels | agreement with verified hill timeline |

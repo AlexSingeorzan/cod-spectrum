@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
+.DS_Store
 cod_spectrum.db
 data/frames/*
 data/crops/*
@@ -20,4 +21,3 @@ data/videos/lat_van.mp4
 # YOLO dataset images/labels are regenerable; keep only data.yaml + README
 data/minimap_dataset/images/
 data/minimap_dataset/labels/
-

@@ -27,6 +27,8 @@ Prerequisites: Python 3.12 (3.11+ supported) and FFmpeg on `PATH`.
 ```bash
 make setup
 make fixture
+make scorebar-ocr-dataset
+make scorebar-ocr-eval
 .venv/bin/python -m backend.app.workers.processor \
   --file data/videos/sample_hardpoint.mp4 \
   --hud-profile CDL_2026_1080p
@@ -91,7 +93,8 @@ Tables: `sources`, `broadcasts`, `processing_jobs`, `matches`, `maps`, `game_eve
 
 - Real: fractional HUD cropping, sampling cadence, crop-change gating, score-event construction, map boundary heuristics, lead changes, scoring-flow break/retake inference with debounce, xMWP HeuristicV0, evidence persistence, FFmpeg clips, reports, scheduler, retry records, API, and dashboard.
 - Stubbed: bundled scorebar OCR reads `data/fixtures/sample_scores.json` and marks its dependent events `is_placeholder=true`. It exists to make the complete flow deterministic and offline.
-- Optional real backend: `TesseractOcrEngine` is wired behind `--ocr-engine tesseract`. Install the Tesseract binary and run `.venv/bin/pip install -r requirements-ocr.txt`, then calibrate the scorebar profile before trusting output. It is intentionally not in the base environment.
+- Evaluated scorebar OCR baseline: `--ocr-engine cdl` uses `CdlScorebarOcrEngine`, a CPU k-NN digit-gallery model trained from human-verified LAT/VAN scorebar crops. It is versioned (`0.1.0-knn`) and confidence-capped by leave-one-crop-out evaluation. Current result: 21/21 operational gallery self-check, but only 10/21 leave-one-out exact score matches (`0.4762`) and 11/21 with temporal decoding (`0.5238`). This is not production-ready OCR.
+- Optional OCR experiment: `TesseractOcrEngine` is wired behind `--ocr-engine tesseract`. Install the Tesseract binary and run `.venv/bin/pip install -r requirements-ocr.txt`, then calibrate the scorebar profile before trusting output. It is intentionally not in the base environment.
 - Deferred: real killfeed parsing, transition-card/mode classification, deep SnD/Control analytics, and minimap object detection.
 
 No analytics are silently invented. Unknown-mode files skip Hardpoint break/retake and xMWP analytics. The sample is identified as Hardpoint by its filename; production runs should pass `--mode hardpoint` only when known or add a mode detector.
@@ -107,7 +110,14 @@ HUD profiles live in `data/configs/hud_profiles/` and use fractional coordinates
   --debug-crops
 ```
 
-Inspect `data/crops/broadcast_<id>/debug/`, tune only the JSON region fractions, and rerun on a fresh/local test database. For production scorebars, Tesseract is the lightest CPU starting point; PaddleOCR is a stronger next evaluation if its larger dependency footprint is acceptable. Label representative crops across teams, maps, resolutions, compression levels, and overlay revisions, then measure digit/score accuracy and temporal stability before enabling unattended processing. Expand next to match/hill timers, then killfeed rows.
+Inspect `data/crops/broadcast_<id>/debug/`, tune only the JSON region fractions, and rerun on a fresh/local test database. For the current `cdl` OCR baseline, the scorebar crop must contain the full broadcast scorebar geometry represented by `data/fixtures/scorebar_ocr/lat_van_hp`; the default synthetic fixture remains stub-backed. Label representative crops across teams, maps, resolutions, compression levels, and overlay revisions, then measure digit/score accuracy and temporal stability before enabling unattended processing. Expand next to match/hill timers, then killfeed rows.
+
+Rebuild and evaluate the current scorebar OCR baseline:
+
+```bash
+make scorebar-ocr-dataset
+make scorebar-ocr-eval
+```
 
 ## YOLO minimap next step
 

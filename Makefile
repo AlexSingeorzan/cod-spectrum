@@ -1,4 +1,4 @@
-.PHONY: setup fixture test serve scheduler process clean-data
+.PHONY: setup fixture scorebar-ocr-dataset scorebar-ocr-eval test serve scheduler process clean-data
 
 PYTHON := .venv/bin/python
 PYTHON_BOOTSTRAP ?= python3.12
@@ -11,6 +11,12 @@ setup:
 
 fixture:
 	$(PYTHON) scripts/generate_fixture.py
+
+scorebar-ocr-dataset:
+	$(PYTHON) scripts/build_scorebar_ocr_dataset.py
+
+scorebar-ocr-eval:
+	$(PYTHON) scripts/eval_scorebar_ocr.py --write-json data/fixtures/scorebar_ocr/lat_van_hp/eval_results.json
 
 test:
 	$(PYTHON) -m pytest -q

@@ -1,0 +1,2642 @@
+{
+  "dataset": {
+    "path": "data/fixtures/scorebar_ocr/lat_van_hp",
+    "samples": 21,
+    "source_url": "https://youtu.be/6pyPLwdrzq4",
+    "label_source": "human_verified",
+    "labeled_by": "alex",
+    "excluded": [
+      {
+        "sample_id": "lat_van_hp_0685",
+        "timestamp_seconds": 685,
+        "reason": "evidence_crop_missing",
+        "score_a": 250,
+        "score_b": 156
+      }
+    ]
+  },
+  "metrics": {
+    "operational_gallery": {
+      "samples": 21,
+      "exact_matches": 21,
+      "score_exact_accuracy": 1.0,
+      "side_accuracy": 1.0,
+      "digit_accuracy": 1.0,
+      "mean_confidence": 1.0,
+      "abstentions": 0,
+      "failures": []
+    },
+    "leave_one_out": {
+      "samples": 21,
+      "exact_matches": 10,
+      "score_exact_accuracy": 0.4762,
+      "side_accuracy": 0.6429,
+      "digit_accuracy": 0.8131,
+      "mean_confidence": 0.5102,
+      "abstentions": 0,
+      "failures": [
+        {
+          "sample_id": "lat_van_hp_0090",
+          "timestamp_seconds": 90.0,
+          "expected": [
+            16,
+            11
+          ],
+          "predicted": [
+            19,
+            1
+          ],
+          "raw_text": "19 1",
+          "confidence": 0.1955,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 19,
+              "score_b": 1,
+              "text": "19 1",
+              "confidence": 0.1955
+            },
+            {
+              "score_a": 0,
+              "score_b": 1,
+              "text": "0 1",
+              "confidence": 0.1159
+            },
+            {
+              "score_a": 19,
+              "score_b": 13,
+              "text": "19 013",
+              "confidence": 0.1122
+            },
+            {
+              "score_a": 19,
+              "score_b": 33,
+              "text": "19 33",
+              "confidence": 0.0865
+            },
+            {
+              "score_a": 0,
+              "score_b": 13,
+              "text": "0 013",
+              "confidence": 0.0326
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0118",
+          "timestamp_seconds": 118.0,
+          "expected": [
+            34,
+            12
+          ],
+          "predicted": [
+            34,
+            112
+          ],
+          "raw_text": "34 112",
+          "confidence": 0.6139,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 34,
+              "score_b": 112,
+              "text": "34 112",
+              "confidence": 0.6139
+            },
+            {
+              "score_a": 34,
+              "score_b": 12,
+              "text": "34 12",
+              "confidence": 0.5408
+            },
+            {
+              "score_a": 34,
+              "score_b": 1,
+              "text": "34 1",
+              "confidence": 0.4263
+            },
+            {
+              "score_a": 1,
+              "score_b": 112,
+              "text": "1 112",
+              "confidence": 0.1976
+            },
+            {
+              "score_a": 1,
+              "score_b": 12,
+              "text": "1 12",
+              "confidence": 0.1246
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0202",
+          "timestamp_seconds": 202.0,
+          "expected": [
+            52,
+            58
+          ],
+          "predicted": [
+            52,
+            56
+          ],
+          "raw_text": "52 56",
+          "confidence": 0.39,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 52,
+              "score_b": 56,
+              "text": "52 56",
+              "confidence": 0.39
+            },
+            {
+              "score_a": 52,
+              "score_b": 4,
+              "text": "52 4",
+              "confidence": 0.252
+            },
+            {
+              "score_a": 1,
+              "score_b": 56,
+              "text": "1 56",
+              "confidence": 0.1458
+            },
+            {
+              "score_a": 1,
+              "score_b": 4,
+              "text": "1 4",
+              "confidence": 0.0078
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0230",
+          "timestamp_seconds": 230.0,
+          "expected": [
+            61,
+            63
+          ],
+          "predicted": [
+            151,
+            63
+          ],
+          "raw_text": "151 63",
+          "confidence": 0.5976,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 151,
+              "score_b": 63,
+              "text": "151 63",
+              "confidence": 0.5976
+            },
+            {
+              "score_a": 91,
+              "score_b": 63,
+              "text": "91 63",
+              "confidence": 0.4348
+            },
+            {
+              "score_a": 1,
+              "score_b": 63,
+              "text": "1 63",
+              "confidence": 0.4206
+            },
+            {
+              "score_a": 151,
+              "score_b": 219,
+              "text": "151 219",
+              "confidence": 0.2008
+            },
+            {
+              "score_a": 151,
+              "score_b": 1,
+              "text": "151 1",
+              "confidence": 0.1827
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0286",
+          "timestamp_seconds": 286.0,
+          "expected": [
+            99,
+            64
+          ],
+          "predicted": [
+            99,
+            54
+          ],
+          "raw_text": "99 54",
+          "confidence": 0.1687,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 99,
+              "score_b": 54,
+              "text": "99 54",
+              "confidence": 0.1687
+            },
+            {
+              "score_a": 4,
+              "score_b": 54,
+              "text": "4 54",
+              "confidence": 0.0928
+            },
+            {
+              "score_a": 99,
+              "score_b": 1,
+              "text": "99 1",
+              "confidence": 0.0834
+            },
+            {
+              "score_a": 4,
+              "score_b": 1,
+              "text": "4 1",
+              "confidence": 0.0075
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0454",
+          "timestamp_seconds": 454.0,
+          "expected": [
+            150,
+            117
+          ],
+          "predicted": [
+            160,
+            17
+          ],
+          "raw_text": "160 17",
+          "confidence": 0.5374,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 160,
+              "score_b": 17,
+              "text": "160 17",
+              "confidence": 0.5374
+            },
+            {
+              "score_a": 1,
+              "score_b": 17,
+              "text": "1 17",
+              "confidence": 0.3237
+            },
+            {
+              "score_a": 160,
+              "score_b": 117,
+              "text": "160 117",
+              "confidence": 0.3234
+            },
+            {
+              "score_a": 61,
+              "score_b": 17,
+              "text": "61 17",
+              "confidence": 0.3192
+            },
+            {
+              "score_a": 160,
+              "score_b": 1,
+              "text": "160 1",
+              "confidence": 0.2586
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0482",
+          "timestamp_seconds": 482.0,
+          "expected": [
+            164,
+            121
+          ],
+          "predicted": [
+            154,
+            121
+          ],
+          "raw_text": "154 121",
+          "confidence": 0.6673,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 154,
+              "score_b": 121,
+              "text": "154 121",
+              "confidence": 0.6673
+            },
+            {
+              "score_a": 1,
+              "score_b": 121,
+              "text": "1 121",
+              "confidence": 0.4572
+            },
+            {
+              "score_a": 17,
+              "score_b": 121,
+              "text": "17 121",
+              "confidence": 0.455
+            },
+            {
+              "score_a": 154,
+              "score_b": 11,
+              "text": "154 11",
+              "confidence": 0.277
+            },
+            {
+              "score_a": 154,
+              "score_b": 4,
+              "text": "154 4",
+              "confidence": 0.2293
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0510",
+          "timestamp_seconds": 510.0,
+          "expected": [
+            190,
+            121
+          ],
+          "predicted": [
+            120,
+            121
+          ],
+          "raw_text": "120 121",
+          "confidence": 0.6407,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 120,
+              "score_b": 121,
+              "text": "120 121",
+              "confidence": 0.6407
+            },
+            {
+              "score_a": 1,
+              "score_b": 121,
+              "text": "1 121",
+              "confidence": 0.4627
+            },
+            {
+              "score_a": 61,
+              "score_b": 121,
+              "text": "61 121",
+              "confidence": 0.4578
+            },
+            {
+              "score_a": 120,
+              "score_b": 11,
+              "text": "120 11",
+              "confidence": 0.2503
+            },
+            {
+              "score_a": 120,
+              "score_b": 4,
+              "text": "120 4",
+              "confidence": 0.2034
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0538",
+          "timestamp_seconds": 538.0,
+          "expected": [
+            201,
+            128
+          ],
+          "predicted": [
+            211,
+            158
+          ],
+          "raw_text": "211 158",
+          "confidence": 0.3016,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 211,
+              "score_b": 158,
+              "text": "211 158",
+              "confidence": 0.3016
+            },
+            {
+              "score_a": 211,
+              "score_b": 62,
+              "text": "211 62",
+              "confidence": 0.1706
+            },
+            {
+              "score_a": 21,
+              "score_b": 158,
+              "text": "21 158",
+              "confidence": 0.1647
+            },
+            {
+              "score_a": 211,
+              "score_b": 4,
+              "text": "211 4",
+              "confidence": 0.1641
+            },
+            {
+              "score_a": 1,
+              "score_b": 158,
+              "text": "1 158",
+              "confidence": 0.1531
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0594",
+          "timestamp_seconds": 594.0,
+          "expected": [
+            223,
+            132
+          ],
+          "predicted": [
+            222,
+            132
+          ],
+          "raw_text": "222 132",
+          "confidence": 0.4942,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 222,
+              "score_b": 132,
+              "text": "222 132",
+              "confidence": 0.4942
+            },
+            {
+              "score_a": 222,
+              "score_b": 62,
+              "text": "222 62",
+              "confidence": 0.281
+            },
+            {
+              "score_a": 1,
+              "score_b": 132,
+              "text": "1 132",
+              "confidence": 0.264
+            },
+            {
+              "score_a": 31,
+              "score_b": 132,
+              "text": "31 132",
+              "confidence": 0.2628
+            },
+            {
+              "score_a": 222,
+              "score_b": 1,
+              "text": "222 1",
+              "confidence": 0.2562
+            }
+          ]
+        },
+        {
+          "sample_id": "lat_van_hp_0650",
+          "timestamp_seconds": 650.0,
+          "expected": [
+            239,
+            156
+          ],
+          "predicted": [
+            236,
+            165
+          ],
+          "raw_text": "236 165",
+          "confidence": 0.3047,
+          "exact": false,
+          "top_candidates": [
+            {
+              "score_a": 236,
+              "score_b": 165,
+              "text": "236 165",
+              "confidence": 0.3047
+            },
+            {
+              "score_a": 236,
+              "score_b": 62,
+              "text": "236 62",
+              "confidence": 0.2248
+            },
+            {
+              "score_a": 236,
+              "score_b": 1,
+              "text": "236 1",
+              "confidence": 0.2215
+            },
+            {
+              "score_a": 1,
+              "score_b": 165,
+              "text": "1 165",
+              "confidence": 0.0948
+            },
+            {
+              "score_a": 36,
+              "score_b": 165,
+              "text": "36 165",
+              "confidence": 0.0926
+            }
+          ]
+        }
+      ]
+    },
+    "leave_one_out_temporal": {
+      "samples": 21,
+      "exact_matches": 11,
+      "score_exact_accuracy": 0.5238,
+      "failures": [
+        {
+          "sample_id": "lat_van_hp_0090",
+          "timestamp_seconds": 90.0,
+          "expected": [
+            16,
+            11
+          ],
+          "predicted": [
+            19,
+            1
+          ],
+          "confidence": 0.1955,
+          "exact": false
+        },
+        {
+          "sample_id": "lat_van_hp_0202",
+          "timestamp_seconds": 202.0,
+          "expected": [
+            52,
+            58
+          ],
+          "predicted": [
+            52,
+            56
+          ],
+          "confidence": 0.39,
+          "exact": false
+        },
+        {
+          "sample_id": "lat_van_hp_0230",
+          "timestamp_seconds": 230.0,
+          "expected": [
+            61,
+            63
+          ],
+          "predicted": [
+            91,
+            63
+          ],
+          "confidence": 0.4348,
+          "exact": false
+        },
+        {
+          "sample_id": "lat_van_hp_0286",
+          "timestamp_seconds": 286.0,
+          "expected": [
+            99,
+            64
+          ],
+          "predicted": [
+            99,
+            54
+          ],
+          "confidence": 0.1687,
+          "exact": false
+        },
+        {
+          "sample_id": "lat_van_hp_0454",
+          "timestamp_seconds": 454.0,
+          "expected": [
+            150,
+            117
+          ],
+          "predicted": [
+            160,
+            117
+          ],
+          "confidence": 0.3234,
+          "exact": false
+        },
+        {
+          "sample_id": "lat_van_hp_0482",
+          "timestamp_seconds": 482.0,
+          "expected": [
+            164,
+            121
+          ],
+          "predicted": [
+            154,
+            121
+          ],
+          "confidence": 0.6673,
+          "exact": false
+        },
+        {
+          "sample_id": "lat_van_hp_0510",
+          "timestamp_seconds": 510.0,
+          "expected": [
+            190,
+            121
+          ],
+          "predicted": [
+            120,
+            121
+          ],
+          "confidence": 0.6407,
+          "exact": false
+        },
+        {
+          "sample_id": "lat_van_hp_0538",
+          "timestamp_seconds": 538.0,
+          "expected": [
+            201,
+            128
+          ],
+          "predicted": [
+            211,
+            158
+          ],
+          "confidence": 0.3016,
+          "exact": false
+        },
+        {
+          "sample_id": "lat_van_hp_0594",
+          "timestamp_seconds": 594.0,
+          "expected": [
+            223,
+            132
+          ],
+          "predicted": [
+            222,
+            132
+          ],
+          "confidence": 0.4942,
+          "exact": false
+        },
+        {
+          "sample_id": "lat_van_hp_0650",
+          "timestamp_seconds": 650.0,
+          "expected": [
+            239,
+            156
+          ],
+          "predicted": [
+            236,
+            165
+          ],
+          "confidence": 0.3047,
+          "exact": false
+        }
+      ]
+    }
+  },
+  "rows": {
+    "operational_gallery": [
+      {
+        "sample_id": "lat_van_hp_0090",
+        "timestamp_seconds": 90.0,
+        "expected": [
+          16,
+          11
+        ],
+        "predicted": [
+          16,
+          11
+        ],
+        "raw_text": "16 11",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 16,
+            "score_b": 11,
+            "text": "16 11",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 16,
+            "score_b": 111,
+            "text": "16 111",
+            "confidence": 0.7209
+          },
+          {
+            "score_a": 115,
+            "score_b": 11,
+            "text": "115 11",
+            "confidence": 0.7087
+          },
+          {
+            "score_a": 16,
+            "score_b": 1,
+            "text": "16 1",
+            "confidence": 0.6159
+          },
+          {
+            "score_a": 1,
+            "score_b": 11,
+            "text": "1 11",
+            "confidence": 0.5
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0118",
+        "timestamp_seconds": 118.0,
+        "expected": [
+          34,
+          12
+        ],
+        "predicted": [
+          34,
+          12
+        ],
+        "raw_text": "34 12",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 34,
+            "score_b": 12,
+            "text": "34 12",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 34,
+            "score_b": 112,
+            "text": "34 112",
+            "confidence": 0.689
+          },
+          {
+            "score_a": 1,
+            "score_b": 12,
+            "text": "1 12",
+            "confidence": 0.5086
+          },
+          {
+            "score_a": 34,
+            "score_b": 1,
+            "text": "34 1",
+            "confidence": 0.5014
+          },
+          {
+            "score_a": 1,
+            "score_b": 112,
+            "text": "1 112",
+            "confidence": 0.1976
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0146",
+        "timestamp_seconds": 146.0,
+        "expected": [
+          34,
+          38
+        ],
+        "predicted": [
+          34,
+          38
+        ],
+        "raw_text": "34 38",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 34,
+            "score_b": 38,
+            "text": "34 38",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 34,
+            "score_b": 219,
+            "text": "34 219",
+            "confidence": 0.5468
+          },
+          {
+            "score_a": 34,
+            "score_b": 4,
+            "text": "34 4",
+            "confidence": 0.5141
+          },
+          {
+            "score_a": 1,
+            "score_b": 38,
+            "text": "1 38",
+            "confidence": 0.5086
+          },
+          {
+            "score_a": 1,
+            "score_b": 219,
+            "text": "1 219",
+            "confidence": 0.0554
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0174",
+        "timestamp_seconds": 174.0,
+        "expected": [
+          39,
+          47
+        ],
+        "predicted": [
+          39,
+          47
+        ],
+        "raw_text": "39 47",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 39,
+            "score_b": 47,
+            "text": "39 47",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 39,
+            "score_b": 217,
+            "text": "39 217",
+            "confidence": 0.6249
+          },
+          {
+            "score_a": 219,
+            "score_b": 47,
+            "text": "219 47",
+            "confidence": 0.5654
+          },
+          {
+            "score_a": 39,
+            "score_b": 1,
+            "text": "39 1",
+            "confidence": 0.5147
+          },
+          {
+            "score_a": 4,
+            "score_b": 47,
+            "text": "4 47",
+            "confidence": 0.5017
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0202",
+        "timestamp_seconds": 202.0,
+        "expected": [
+          52,
+          58
+        ],
+        "predicted": [
+          52,
+          58
+        ],
+        "raw_text": "52 58",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 52,
+            "score_b": 58,
+            "text": "52 58",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 1,
+            "score_b": 58,
+            "text": "1 58",
+            "confidence": 0.5048
+          },
+          {
+            "score_a": 52,
+            "score_b": 4,
+            "text": "52 4",
+            "confidence": 0.503
+          },
+          {
+            "score_a": 1,
+            "score_b": 4,
+            "text": "1 4",
+            "confidence": 0.0078
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0230",
+        "timestamp_seconds": 230.0,
+        "expected": [
+          61,
+          63
+        ],
+        "predicted": [
+          61,
+          63
+        ],
+        "raw_text": "61 63",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 61,
+            "score_b": 63,
+            "text": "61 63",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 151,
+            "score_b": 63,
+            "text": "151 63",
+            "confidence": 0.6783
+          },
+          {
+            "score_a": 61,
+            "score_b": 1,
+            "text": "61 1",
+            "confidence": 0.5044
+          },
+          {
+            "score_a": 1,
+            "score_b": 63,
+            "text": "1 63",
+            "confidence": 0.5013
+          },
+          {
+            "score_a": 151,
+            "score_b": 1,
+            "text": "151 1",
+            "confidence": 0.1827
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0258",
+        "timestamp_seconds": 258.0,
+        "expected": [
+          85,
+          63
+        ],
+        "predicted": [
+          85,
+          63
+        ],
+        "raw_text": "85 63",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 85,
+            "score_b": 63,
+            "text": "85 63",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 85,
+            "score_b": 1,
+            "text": "85 1",
+            "confidence": 0.5044
+          },
+          {
+            "score_a": 4,
+            "score_b": 63,
+            "text": "4 63",
+            "confidence": 0.5015
+          },
+          {
+            "score_a": 4,
+            "score_b": 1,
+            "text": "4 1",
+            "confidence": 0.006
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0286",
+        "timestamp_seconds": 286.0,
+        "expected": [
+          99,
+          64
+        ],
+        "predicted": [
+          99,
+          64
+        ],
+        "raw_text": "99 64",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 99,
+            "score_b": 64,
+            "text": "99 64",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 4,
+            "score_b": 64,
+            "text": "4 64",
+            "confidence": 0.5045
+          },
+          {
+            "score_a": 99,
+            "score_b": 1,
+            "text": "99 1",
+            "confidence": 0.5029
+          },
+          {
+            "score_a": 4,
+            "score_b": 1,
+            "text": "4 1",
+            "confidence": 0.0075
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0314",
+        "timestamp_seconds": 314.0,
+        "expected": [
+          104,
+          71
+        ],
+        "predicted": [
+          104,
+          71
+        ],
+        "raw_text": "104 71",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 104,
+            "score_b": 71,
+            "text": "104 71",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 104,
+            "score_b": 171,
+            "text": "104 171",
+            "confidence": 0.6793
+          },
+          {
+            "score_a": 1,
+            "score_b": 71,
+            "text": "1 71",
+            "confidence": 0.5246
+          },
+          {
+            "score_a": 7,
+            "score_b": 71,
+            "text": "07 71",
+            "confidence": 0.5198
+          },
+          {
+            "score_a": 104,
+            "score_b": 1,
+            "text": "104 1",
+            "confidence": 0.516
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0342",
+        "timestamp_seconds": 342.0,
+        "expected": [
+          120,
+          71
+        ],
+        "predicted": [
+          120,
+          71
+        ],
+        "raw_text": "120 71",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 120,
+            "score_b": 71,
+            "text": "120 71",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 120,
+            "score_b": 171,
+            "text": "120 171",
+            "confidence": 0.6778
+          },
+          {
+            "score_a": 120,
+            "score_b": 1,
+            "text": "120 1",
+            "confidence": 0.516
+          },
+          {
+            "score_a": 61,
+            "score_b": 71,
+            "text": "61 71",
+            "confidence": 0.5102
+          },
+          {
+            "score_a": 1,
+            "score_b": 71,
+            "text": "1 71",
+            "confidence": 0.5055
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0370",
+        "timestamp_seconds": 370.0,
+        "expected": [
+          120,
+          95
+        ],
+        "predicted": [
+          120,
+          95
+        ],
+        "raw_text": "120 95",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 120,
+            "score_b": 95,
+            "text": "120 95",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 61,
+            "score_b": 95,
+            "text": "61 95",
+            "confidence": 0.5093
+          },
+          {
+            "score_a": 120,
+            "score_b": 1,
+            "text": "120 1",
+            "confidence": 0.5067
+          },
+          {
+            "score_a": 1,
+            "score_b": 95,
+            "text": "1 95",
+            "confidence": 0.5037
+          },
+          {
+            "score_a": 61,
+            "score_b": 1,
+            "text": "61 1",
+            "confidence": 0.016
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0398",
+        "timestamp_seconds": 398.0,
+        "expected": [
+          129,
+          102
+        ],
+        "predicted": [
+          129,
+          102
+        ],
+        "raw_text": "129 102",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 129,
+            "score_b": 102,
+            "text": "129 102",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 129,
+            "score_b": 1,
+            "text": "129 1",
+            "confidence": 0.5263
+          },
+          {
+            "score_a": 129,
+            "score_b": 2,
+            "text": "129 02",
+            "confidence": 0.5163
+          },
+          {
+            "score_a": 63,
+            "score_b": 102,
+            "text": "63 102",
+            "confidence": 0.5112
+          },
+          {
+            "score_a": 1,
+            "score_b": 102,
+            "text": "1 102",
+            "confidence": 0.5087
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0426",
+        "timestamp_seconds": 426.0,
+        "expected": [
+          138,
+          109
+        ],
+        "predicted": [
+          138,
+          109
+        ],
+        "raw_text": "138 109",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 138,
+            "score_b": 109,
+            "text": "138 109",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 138,
+            "score_b": 1,
+            "text": "138 1",
+            "confidence": 0.5189
+          },
+          {
+            "score_a": 138,
+            "score_b": 13,
+            "text": "138 13",
+            "confidence": 0.509
+          },
+          {
+            "score_a": 61,
+            "score_b": 109,
+            "text": "61 109",
+            "confidence": 0.5077
+          },
+          {
+            "score_a": 1,
+            "score_b": 109,
+            "text": "1 109",
+            "confidence": 0.5009
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0454",
+        "timestamp_seconds": 454.0,
+        "expected": [
+          150,
+          117
+        ],
+        "predicted": [
+          150,
+          117
+        ],
+        "raw_text": "150 117",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 150,
+            "score_b": 117,
+            "text": "150 117",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 150,
+            "score_b": 17,
+            "text": "150 17",
+            "confidence": 0.808
+          },
+          {
+            "score_a": 150,
+            "score_b": 1,
+            "text": "150 1",
+            "confidence": 0.5292
+          },
+          {
+            "score_a": 61,
+            "score_b": 117,
+            "text": "61 117",
+            "confidence": 0.5117
+          },
+          {
+            "score_a": 1,
+            "score_b": 117,
+            "text": "1 117",
+            "confidence": 0.5064
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0482",
+        "timestamp_seconds": 482.0,
+        "expected": [
+          164,
+          121
+        ],
+        "predicted": [
+          164,
+          121
+        ],
+        "raw_text": "164 121",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 164,
+            "score_b": 121,
+            "text": "164 121",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 164,
+            "score_b": 11,
+            "text": "164 11",
+            "confidence": 0.5574
+          },
+          {
+            "score_a": 164,
+            "score_b": 4,
+            "text": "164 4",
+            "confidence": 0.5097
+          },
+          {
+            "score_a": 1,
+            "score_b": 121,
+            "text": "1 121",
+            "confidence": 0.5094
+          },
+          {
+            "score_a": 17,
+            "score_b": 121,
+            "text": "17 121",
+            "confidence": 0.5072
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0510",
+        "timestamp_seconds": 510.0,
+        "expected": [
+          190,
+          121
+        ],
+        "predicted": [
+          190,
+          121
+        ],
+        "raw_text": "190 121",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 190,
+            "score_b": 121,
+            "text": "190 121",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 190,
+            "score_b": 11,
+            "text": "190 11",
+            "confidence": 0.5566
+          },
+          {
+            "score_a": 1,
+            "score_b": 121,
+            "text": "1 121",
+            "confidence": 0.5157
+          },
+          {
+            "score_a": 61,
+            "score_b": 121,
+            "text": "61 121",
+            "confidence": 0.5108
+          },
+          {
+            "score_a": 190,
+            "score_b": 4,
+            "text": "190 4",
+            "confidence": 0.5097
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0538",
+        "timestamp_seconds": 538.0,
+        "expected": [
+          201,
+          128
+        ],
+        "predicted": [
+          201,
+          128
+        ],
+        "raw_text": "201 128",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 201,
+            "score_b": 128,
+            "text": "201 128",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 21,
+            "score_b": 128,
+            "text": "21 128",
+            "confidence": 0.5237
+          },
+          {
+            "score_a": 1,
+            "score_b": 128,
+            "text": "1 128",
+            "confidence": 0.5121
+          },
+          {
+            "score_a": 201,
+            "score_b": 62,
+            "text": "201 62",
+            "confidence": 0.5099
+          },
+          {
+            "score_a": 201,
+            "score_b": 4,
+            "text": "201 4",
+            "confidence": 0.5034
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0566",
+        "timestamp_seconds": 566.0,
+        "expected": [
+          215,
+          132
+        ],
+        "predicted": [
+          215,
+          132
+        ],
+        "raw_text": "215 132",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 215,
+            "score_b": 132,
+            "text": "215 132",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 23,
+            "score_b": 132,
+            "text": "23 132",
+            "confidence": 0.5288
+          },
+          {
+            "score_a": 215,
+            "score_b": 62,
+            "text": "215 62",
+            "confidence": 0.5278
+          },
+          {
+            "score_a": 1,
+            "score_b": 132,
+            "text": "1 132",
+            "confidence": 0.5193
+          },
+          {
+            "score_a": 215,
+            "score_b": 1,
+            "text": "215 1",
+            "confidence": 0.506
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0594",
+        "timestamp_seconds": 594.0,
+        "expected": [
+          223,
+          132
+        ],
+        "predicted": [
+          223,
+          132
+        ],
+        "raw_text": "223 132",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 223,
+            "score_b": 132,
+            "text": "223 132",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 223,
+            "score_b": 62,
+            "text": "223 62",
+            "confidence": 0.5276
+          },
+          {
+            "score_a": 223,
+            "score_b": 1,
+            "text": "223 1",
+            "confidence": 0.5137
+          },
+          {
+            "score_a": 1,
+            "score_b": 132,
+            "text": "1 132",
+            "confidence": 0.5123
+          },
+          {
+            "score_a": 31,
+            "score_b": 132,
+            "text": "31 132",
+            "confidence": 0.5111
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0622",
+        "timestamp_seconds": 622.0,
+        "expected": [
+          232,
+          141
+        ],
+        "predicted": [
+          232,
+          141
+        ],
+        "raw_text": "232 141",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 232,
+            "score_b": 141,
+            "text": "232 141",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 232,
+            "score_b": 11,
+            "text": "232 11",
+            "confidence": 0.5196
+          },
+          {
+            "score_a": 232,
+            "score_b": 4,
+            "text": "232 4",
+            "confidence": 0.5083
+          },
+          {
+            "score_a": 1,
+            "score_b": 141,
+            "text": "1 141",
+            "confidence": 0.5043
+          },
+          {
+            "score_a": 31,
+            "score_b": 141,
+            "text": "31 141",
+            "confidence": 0.5039
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0650",
+        "timestamp_seconds": 650.0,
+        "expected": [
+          239,
+          156
+        ],
+        "predicted": [
+          239,
+          156
+        ],
+        "raw_text": "239 156",
+        "confidence": 1.0,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 239,
+            "score_b": 156,
+            "text": "239 156",
+            "confidence": 1.0
+          },
+          {
+            "score_a": 239,
+            "score_b": 62,
+            "text": "239 62",
+            "confidence": 0.5092
+          },
+          {
+            "score_a": 239,
+            "score_b": 1,
+            "text": "239 1",
+            "confidence": 0.5059
+          },
+          {
+            "score_a": 1,
+            "score_b": 156,
+            "text": "1 156",
+            "confidence": 0.5057
+          },
+          {
+            "score_a": 36,
+            "score_b": 156,
+            "text": "36 156",
+            "confidence": 0.5035
+          }
+        ]
+      }
+    ],
+    "leave_one_out": [
+      {
+        "sample_id": "lat_van_hp_0090",
+        "timestamp_seconds": 90.0,
+        "expected": [
+          16,
+          11
+        ],
+        "predicted": [
+          19,
+          1
+        ],
+        "raw_text": "19 1",
+        "confidence": 0.1955,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 19,
+            "score_b": 1,
+            "text": "19 1",
+            "confidence": 0.1955
+          },
+          {
+            "score_a": 0,
+            "score_b": 1,
+            "text": "0 1",
+            "confidence": 0.1159
+          },
+          {
+            "score_a": 19,
+            "score_b": 13,
+            "text": "19 013",
+            "confidence": 0.1122
+          },
+          {
+            "score_a": 19,
+            "score_b": 33,
+            "text": "19 33",
+            "confidence": 0.0865
+          },
+          {
+            "score_a": 0,
+            "score_b": 13,
+            "text": "0 013",
+            "confidence": 0.0326
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0118",
+        "timestamp_seconds": 118.0,
+        "expected": [
+          34,
+          12
+        ],
+        "predicted": [
+          34,
+          112
+        ],
+        "raw_text": "34 112",
+        "confidence": 0.6139,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 34,
+            "score_b": 112,
+            "text": "34 112",
+            "confidence": 0.6139
+          },
+          {
+            "score_a": 34,
+            "score_b": 12,
+            "text": "34 12",
+            "confidence": 0.5408
+          },
+          {
+            "score_a": 34,
+            "score_b": 1,
+            "text": "34 1",
+            "confidence": 0.4263
+          },
+          {
+            "score_a": 1,
+            "score_b": 112,
+            "text": "1 112",
+            "confidence": 0.1976
+          },
+          {
+            "score_a": 1,
+            "score_b": 12,
+            "text": "1 12",
+            "confidence": 0.1246
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0146",
+        "timestamp_seconds": 146.0,
+        "expected": [
+          34,
+          38
+        ],
+        "predicted": [
+          34,
+          38
+        ],
+        "raw_text": "34 38",
+        "confidence": 0.6663,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 34,
+            "score_b": 38,
+            "text": "34 38",
+            "confidence": 0.6663
+          },
+          {
+            "score_a": 34,
+            "score_b": 219,
+            "text": "34 219",
+            "confidence": 0.4965
+          },
+          {
+            "score_a": 34,
+            "score_b": 4,
+            "text": "34 4",
+            "confidence": 0.4638
+          },
+          {
+            "score_a": 1,
+            "score_b": 38,
+            "text": "1 38",
+            "confidence": 0.2252
+          },
+          {
+            "score_a": 1,
+            "score_b": 219,
+            "text": "1 219",
+            "confidence": 0.0554
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0174",
+        "timestamp_seconds": 174.0,
+        "expected": [
+          39,
+          47
+        ],
+        "predicted": [
+          39,
+          47
+        ],
+        "raw_text": "39 47",
+        "confidence": 0.6992,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 39,
+            "score_b": 47,
+            "text": "39 47",
+            "confidence": 0.6992
+          },
+          {
+            "score_a": 39,
+            "score_b": 217,
+            "text": "39 217",
+            "confidence": 0.545
+          },
+          {
+            "score_a": 39,
+            "score_b": 1,
+            "text": "39 1",
+            "confidence": 0.4327
+          },
+          {
+            "score_a": 219,
+            "score_b": 47,
+            "text": "219 47",
+            "confidence": 0.3466
+          },
+          {
+            "score_a": 4,
+            "score_b": 47,
+            "text": "4 47",
+            "confidence": 0.2828
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0202",
+        "timestamp_seconds": 202.0,
+        "expected": [
+          52,
+          58
+        ],
+        "predicted": [
+          52,
+          56
+        ],
+        "raw_text": "52 56",
+        "confidence": 0.39,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 52,
+            "score_b": 56,
+            "text": "52 56",
+            "confidence": 0.39
+          },
+          {
+            "score_a": 52,
+            "score_b": 4,
+            "text": "52 4",
+            "confidence": 0.252
+          },
+          {
+            "score_a": 1,
+            "score_b": 56,
+            "text": "1 56",
+            "confidence": 0.1458
+          },
+          {
+            "score_a": 1,
+            "score_b": 4,
+            "text": "1 4",
+            "confidence": 0.0078
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0230",
+        "timestamp_seconds": 230.0,
+        "expected": [
+          61,
+          63
+        ],
+        "predicted": [
+          151,
+          63
+        ],
+        "raw_text": "151 63",
+        "confidence": 0.5976,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 151,
+            "score_b": 63,
+            "text": "151 63",
+            "confidence": 0.5976
+          },
+          {
+            "score_a": 91,
+            "score_b": 63,
+            "text": "91 63",
+            "confidence": 0.4348
+          },
+          {
+            "score_a": 1,
+            "score_b": 63,
+            "text": "1 63",
+            "confidence": 0.4206
+          },
+          {
+            "score_a": 151,
+            "score_b": 219,
+            "text": "151 219",
+            "confidence": 0.2008
+          },
+          {
+            "score_a": 151,
+            "score_b": 1,
+            "text": "151 1",
+            "confidence": 0.1827
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0258",
+        "timestamp_seconds": 258.0,
+        "expected": [
+          85,
+          63
+        ],
+        "predicted": [
+          85,
+          63
+        ],
+        "raw_text": "85 63",
+        "confidence": 0.533,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 85,
+            "score_b": 63,
+            "text": "85 63",
+            "confidence": 0.533
+          },
+          {
+            "score_a": 4,
+            "score_b": 63,
+            "text": "4 63",
+            "confidence": 0.4221
+          },
+          {
+            "score_a": 85,
+            "score_b": 1,
+            "text": "85 1",
+            "confidence": 0.117
+          },
+          {
+            "score_a": 4,
+            "score_b": 1,
+            "text": "4 1",
+            "confidence": 0.006
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0286",
+        "timestamp_seconds": 286.0,
+        "expected": [
+          99,
+          64
+        ],
+        "predicted": [
+          99,
+          54
+        ],
+        "raw_text": "99 54",
+        "confidence": 0.1687,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 99,
+            "score_b": 54,
+            "text": "99 54",
+            "confidence": 0.1687
+          },
+          {
+            "score_a": 4,
+            "score_b": 54,
+            "text": "4 54",
+            "confidence": 0.0928
+          },
+          {
+            "score_a": 99,
+            "score_b": 1,
+            "text": "99 1",
+            "confidence": 0.0834
+          },
+          {
+            "score_a": 4,
+            "score_b": 1,
+            "text": "4 1",
+            "confidence": 0.0075
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0314",
+        "timestamp_seconds": 314.0,
+        "expected": [
+          104,
+          71
+        ],
+        "predicted": [
+          104,
+          71
+        ],
+        "raw_text": "104 71",
+        "confidence": 0.6888,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 104,
+            "score_b": 71,
+            "text": "104 71",
+            "confidence": 0.6888
+          },
+          {
+            "score_a": 1,
+            "score_b": 71,
+            "text": "1 71",
+            "confidence": 0.4675
+          },
+          {
+            "score_a": 7,
+            "score_b": 71,
+            "text": "07 71",
+            "confidence": 0.4627
+          },
+          {
+            "score_a": 104,
+            "score_b": 171,
+            "text": "104 171",
+            "confidence": 0.426
+          },
+          {
+            "score_a": 104,
+            "score_b": 1,
+            "text": "104 1",
+            "confidence": 0.262
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0342",
+        "timestamp_seconds": 342.0,
+        "expected": [
+          120,
+          71
+        ],
+        "predicted": [
+          120,
+          71
+        ],
+        "raw_text": "120 71",
+        "confidence": 0.807,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 120,
+            "score_b": 71,
+            "text": "120 71",
+            "confidence": 0.807
+          },
+          {
+            "score_a": 120,
+            "score_b": 171,
+            "text": "120 171",
+            "confidence": 0.5416
+          },
+          {
+            "score_a": 61,
+            "score_b": 71,
+            "text": "61 71",
+            "confidence": 0.4534
+          },
+          {
+            "score_a": 1,
+            "score_b": 71,
+            "text": "1 71",
+            "confidence": 0.4487
+          },
+          {
+            "score_a": 120,
+            "score_b": 1,
+            "text": "120 1",
+            "confidence": 0.3798
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0370",
+        "timestamp_seconds": 370.0,
+        "expected": [
+          120,
+          95
+        ],
+        "predicted": [
+          120,
+          95
+        ],
+        "raw_text": "120 95",
+        "confidence": 0.6136,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 120,
+            "score_b": 95,
+            "text": "120 95",
+            "confidence": 0.6136
+          },
+          {
+            "score_a": 120,
+            "score_b": 1,
+            "text": "120 1",
+            "confidence": 0.3211
+          },
+          {
+            "score_a": 61,
+            "score_b": 95,
+            "text": "61 95",
+            "confidence": 0.3085
+          },
+          {
+            "score_a": 1,
+            "score_b": 95,
+            "text": "1 95",
+            "confidence": 0.3029
+          },
+          {
+            "score_a": 61,
+            "score_b": 1,
+            "text": "61 1",
+            "confidence": 0.016
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0398",
+        "timestamp_seconds": 398.0,
+        "expected": [
+          129,
+          102
+        ],
+        "predicted": [
+          129,
+          102
+        ],
+        "raw_text": "129 102",
+        "confidence": 0.5242,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 129,
+            "score_b": 102,
+            "text": "129 102",
+            "confidence": 0.5242
+          },
+          {
+            "score_a": 129,
+            "score_b": 1,
+            "text": "129 1",
+            "confidence": 0.2898
+          },
+          {
+            "score_a": 129,
+            "score_b": 2,
+            "text": "129 02",
+            "confidence": 0.2797
+          },
+          {
+            "score_a": 63,
+            "score_b": 102,
+            "text": "63 102",
+            "confidence": 0.272
+          },
+          {
+            "score_a": 1,
+            "score_b": 102,
+            "text": "1 102",
+            "confidence": 0.2695
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0426",
+        "timestamp_seconds": 426.0,
+        "expected": [
+          138,
+          109
+        ],
+        "predicted": [
+          138,
+          109
+        ],
+        "raw_text": "138 109",
+        "confidence": 0.3931,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 138,
+            "score_b": 109,
+            "text": "138 109",
+            "confidence": 0.3931
+          },
+          {
+            "score_a": 138,
+            "score_b": 1,
+            "text": "138 1",
+            "confidence": 0.2106
+          },
+          {
+            "score_a": 61,
+            "score_b": 109,
+            "text": "61 109",
+            "confidence": 0.2091
+          },
+          {
+            "score_a": 1,
+            "score_b": 109,
+            "text": "1 109",
+            "confidence": 0.2023
+          },
+          {
+            "score_a": 138,
+            "score_b": 13,
+            "text": "138 13",
+            "confidence": 0.2007
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0454",
+        "timestamp_seconds": 454.0,
+        "expected": [
+          150,
+          117
+        ],
+        "predicted": [
+          160,
+          17
+        ],
+        "raw_text": "160 17",
+        "confidence": 0.5374,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 160,
+            "score_b": 17,
+            "text": "160 17",
+            "confidence": 0.5374
+          },
+          {
+            "score_a": 1,
+            "score_b": 17,
+            "text": "1 17",
+            "confidence": 0.3237
+          },
+          {
+            "score_a": 160,
+            "score_b": 117,
+            "text": "160 117",
+            "confidence": 0.3234
+          },
+          {
+            "score_a": 61,
+            "score_b": 17,
+            "text": "61 17",
+            "confidence": 0.3192
+          },
+          {
+            "score_a": 160,
+            "score_b": 1,
+            "text": "160 1",
+            "confidence": 0.2586
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0482",
+        "timestamp_seconds": 482.0,
+        "expected": [
+          164,
+          121
+        ],
+        "predicted": [
+          154,
+          121
+        ],
+        "raw_text": "154 121",
+        "confidence": 0.6673,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 154,
+            "score_b": 121,
+            "text": "154 121",
+            "confidence": 0.6673
+          },
+          {
+            "score_a": 1,
+            "score_b": 121,
+            "text": "1 121",
+            "confidence": 0.4572
+          },
+          {
+            "score_a": 17,
+            "score_b": 121,
+            "text": "17 121",
+            "confidence": 0.455
+          },
+          {
+            "score_a": 154,
+            "score_b": 11,
+            "text": "154 11",
+            "confidence": 0.277
+          },
+          {
+            "score_a": 154,
+            "score_b": 4,
+            "text": "154 4",
+            "confidence": 0.2293
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0510",
+        "timestamp_seconds": 510.0,
+        "expected": [
+          190,
+          121
+        ],
+        "predicted": [
+          120,
+          121
+        ],
+        "raw_text": "120 121",
+        "confidence": 0.6407,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 120,
+            "score_b": 121,
+            "text": "120 121",
+            "confidence": 0.6407
+          },
+          {
+            "score_a": 1,
+            "score_b": 121,
+            "text": "1 121",
+            "confidence": 0.4627
+          },
+          {
+            "score_a": 61,
+            "score_b": 121,
+            "text": "61 121",
+            "confidence": 0.4578
+          },
+          {
+            "score_a": 120,
+            "score_b": 11,
+            "text": "120 11",
+            "confidence": 0.2503
+          },
+          {
+            "score_a": 120,
+            "score_b": 4,
+            "text": "120 4",
+            "confidence": 0.2034
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0538",
+        "timestamp_seconds": 538.0,
+        "expected": [
+          201,
+          128
+        ],
+        "predicted": [
+          211,
+          158
+        ],
+        "raw_text": "211 158",
+        "confidence": 0.3016,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 211,
+            "score_b": 158,
+            "text": "211 158",
+            "confidence": 0.3016
+          },
+          {
+            "score_a": 211,
+            "score_b": 62,
+            "text": "211 62",
+            "confidence": 0.1706
+          },
+          {
+            "score_a": 21,
+            "score_b": 158,
+            "text": "21 158",
+            "confidence": 0.1647
+          },
+          {
+            "score_a": 211,
+            "score_b": 4,
+            "text": "211 4",
+            "confidence": 0.1641
+          },
+          {
+            "score_a": 1,
+            "score_b": 158,
+            "text": "1 158",
+            "confidence": 0.1531
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0566",
+        "timestamp_seconds": 566.0,
+        "expected": [
+          215,
+          132
+        ],
+        "predicted": [
+          215,
+          132
+        ],
+        "raw_text": "215 132",
+        "confidence": 0.4566,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 215,
+            "score_b": 132,
+            "text": "215 132",
+            "confidence": 0.4566
+          },
+          {
+            "score_a": 23,
+            "score_b": 132,
+            "text": "23 132",
+            "confidence": 0.2876
+          },
+          {
+            "score_a": 1,
+            "score_b": 132,
+            "text": "1 132",
+            "confidence": 0.278
+          },
+          {
+            "score_a": 215,
+            "score_b": 62,
+            "text": "215 62",
+            "confidence": 0.2256
+          },
+          {
+            "score_a": 215,
+            "score_b": 1,
+            "text": "215 1",
+            "confidence": 0.2038
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0594",
+        "timestamp_seconds": 594.0,
+        "expected": [
+          223,
+          132
+        ],
+        "predicted": [
+          222,
+          132
+        ],
+        "raw_text": "222 132",
+        "confidence": 0.4942,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 222,
+            "score_b": 132,
+            "text": "222 132",
+            "confidence": 0.4942
+          },
+          {
+            "score_a": 222,
+            "score_b": 62,
+            "text": "222 62",
+            "confidence": 0.281
+          },
+          {
+            "score_a": 1,
+            "score_b": 132,
+            "text": "1 132",
+            "confidence": 0.264
+          },
+          {
+            "score_a": 31,
+            "score_b": 132,
+            "text": "31 132",
+            "confidence": 0.2628
+          },
+          {
+            "score_a": 222,
+            "score_b": 1,
+            "text": "222 1",
+            "confidence": 0.2562
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0622",
+        "timestamp_seconds": 622.0,
+        "expected": [
+          232,
+          141
+        ],
+        "predicted": [
+          232,
+          141
+        ],
+        "raw_text": "232 141",
+        "confidence": 0.4216,
+        "exact": true,
+        "top_candidates": [
+          {
+            "score_a": 232,
+            "score_b": 141,
+            "text": "232 141",
+            "confidence": 0.4216
+          },
+          {
+            "score_a": 232,
+            "score_b": 11,
+            "text": "232 11",
+            "confidence": 0.311
+          },
+          {
+            "score_a": 232,
+            "score_b": 1,
+            "text": "232 1",
+            "confidence": 0.2946
+          },
+          {
+            "score_a": 1,
+            "score_b": 141,
+            "text": "1 141",
+            "confidence": 0.1345
+          },
+          {
+            "score_a": 31,
+            "score_b": 141,
+            "text": "31 141",
+            "confidence": 0.1334
+          }
+        ]
+      },
+      {
+        "sample_id": "lat_van_hp_0650",
+        "timestamp_seconds": 650.0,
+        "expected": [
+          239,
+          156
+        ],
+        "predicted": [
+          236,
+          165
+        ],
+        "raw_text": "236 165",
+        "confidence": 0.3047,
+        "exact": false,
+        "top_candidates": [
+          {
+            "score_a": 236,
+            "score_b": 165,
+            "text": "236 165",
+            "confidence": 0.3047
+          },
+          {
+            "score_a": 236,
+            "score_b": 62,
+            "text": "236 62",
+            "confidence": 0.2248
+          },
+          {
+            "score_a": 236,
+            "score_b": 1,
+            "text": "236 1",
+            "confidence": 0.2215
+          },
+          {
+            "score_a": 1,
+            "score_b": 165,
+            "text": "1 165",
+            "confidence": 0.0948
+          },
+          {
+            "score_a": 36,
+            "score_b": 165,
+            "text": "36 165",
+            "confidence": 0.0926
+          }
+        ]
+      }
+    ]
+  },
+  "notes": [
+    "Operational gallery accuracy is a regression check, not generalization.",
+    "Leave-one-out accuracy is the confidence ceiling used by the runtime engine.",
+    "The dataset is one real Hardpoint map; Phase 3 is not production OCR yet."
+  ]
+}
