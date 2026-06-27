@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "kind": "killfeed_content_sample",
+  "detector": "synthetic_fixture",
+  "content_reader": "killfeed_content_knn@0.1.0",
+  "source_url": "synthetic://killfeed-content-demo",
+  "label_status": "labeled",
+  "labeled_by": "synthetic_fixture",
+  "honesty_note": "Synthetic fixture for event-contract verification only; not real broadcast accuracy."
+}

@@ -14,9 +14,9 @@ Two separate metrics, never conflated:
   * detection — onset-level kill-detection precision / recall / F1. This is what the
     classical detector is judged on.
   * content_readiness — how many rows carry attacker/victim/weapon labels, i.e. how
-    ready the set is to train the Phase-4 deliverable-2 content reader (which unlocks
-    DeathEvent / WeaponEvent / TradeEvent). No content reader exists yet, so this
-    reports readiness, not accuracy — we never fabricate a number.
+    ready the set is for ``scripts/eval_killfeed_content.py`` and the Phase-4
+    content reader (which unlocks DeathEvent / WeaponEvent / TradeEvent). This
+    reports readiness, not content accuracy — we never fabricate a number.
 """
 from __future__ import annotations
 
@@ -86,7 +86,7 @@ def _content_readiness(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "with_victim": have("victim"),
         "with_weapon": have("weapon"),
         "note": ("counts of human-read fields on real kills; these train the future "
-                 "content reader. No reader exists yet, so this is readiness, not accuracy."),
+                 "content reader. Use eval_killfeed_content.py for reader accuracy once labelled."),
     }
 
 
@@ -117,8 +117,8 @@ def evaluate(dataset_dir: Path) -> dict[str, Any]:
             "Detection precision/recall is onset-level kill detection by classical CV; "
             "it is a baseline, not production OCR.",
             "Recall requires the labeller to add missed kills as detector='manual_added'.",
-            "content_readiness is not accuracy — the content reader (names/weapons) is "
-            "Phase-4 deliverable 2 and is not built yet.",
+            "content_readiness is not accuracy — run eval_killfeed_content.py once "
+            "attacker/victim/weapon labels exist.",
         ],
     }
 

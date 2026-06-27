@@ -1,0 +1,29 @@
+{
+  "dataset": {
+    "path": "data/killfeed_dataset",
+    "model": "killfeed_content_knn@0.1.0",
+    "manifest_detector": "killfeed_classical@0.1.0",
+    "source_url": "https://www.youtube.com/watch?v=lat-van-hacienda-hp",
+    "candidates": 245,
+    "content_labeled_rows": 0,
+    "label_status": "unlabeled"
+  },
+  "metrics": {
+    "content_readiness": {
+      "valid_kills_with_identity": 0,
+      "with_weapon": 0,
+      "with_headshot": 0,
+      "with_trade": 0
+    },
+    "reader": {
+      "status": "unlabeled \u2014 no content-reader accuracy claim",
+      "operational_gallery": null,
+      "leave_one_out": null
+    }
+  },
+  "notes": [
+    "No content accuracy is reported until annotations.jsonl has human labels.",
+    "Operational gallery is a regression check; leave-one-out is the honest small-data estimate.",
+    "Panel counter remains the kill-count spine; killfeed content is the weapon/headshot/trade enrichment layer."
+  ]
+}

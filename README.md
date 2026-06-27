@@ -95,9 +95,9 @@ Tables: `sources`, `broadcasts`, `processing_jobs`, `matches`, `maps`, `game_eve
 - Stubbed: bundled scorebar OCR reads `data/fixtures/sample_scores.json` and marks its dependent events `is_placeholder=true`. It exists to make the complete flow deterministic and offline.
 - Evaluated scorebar OCR baseline: `--ocr-engine cdl` uses `CdlScorebarOcrEngine`, a CPU k-NN digit-gallery model trained from human-verified LAT/VAN scorebar crops. It is versioned (`0.1.0-knn`) and confidence-capped by leave-one-crop-out evaluation. Current result: 21/21 operational gallery self-check, but only 10/21 leave-one-out exact score matches (`0.4762`) and 11/21 with temporal decoding (`0.5238`). This is not production-ready OCR.
 - **Scoreboard kill counter (Phase 4, the kill spine)** — `PanelKillCounter` (`panel_kill_counter@0.1.0`) reads each player's running kills/deaths from the top team panels and emits `KillEvent` (attacker) + `DeathEvent` (victim) facts from **monotonic** increments. Scored against the **human-verified post-game card** it is **exact: 8/8 players, 0.0 mean kill error, team totals 106/79, and the 505 s checkpoint 73/61** (`make panel-eval`, offline from the cached readings). Tesseract reads the clean panel font reliably. This is the authoritative kill count + who; see **Scoreboard kill counter** below.
-- Killfeed detection baseline (Phase 4, deliverable 1): `KillfeedDetector` (`killfeed_classical@0.1.0`) localises kill-notification rows in the killfeed region (verified against the real VOD — the HUD profile's original top-right "killfeed" box was actually the opponent stats panel), and a positional tracker collapses the per-frame flicker into candidate kill onsets — `KillEvent` facts with evidence, confidence, and `identity_unread`. It is the **corroboration/weapon layer**, not the count: measured against the panel-counter ground truth it runs at **~56% precision / ~80% recall**. `scripts/build_killfeed_dataset.py` turns it into an annotation scaffold for the future name/weapon reader. See **Killfeed detection** below.
+- Killfeed detection/content baseline (Phase 4): `KillfeedDetector` (`killfeed_classical@0.1.0`) localises kill-notification rows and a positional tracker collapses flicker into candidate kill onsets — `KillEvent` facts with evidence, confidence, and `identity_unread`. It is the **corroboration/weapon layer**, not the kill-count source: measured against panel-counter ground truth it runs at **~56% precision / ~80% recall**. `KillfeedContentReader` (`killfeed_content_knn@0.1.0`) is wired to train from labelled row crops and emit `KillEvent`/`DeathEvent`/`WeaponEvent`/`TradeEvent`, but the real LAT/VAN scaffold still has **0 content-labelled rows**, so it makes **no real content accuracy claim** yet. See **Killfeed detection and content** below.
 - Optional OCR experiment: `TesseractOcrEngine` is wired behind `--ocr-engine tesseract`. Install the Tesseract binary and run `.venv/bin/pip install -r requirements-ocr.txt`, then calibrate the scorebar profile before trusting output. It is intentionally not in the base environment.
-- Deferred: killfeed **name/weapon reading** (→ `DeathEvent`/`WeaponEvent`/`TradeEvent`; the detection scaffold above is the bridge to it), transition-card/mode classification, deep SnD/Control analytics, and minimap object detection.
+- Deferred: real-labelled killfeed content accuracy, transition-card/mode classification, deep SnD/Control analytics, and minimap object detection.
 
 No analytics are silently invented. Unknown-mode files skip Hardpoint break/retake and xMWP analytics. The sample is identified as Hardpoint by its filename; production runs should pass `--mode hardpoint` only when known or add a mode detector.
 
@@ -121,7 +121,7 @@ make scorebar-ocr-dataset
 make scorebar-ocr-eval
 ```
 
-## Killfeed detection
+## Killfeed detection and content
 
 `KillfeedDetector` is a classical, training-free localiser for the broadcast killfeed
 (`attacker → weapon → victim` rows). It is honest about the split between what classical
@@ -134,20 +134,27 @@ CV can do and what needs a labelled model:
   tracking (not content-hashing) is what makes onset counting robust. It is a baseline —
   it over- and under-counts, which is why every onset is a labelable candidate, not a
   claimed kill.
-- **Does not read** attacker/victim/weapon. That is a content reader trained from the
-  annotation scaffold (deliverable 2), and it is what unlocks `DeathEvent` /
-  `WeaponEvent` / `TradeEvent`.
+- `KillfeedContentReader` is the label-trained content layer. It reads attacker,
+  victim, weapon, headshot, and trade fields from labelled row crops and expands them
+  into `KillEvent`, `DeathEvent`, `WeaponEvent`, and `TradeEvent`. With no labels it
+  abstains; it never fills names/weapons from empty annotation slots.
 
 ```bash
 make killfeed-dataset   # build the annotation scaffold from the local VOD (2 fps)
 make killfeed-eval      # detection precision/recall once annotations.jsonl is labelled
+make killfeed-content-eval
 make killfeed-sample    # deterministic synthetic candidate-KillEvent stream
+make killfeed-content-sample
 ```
 
 The committed dataset (`data/killfeed_dataset/`, 245 unlabelled candidates from the
 LAT/VAN Hardpoint) ships with empty label slots and a labelling guide in its README;
 no kill identities are invented. `eval_killfeed.py` prints "no accuracy claim" until a
 person labels `valid_kill` and adds missed kills as `detector="manual_added"`.
+`eval_killfeed_content.py` separately reports `0` content-labelled rows and no
+content-reader accuracy until attacker/victim/weapon labels exist. The synthetic
+fixture at `data/fixtures/killfeed_content_sample/` is only an event-contract sample,
+not real broadcast accuracy.
 
 ## Scoreboard kill counter
 

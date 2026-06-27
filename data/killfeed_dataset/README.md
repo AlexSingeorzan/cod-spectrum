@@ -44,12 +44,22 @@ Then:
 
 ```bash
 make killfeed-eval           # precision / recall / F1 once labelled; honest "no claim" until then
+make killfeed-content-eval   # attacker/victim/weapon reader eval once content-labelled
 ```
 
 ## Honesty
 
 This is **not** verified kill data yet. It is unverified classical-CV candidates plus
-empty label slots. The detector localises kills (timing/count) but does **not** read
-names/weapons — that is Phase-4 deliverable 2 (a content reader trained from these
-labels), which is what unlocks real `DeathEvent` / `WeaponEvent` / `TradeEvent`.
-Until `annotations.jsonl` is labelled, `eval_killfeed.py` reports no accuracy.
+empty label slots. The detector localises kill rows (timing/count). The Phase-4
+content reader (`KillfeedContentReader`, `killfeed_content_knn@0.1.0`) is now wired
+to train from these labels and emit real `DeathEvent` / `WeaponEvent` / `TradeEvent`
+facts, but it abstains until labels exist.
+
+Current committed status:
+
+- Detection candidates: `245`
+- Content-labelled rows: `0`
+- Content-reader accuracy: no claim
+
+Until `annotations.jsonl` is labelled, `eval_killfeed.py` and
+`eval_killfeed_content.py` report no real accuracy.

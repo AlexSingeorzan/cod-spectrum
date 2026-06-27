@@ -1,0 +1,99 @@
+{
+  "dataset": {
+    "path": "data/fixtures/killfeed_content_sample",
+    "model": "killfeed_content_knn@0.1.0",
+    "manifest_detector": "synthetic_fixture",
+    "source_url": "synthetic://killfeed-content-demo",
+    "candidates": 3,
+    "content_labeled_rows": 3,
+    "label_status": "labeled"
+  },
+  "metrics": {
+    "content_readiness": {
+      "valid_kills_with_identity": 3,
+      "with_weapon": 3,
+      "with_headshot": 3,
+      "with_trade": 3
+    },
+    "manual_label_events": {
+      "readable_rows": 3,
+      "source": "manual_label"
+    },
+    "reader": {
+      "status": "labeled",
+      "operational_gallery": {
+        "samples": 3,
+        "exact_matches": 3,
+        "exact_accuracy": 1.0,
+        "field_accuracy": {
+          "attacker": 1.0,
+          "victim": 1.0,
+          "weapon": 1.0,
+          "headshot": 1.0,
+          "is_trade": 1.0
+        },
+        "abstentions": 0,
+        "mean_confidence": 1.0,
+        "failures": [],
+        "training_samples": 3
+      },
+      "leave_one_out": {
+        "samples": 3,
+        "exact_matches": 0,
+        "exact_accuracy": 0.0,
+        "field_accuracy": {
+          "attacker": 0.0,
+          "victim": 0.0,
+          "weapon": 0.0,
+          "headshot": 0.0,
+          "is_trade": 0.0
+        },
+        "abstentions": 3,
+        "mean_confidence": 0.0,
+        "failures": [
+          {
+            "id": "kf_content_0001",
+            "timestamp": 88.0,
+            "expected": {
+              "attacker": "HyDra",
+              "victim": "Lunarz",
+              "weapon": "SMG",
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_content_0002",
+            "timestamp": 91.0,
+            "expected": {
+              "attacker": "Mamba",
+              "victim": "HyDra",
+              "weapon": "AR",
+              "headshot": true,
+              "is_trade": true
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_content_0003",
+            "timestamp": 96.0,
+            "expected": {
+              "attacker": "aBeZy",
+              "victim": "Nero",
+              "weapon": "SMG",
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          }
+        ]
+      }
+    }
+  },
+  "notes": [
+    "No content accuracy is reported until annotations.jsonl has human labels.",
+    "Operational gallery is a regression check; leave-one-out is the honest small-data estimate.",
+    "Panel counter remains the kill-count spine; killfeed content is the weapon/headshot/trade enrichment layer."
+  ]
+}
