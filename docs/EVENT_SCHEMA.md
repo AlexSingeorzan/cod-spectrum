@@ -116,7 +116,7 @@ All fact bodies; `InsightEvent` is the only insight.
 | `TradeEvent` | `trade` | `dead_player`, `trading_player`, `*_team`, `trade_window_seconds`, kill ids |
 | `ObjectiveEvent` | `objective` | `objective_type`, `action`, `hill_id?`, `side?`, `progress?` |
 | `SpawnFlipEvent` | `spawn_flip` | `side`, `from_region?`, `to_region?`, `inferred`, `method?` |
-| `PositionEvent` | `position` | `x`, `y` (0–1), `player?`, `team?`, `observed_team?`, `detector` |
+| `PositionEvent` | `position` | `x`, `y` (0–1), `player?`, `team?`, `observed_team?`, `detector`; minimap boxes/visibility live in `attributes` |
 | `RotationEvent` | `rotation` | `team`, `player?`, `from_region?`, `to_region?`, `hill_id?` |
 | `CommunicationEvent` | `communication` | `transcript`, `speaker?`, `team?`, `callout_type?`, `targets`, `start/end_seconds`, `audio_source` |
 | `TimelineEvent` | `timeline` | `marker_type` (replay/listen_in/camera/facecam/caster/pause/…), `label`, `end_seconds?`, `subject?` |
@@ -128,7 +128,9 @@ string.
 
 > **Position visibility discipline:** broadcast minimaps usually expose only the
 > *observed* team. `PositionEvent.observed_team` records whose information this is;
-> detectors must never invent hidden opponents.
+> detectors must never invent hidden opponents. Phase 6 minimap detections store
+> normalized bounding boxes, visibility (`observed_team` or `radar_visible_enemy`),
+> processing version, and human review status in `payload.attributes`.
 
 ---
 
@@ -183,8 +185,11 @@ Wired in Phase 2:
 
 Not yet (later phases):
 
-- **No new detectors.** Payloads for Kill/Position/Communication exist as the
-  contract those future modules will fill; nothing emits them in the pipeline yet.
+- Phase 6 minimap contract evaluation can emit synthetic `PositionEvent`s, but
+  the production processing pipeline does not yet persist real minimap position
+  events from VOD frames.
+- Communication payloads exist as a future contract; no audio detector emits
+  them yet.
 - xMWP still persists separately in `model_outputs` (not as events).
 
 Evaluation of the schema is `tests/test_event_schema.py` and

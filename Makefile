@@ -1,4 +1,4 @@
-.PHONY: setup fixture scorebar-ocr-dataset scorebar-ocr-eval killfeed-dataset killfeed-eval killfeed-segments killfeed-segment-eval killfeed-segment-sample killfeed-content-eval killfeed-sample killfeed-content-sample kill-type-dataset kill-type-eval kill-type-review kill-type-prune-missing kill-type-contact-sheet kill-type-sample weapon-dataset weapon-eval weapon-sample panel-counter panel-eval test serve scheduler process clean-data
+.PHONY: setup fixture scorebar-ocr-dataset scorebar-ocr-eval killfeed-dataset killfeed-eval killfeed-segments killfeed-segment-eval killfeed-segment-sample killfeed-content-eval killfeed-sample killfeed-content-sample kill-type-dataset kill-type-eval kill-type-review kill-type-prune-missing kill-type-contact-sheet kill-type-sample weapon-dataset weapon-eval weapon-sample minimap-eval panel-counter panel-eval test serve scheduler process clean-data
 
 PYTHON := .venv/bin/python
 PYTHON_BOOTSTRAP ?= python3.12
@@ -65,6 +65,9 @@ weapon-dataset: kill-type-dataset
 weapon-eval: kill-type-eval
 
 weapon-sample: kill-type-sample
+
+minimap-eval:
+	$(PYTHON) scripts/eval_minimap_contract.py
 
 panel-counter:
 	$(PYTHON) scripts/run_panel_counter.py --vod data/videos/lat_van.mp4

@@ -2,8 +2,8 @@
 
 Last audited: 2026-06-28
 
-This is the current engineering status after Phase 5 kill-type-recognition
-scaffolding. It is the checkpoint required before continuing Phase 6+ work.
+This is the current engineering status after deferring killfeed name OCR and
+manual kill-type labelling, then auditing the Phase 6 minimap layer.
 
 ## Completed Systems
 
@@ -43,8 +43,12 @@ scaffolding. It is the checkpoint required before continuing Phase 6+ work.
   generates `data/kill_type_dataset/review_contact_sheet.png`.
 - Synthetic kill-type recognition sample: demonstrates event emission and
   baseline comparison without claiming real broadcast accuracy.
-- Minimap classical baseline: localises some minimap markers and writes
-  occupancy heatmaps. It is not player-resolved and not production-grade.
+- Minimap contract baseline: `ClassicalMinimapDetector` localises synthetic and
+  broadcast-style minimap markers, exposes model metadata/latency/failure fields,
+  preserves crop/frame evidence and bounding boxes, and can emit evidence-backed
+  `PositionEvent` facts. It is not player-resolved and not production-grade.
+- Minimap dataset scaffold: `scripts/build_minimap_dataset.py` can seed YOLO
+  labels from the classical detector for later human correction.
 - What-If Lab: synthetic counterfactual hardpoint model exists and is labelled
   as synthetic.
 
@@ -65,9 +69,9 @@ scaffolding. It is the checkpoint required before continuing Phase 6+ work.
 - Kill-type real dataset: `data/kill_type_dataset/` has `61` curated icon crops,
   `59` stale/misleading crop rows pruned, and `0` labelled kill-type classes, so
   real kill-type accuracy cannot be measured yet.
-- Minimap intelligence: dataset scaffold has six labelled images and a classical
-  detector, but no trained player-resolved model, trajectories, velocity,
-  heading, or map-control graph.
+- Minimap intelligence: Phase 6 now has a typed detector/event contract and a
+  synthetic contract eval. There is still no trained player-resolved model,
+  trajectories, velocity, heading, or map-control graph.
 - Tactical analytics: existing Hardpoint break/retake and coach views are
   scoring-flow heuristics, not full tactical reasoning from kills + positions.
 - Autonomous orchestration: scheduler and queue foundations exist, but full CDL
@@ -90,6 +94,9 @@ scaffolding. It is the checkpoint required before continuing Phase 6+ work.
   every model to expose training dataset, latency, failure reason,
   fallback_used, and evaluation metrics; newer modules expose versions and
   confidence, but not the full contract everywhere.
+- Minimap production accuracy is not established. The current contract fixture
+  proves metadata/evidence behavior only; real broadcast mAP requires a labelled
+  minimap validation set.
 - Some local generated `.DS_Store` files exist under `data/`; they are ignored
   and should not be committed.
 
@@ -123,12 +130,13 @@ make killfeed-content-eval
 make kill-type-prune-missing
 make kill-type-eval
 make kill-type-review
+make minimap-eval
 .venv/bin/python -m pytest -q
 ```
 
 Current result:
 
-- `141 passed`
+- `145 passed`
 - Scorebar OCR eval: operational gallery `21/21`, leave-one-out `10/21`
   (`0.4762`), temporal leave-one-out `11/21` (`0.5238`).
 - Killfeed segmentation eval: `120/245` rows with complete attacker+weapon+
@@ -140,6 +148,8 @@ Current result:
 - Kill-type eval: `61` curated icon crops, `0` labelled kill-type icons,
   no kill-type-recognition accuracy claim.
 - Kill-type review: `61` rows, `0` reviewed, `0` missing crops, validation OK.
+- Minimap contract eval: synthetic fixture, `2` detections, `2` `PositionEvent`s,
+  `0` high-threshold events, no real broadcast accuracy claim.
 
 Coverage exists for:
 
@@ -152,7 +162,8 @@ Coverage exists for:
   comparison, killstreak support, review tooling, missing-crop pruning,
   contact-sheet generation, and event emission
 - panel kill spine
-- minimap classical detector
+- minimap classical detector, typed minimap result contract, synthetic minimap
+  contract eval, and evidence-backed `PositionEvent` emission
 - processor/report/dashboard contracts
 
 Missing coverage:
@@ -161,6 +172,7 @@ Missing coverage:
 - manually reviewed killfeed segmentation-box accuracy
 - real labelled kill-type classifier metrics
 - player-resolved minimap detections
+- real labelled minimap mAP
 - event fusion graph and tactical reasoning chains
 - audio/listen-in subsystem
 
@@ -170,7 +182,8 @@ Missing coverage:
 2. Kill-type recognition cannot be honestly evaluated until icon labels exist.
 3. Stage B segmentation needs human review before production kill-type
    classifier comparisons are meaningful.
-4. A shared model-result contract is needed before productionizing multiple
+4. Phase 6 minimap modelling needs a labelled minimap train/validation split.
+5. A shared model-result contract is needed before productionizing multiple
    detectors.
 
 ## Suggested Improvements
@@ -183,25 +196,24 @@ Missing coverage:
   mark unclear crops rather than forcing classes.
 - After labels exist, compare the template/histogram baselines against a small
   CNN on the same split.
-- Introduce a shared model output contract for all detectors.
+- Promote the minimap contract shape into a shared model output contract for all
+  detectors.
 
 ## Next Recommended Phase
 
 Do not touch the panel kill spine.
 
-The next build is **real kill-type icon labelling and classifier evaluation**:
+The next build is **Phase 6 minimap labelled-data and tracking infrastructure**,
+while continuing to defer player-name OCR and manual kill-type labels:
 
-1. Open `data/kill_type_dataset/review_contact_sheet.png` and review the `61`
-   remaining crops.
-2. Use `scripts/review_kill_type_dataset.py set-label` to fill
-   `valid_kill_type`, `kill_type`, and `unclear` in
-   `data/kill_type_dataset/annotations.jsonl`. `exact_weapon` is optional
-   metadata only. Mis-segmented name/HUD crops should be invalid or unclear.
-3. Rerun `make kill-type-review` and `make kill-type-eval` to compare template
-   and histogram baselines.
-4. Train/evaluate the small CNN candidate from
-   `docs/KILL_TYPE_RECOGNITION_DESIGN.md` only after there are enough labels per
-   class.
+1. Generate a larger `data/minimap_dataset/` sample from the LAT/VAN VOD.
+2. Correct YOLO labels for visible `observed_player` and `enemy_player` markers
+   only; never label hidden opponents.
+3. Add a minimap validation evaluator that reports mAP/precision/recall and
+   abstention behavior on labelled crops.
+4. Implement trajectory stitching downstream of `PositionEvent`: velocity,
+   heading, lane occupancy, nearest-team/enemy graph, and map-control precursors.
+5. Keep `YoloMinimapDetector` behind the same `MinimapFrameResult` contract.
 
 This keeps `PanelKillCounter` as the kill-count truth and uses killfeed content
 only as evidence-backed enrichment.

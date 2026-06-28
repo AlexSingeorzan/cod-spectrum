@@ -1,0 +1,25 @@
+{
+  "fixture": "data/fixtures/minimap_contract",
+  "model": "minimap_classical_marker_detector@0.2.0",
+  "samples": 1,
+  "detections": 2,
+  "position_events": 2,
+  "high_threshold_events": 0,
+  "visibility_counts": {
+    "radar_visible_enemy": 1,
+    "observed_team": 1
+  },
+  "latency_ms": 0.297,
+  "contract": {
+    "has_model_metadata": true,
+    "has_visual_evidence": true,
+    "has_bounding_boxes": true,
+    "does_not_infer_enemy_team": true,
+    "low_confidence_abstains": true
+  },
+  "notes": [
+    "Synthetic contract fixture only; no real broadcast accuracy claim.",
+    "Enemy markers are radar-visible observations, not inferred hidden opponents.",
+    "Future YOLO detector must satisfy the same result/event contract."
+  ]
+}

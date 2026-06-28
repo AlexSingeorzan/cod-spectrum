@@ -59,7 +59,7 @@ Supporting invariants (already the discipline in the v0 code, now made universal
 
 FastAPI + SQLAlchemy + SQLite, CPU-only, Python 3.12.13 in the local virtualenv.
 `main` branch, **no git remote configured**. Baseline after the Phase 0/1/2 work
-currently in this repository: **141 tests passing**.
+currently in this repository: **145 tests passing**.
 
 ### 3.1 What exists and is real
 
@@ -79,7 +79,8 @@ currently in this repository: **141 tests passing**.
   hill-rotation windows, per-player K/D read from post-game cards (cross-checked),
   low-confidence spawn inference. Verified/derived/inferred are labelled separately.
 - **Minimap** (`services/minimap.py`): `ClassicalMinimapDetector` (colour/shape CV,
-  no training) → marker positions + occupancy heatmaps.
+  no training) → typed marker detections, evidence-backed `PositionEvent`s, and
+  occupancy heatmaps.
 - **Coach view** (`services/coach_view.py`): momentum timeline, turning-point
   ranking, rotation timing — the first "explain why" surfaces.
 - **What-If Lab** (`services/simulation.py`, `routes/sim.py`, `/lab`): transparent
@@ -165,7 +166,7 @@ Each module is **independent and loosely coupled** — models are never entangle
 | Kill counting (scoreboard) | ✅ exact vs verified card | `KillEvent`, `DeathEvent` | How many kills, and who? |
 | Killfeed OCR | 🟡 detection + Stage B segmentation + label-gated content reader | `KillEvent`, `DeathEvent`, kill-type `WeaponEvent`, `TradeEvent` when labelled | Who traded, who got isolated, by what kill type? |
 | Kill-type recognition | 🔬 independent dataset + label-gated baselines; real labels pending | `WeaponEvent` with `kill_type` | Gun, grenade, melee, killstreak, or other coarse cause? |
-| Minimap detection | 🟡 classical | `PositionEvent` | Where was everyone? |
+| Minimap detection | 🟡 classical contract baseline | `PositionEvent` | Where was everyone? |
 | Player tracking | 🔬 dataset only | `PositionEvent` (player-resolved) | Routes, crossfires, space created |
 | Objective tracking | 🟡 score-inferred | `ObjectiveEvent`, `SpawnFlipEvent` | Hill/bomb control, capture progress |
 | HUD recognition | ✅ regions | (frame state) | (enables every other module) |
@@ -284,7 +285,7 @@ never skip tests; never invent data.
 | **3** ✅ | Score OCR baseline on labelled CDL scorebars (`CdlScorebarOcrEngine`) | done for baseline — dataset, eval, tests, docs, sample output; not promoted to default because LOO exact score accuracy is `0.4762` |
 | **4** 🟢 | Kills → `KillEvent`/`DeathEvent` (+ killfeed `WeaponEvent`/`TradeEvent`) | **kill spine done + ground-truth-verified**: `PanelKillCounter` is exact vs the post-game card (8/8, 106/79); `KillfeedDetector` + onset tracking + annotation scaffold + eval done (corroboration, ~56% prec / ~80% recall); `KillfeedSegmenter` Stage B field crops done (`120/245` complete core rows); `KillfeedContentReader` + content eval + synthetic event sample done. **Real content accuracy remains blocked by labels** (`0` labelled LAT/VAN rows). |
 | **5** 🟢 | Kill-type recognition scaffold independent from OCR | dataset builder + `61` curated real icon crops + template/histogram baseline evaluator + synthetic kill-type sample done; `59` stale/misleading crop rows pruned; **real accuracy blocked by `0` kill-type labels** |
-| **6** | Minimap → player-resolved `PositionEvent` (YOLO) with visibility discipline | mAP on labelled minimap set |
+| **6** 🟡 | Minimap → player-resolved `PositionEvent` (YOLO) with visibility discipline | contract baseline done: typed minimap detections + evidence-backed `PositionEvent`s + synthetic contract eval; production exit still requires mAP on labelled minimap set |
 | **7** | Event fusion graph over score/killfeed/minimap/objective/clock/comms | causal event graph with evidence-backed state transitions |
 | **8** | Objective/spawn tracking → `ObjectiveEvent`/`SpawnFlipEvent` from pixels | agreement with verified hill timeline |
 | **9** | Audio pipeline + listen-in → `CommunicationEvent` | diarisation + transcription eval |

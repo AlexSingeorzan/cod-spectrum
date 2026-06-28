@@ -1,0 +1,62 @@
+{
+  "video_timestamp_seconds": 88.0,
+  "frame_index": 24,
+  "frame_path": "data/fixtures/minimap_contract/frame.png",
+  "crop_path": "data/fixtures/minimap_contract/minimap_crop.png",
+  "crop_box": {
+    "x": 0,
+    "y": 0,
+    "w": 1,
+    "h": 1
+  },
+  "observed_team": "LAT",
+  "model_name": "minimap_classical_marker_detector",
+  "model_version": "0.2.0",
+  "training_dataset": "none_classical_cv",
+  "latency_ms": 0.297,
+  "failure_reason": null,
+  "fallback_used": false,
+  "evaluation_metrics": {
+    "real_labelled_map_accuracy": null,
+    "reason": "classical minimap detector is a contract baseline; no player-resolved labelled eval yet"
+  },
+  "processing_version": "phase6_minimap_contract_v1",
+  "detections": [
+    {
+      "x": 0.2719,
+      "y": 0.2719,
+      "w": 0.0688,
+      "h": 0.0688,
+      "team": "enemy",
+      "confidence": 0.5,
+      "area": 92,
+      "bbox_xywh_norm": [
+        0.2375,
+        0.2375,
+        0.0688,
+        0.0688
+      ],
+      "observed_team": "LAT",
+      "visibility": "radar_visible_enemy",
+      "human_review_status": "synthetic_fixture"
+    },
+    {
+      "x": 0.7344,
+      "y": 0.7094,
+      "w": 0.0688,
+      "h": 0.0688,
+      "team": "observed",
+      "confidence": 0.4,
+      "area": 92,
+      "bbox_xywh_norm": [
+        0.7,
+        0.675,
+        0.0688,
+        0.0688
+      ],
+      "observed_team": "LAT",
+      "visibility": "observed_team",
+      "human_review_status": "synthetic_fixture"
+    }
+  ]
+}

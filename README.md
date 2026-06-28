@@ -226,9 +226,28 @@ OCR is cached to `data/panel_counter/readings.jsonl`, so `make panel-eval` re-sc
 offline. The counter is also the ground truth that measures the killfeed detector
 (above) at ~56% precision / ~80% recall via `reconcile_with_killfeed`.
 
-## YOLO minimap next step
+## Minimap intelligence
 
-Collect and label minimap crops with player-arrow/object boxes, team/color, frame timestamp, HUD profile, and map. Broadcast minimaps usually expose the observed team’s information rather than a complete neutral ground truth, so training and outputs must preserve an `observed_team`/visibility field and must not infer hidden opponents. A future `MinimapDetector` interface should mirror `OcrEngine`: crop through the active HUD profile, return boxes with confidence and evidence, store raw results in `model_outputs`, and let a separate temporal service derive map events. GPU acceleration remains optional behind configuration.
+`ClassicalMinimapDetector` is now a Phase 6 contract baseline. It crops through
+the active HUD profile, returns typed marker detections with model metadata,
+latency, confidence, normalized boxes, observed-team visibility, human review
+status, and frame/crop evidence. Accepted detections emit evidence-backed
+`PositionEvent` facts; low-confidence detections or detections without visual
+evidence emit nothing.
+
+```bash
+make minimap-eval
+```
+
+Current status: synthetic contract fixture only, `2` marker detections, `2`
+`PositionEvent`s, `0` high-threshold events, and no real broadcast accuracy
+claim. See [`docs/MINIMAP_INTELLIGENCE_DESIGN.md`](docs/MINIMAP_INTELLIGENCE_DESIGN.md).
+
+The YOLO upgrade remains the next modelling step: collect and label minimap crops
+with player-arrow/object boxes, team/color, frame timestamp, HUD profile, and
+map. Broadcast minimaps usually expose the observed team's information rather
+than complete neutral ground truth, so training and outputs must preserve
+`observed_team`/visibility and must not infer hidden opponents.
 
 ## API
 

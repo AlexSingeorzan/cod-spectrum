@@ -1,7 +1,7 @@
 # Minimap detection dataset (YOLO)
 
-The training path from the classical `ClassicalMinimapDetector` to a real model —
-the "YOLO minimap next step" from the project README.
+The training path from the classical `ClassicalMinimapDetector` contract baseline
+to a real player-marker model.
 
 ## Why
 The classical detector localises player markers but can't reliably classify team
@@ -33,9 +33,18 @@ and per-player positions.
    ```
 
 5. **Drop it in**: implement a `YoloMinimapDetector` satisfying the same
-   `MinimapDetector` protocol (`detect(frame, hud_profile) -> list[dict]`). The
-   occupancy heatmap, spawn derivation, persistence and UI are unchanged — only
-   `detect()` swaps from color/shape to the model.
+   `MinimapDetector` contract (`read_frame(...) -> MinimapFrameResult`, plus the
+   compact `detect(frame, hud_profile) -> list[dict]` compatibility method). The
+   `PositionEvent` schema, occupancy heatmap, spawn derivation, persistence and
+   UI are unchanged — only marker detection swaps from color/shape to the model.
+
+6. **Contract check**:
+   ```bash
+   make minimap-eval
+   ```
+   This synthetic fixture verifies metadata, evidence, bounding boxes,
+   visibility discipline, and threshold abstention. It is not real broadcast
+   accuracy.
 
 ## Note
 `images/` and `labels/` are gitignored (large / regenerable). Only this README and

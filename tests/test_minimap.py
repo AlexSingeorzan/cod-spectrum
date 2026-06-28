@@ -27,6 +27,88 @@ def test_detector_returns_serialisable_dicts():
     assert all(0.0 <= d["x"] <= 1.0 and 0.0 <= d["y"] <= 1.0 for d in out)
 
 
+def test_read_frame_exposes_model_contract_and_visibility():
+    img = np.full((120, 120, 3), 18, np.uint8)
+    cv2.circle(img, (30, 30), 5, (0, 0, 255), -1)
+    cv2.circle(img, (85, 85), 5, (255, 255, 255), -1)
+    full = {"regions": {"minimap": {"x": 0, "y": 0, "w": 1, "h": 1}}}
+
+    result = mm.ClassicalMinimapDetector().read_frame(
+        img,
+        full,
+        frame_index=42,
+        video_timestamp_seconds=12.5,
+        frame_path="data/frames/test.png",
+        crop_path="data/crops/minimap.png",
+        observed_team="LAT",
+    )
+
+    assert result.accepted is True
+    assert result.model_name == mm.MODEL_NAME
+    assert result.model_version == mm.MODEL_VERSION
+    assert result.training_dataset == mm.TRAINING_DATASET
+    assert result.failure_reason is None
+    assert result.fallback_used is False
+    assert result.latency_ms >= 0
+    assert {d.visibility for d in result.detections} == {"observed_team", "radar_visible_enemy"}
+    assert all(d.observed_team == "LAT" for d in result.detections)
+    assert result.as_dict()["detections"][0]["bbox_xywh_norm"]
+
+
+def test_position_events_preserve_evidence_and_do_not_infer_hidden_opponents():
+    img = np.full((120, 120, 3), 18, np.uint8)
+    cv2.circle(img, (30, 30), 5, (0, 0, 255), -1)
+    cv2.circle(img, (85, 85), 5, (255, 255, 255), -1)
+    full = {"regions": {"minimap": {"x": 0, "y": 0, "w": 1, "h": 1}}}
+    result = mm.ClassicalMinimapDetector().read_frame(
+        img,
+        full,
+        frame_index=7,
+        video_timestamp_seconds=88.0,
+        frame_path="data/frames/mm_0007.png",
+        crop_path="data/crops/mm_0007.png",
+        observed_team="LAT",
+    )
+
+    events = mm.position_events_from_minimap_result(result, confidence_threshold=0.0, map_id=1)
+
+    assert len(events) >= 2
+    observed = next(e for e in events if e.payload.attributes["visibility"] == "observed_team")
+    enemy = next(e for e in events if e.payload.attributes["visibility"] == "radar_visible_enemy")
+    assert observed.event_type == "position"
+    assert observed.payload.team == "LAT"
+    assert observed.payload.observed_team == "LAT"
+    assert observed.evidence.frame_index == 7
+    assert observed.evidence.crop_path == "data/crops/mm_0007.png"
+    assert observed.payload.attributes["bbox_xywh_norm"]
+    assert enemy.payload.team is None
+    assert enemy.payload.observed_team == "LAT"
+    assert enemy.payload.attributes["team_marker"] == "enemy"
+
+
+def test_position_events_abstain_without_visual_evidence_or_confidence():
+    img = np.full((120, 120, 3), 18, np.uint8)
+    cv2.circle(img, (30, 30), 5, (0, 0, 255), -1)
+    full = {"regions": {"minimap": {"x": 0, "y": 0, "w": 1, "h": 1}}}
+    result = mm.ClassicalMinimapDetector().read_frame(img, full, observed_team="LAT")
+
+    assert mm.position_events_from_minimap_result(result, confidence_threshold=0.0) == []
+    with_evidence = mm.ClassicalMinimapDetector().read_frame(
+        img,
+        full,
+        crop_path="data/crops/mm.png",
+        observed_team="LAT",
+    )
+    assert mm.position_events_from_minimap_result(with_evidence, confidence_threshold=0.99) == []
+
+
+def test_read_frame_abstains_on_unreadable_input():
+    result = mm.ClassicalMinimapDetector().read_frame(np.zeros((0, 0, 3), np.uint8))
+
+    assert result.detections == []
+    assert result.failure_reason == "frame_unreadable"
+
+
 def test_occupancy_heatmap_normalises_to_peak_one():
     fd = [
         [{"x": 0.1, "y": 0.1, "team": "observed", "confidence": 0.4, "area": 20}],
