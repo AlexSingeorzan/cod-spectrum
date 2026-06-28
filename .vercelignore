@@ -1,0 +1,11 @@
+# Large local-only assets and artifacts — not needed in the serverless bundle
+data/
+*.mp4
+*.db
+docs/
+tests/
+scripts/
+.git/
+__pycache__/
+*.pyc
+requirements-ocr.txt
