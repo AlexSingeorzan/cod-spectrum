@@ -2,7 +2,7 @@
   "dataset": {
     "path": "data/kill_type_dataset",
     "dataset_id": "lat_van_hp_kill_type_icons_v0",
-    "icon_count": 120,
+    "icon_count": 61,
     "labelled_kill_type_icons": 0,
     "label_counts": {},
     "unknown_labels": 0,

@@ -32,7 +32,8 @@ Phase 4 Stage B produces killfeed icon crops from row segmentation:
 - source: `data/killfeed_dataset/segments.jsonl`
 - crop directory: `data/killfeed_dataset/segments/`
 - current readiness: `120/245` rows have attacker+weapon+victim core boxes
-- kill-type dataset: `data/kill_type_dataset/` with `120` copied icon crops
+- kill-type dataset: `data/kill_type_dataset/` with `61` curated icon crops
+  after pruning `59` visually rejected/missing crop rows
 - current labelled kill-type classes: `0`
 
 No classifier should be trained or promoted until kill-type labels exist.
@@ -52,15 +53,17 @@ No classifier should be trained or promoted until kill-type labels exist.
 1. Build a kill-type dataset from Stage B icon crops. **Done.**
 2. Validate the dataset and create a contact sheet with
    `scripts/review_kill_type_dataset.py`. **Done.**
-3. Human-label visible kill types, use `unknown` only for reviewed valid causes
+3. Prune rows whose crop evidence was removed during visual cleanup. **Done for
+   the current LAT/VAN dataset: 59 rows pruned, 61 remain.**
+4. Human-label visible kill types, use `unknown` only for reviewed valid causes
    outside/indistinguishable from the named classes, and mark ambiguous crops
    `unclear=true`.
-4. Evaluate template/histogram nearest-neighbour baselines on the same labelled
+5. Evaluate template/histogram nearest-neighbour baselines on the same labelled
    split. **Wired, blocked by real labels.**
-5. Train a lightweight CNN once there are enough labels per category.
-6. Promote only the model with the best accuracy/latency/maintenance tradeoff on
+6. Train a lightweight CNN once there are enough labels per category.
+7. Promote only the model with the best accuracy/latency/maintenance tradeoff on
    held-out labelled crops.
-7. Add exact weapon classification later as optional metadata only.
+8. Add exact weapon classification later as optional metadata only.
 
 ## Required Model Contract
 
@@ -112,6 +115,9 @@ Minimum metrics before promotion:
 ## Known Limitations
 
 - Current real dataset has no kill-type labels.
+- Current LAT/VAN dataset has been visually reduced from `120` generated icon
+  crops to `61` remaining crop-evidence rows. Deleted crop rows are pruned
+  rather than restored or guessed.
 - Some killfeed detections are false positives; they must not be used as
   training samples until the crop is human reviewed.
 - Stage B complete-core segmentation is `120/245`, so the dataset is currently
@@ -124,7 +130,7 @@ Minimum metrics before promotion:
 - `data/kill_type_dataset/` exists with icon crops and source metadata. **Done.**
 - The category list includes `killstreak`. **Done.**
 - Review tooling can validate JSONL, summarize readiness, list rows, apply one
-  reviewed label, and generate a contact sheet. **Done.**
+  reviewed label, prune missing crop rows, and generate a contact sheet. **Done.**
 - At least two approaches are evaluated on the same split. **Wired for template
   and histogram baselines; real split is blocked by labels.**
 - Low-confidence outputs return `kill_type=null`.

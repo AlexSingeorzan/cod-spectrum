@@ -5,7 +5,8 @@ Phase 5 coarse kill-type dataset generated from Stage B killfeed icon segments.
 - Source segments: `data/killfeed_dataset/segments.jsonl`
 - Icon crops: `icons/`
 - Annotation file: `annotations.jsonl`
-- Current icon crops: `120`
+- Current icon crops: `61`
+- Pruned missing/deleted crop rows: `59`
 - Current labelled kill-type icons: `0`
 - Current real kill-type accuracy: no claim
 
@@ -13,6 +14,7 @@ Build and evaluate:
 
 ```bash
 make kill-type-dataset
+make kill-type-prune-missing
 make kill-type-eval
 make kill-type-review
 make kill-type-contact-sheet
@@ -36,4 +38,10 @@ Apply labels through the review CLI instead of editing JSONL by hand:
 ```bash
 .venv/bin/python scripts/review_kill_type_dataset.py --dataset data/kill_type_dataset list --status unreviewed --limit 20
 .venv/bin/python scripts/review_kill_type_dataset.py --dataset data/kill_type_dataset set-label --id kf_0000_80 --reviewed-by alex --valid true --kill-type gun
+```
+
+If visual cleanup removes invalid crop files, reconcile the JSONL before review:
+
+```bash
+make kill-type-prune-missing
 ```

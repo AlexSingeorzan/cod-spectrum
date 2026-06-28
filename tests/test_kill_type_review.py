@@ -10,6 +10,8 @@ import pytest
 from backend.app.services.kill_type_recognition import KILL_TYPE_CATEGORIES
 from scripts.review_kill_type_dataset import (
     apply_label,
+    main,
+    prune_missing_crops,
     select_rows,
     summarize,
     validate_dataset,
@@ -101,6 +103,51 @@ def test_review_validation_rejects_partial_unlabeled_rows(tmp_path):
     assert report.ok is False
     assert any("unlabeled rows must not contain partial labels" in error for error in report.errors)
     assert [row["id"] for row in select_rows(dataset, "invalid")] == ["kf_0001"]
+
+
+def test_prune_missing_crops_removes_stale_rows_and_updates_manifest(tmp_path):
+    dataset = _write_dataset(tmp_path, [_row(1), _row(2), _row(3, labelled=True)])
+    (dataset / "icons" / "kf_0002.png").unlink()
+
+    before = prune_missing_crops(dataset, dry_run=True)
+    result = prune_missing_crops(dataset)
+
+    rows = [
+        json.loads(line)
+        for line in (dataset / "annotations.jsonl").read_text().splitlines()
+        if line.strip()
+    ]
+    manifest = json.loads((dataset / "manifest.json").read_text())
+
+    assert before["written"] is False
+    assert before["pruned_ids"] == ["kf_0002"]
+    assert result["written"] is True
+    assert result["original_rows"] == 3
+    assert result["kept_rows"] == 2
+    assert result["pruned_ids"] == ["kf_0002"]
+    assert [row["id"] for row in rows] == ["kf_0001", "kf_0003"]
+    assert manifest["icon_count"] == 2
+    assert manifest["label_status"] == "labeled"
+    assert manifest["pruned_missing_icon_count"] == 1
+    assert manifest["pruned_missing_icon_ids"] == ["kf_0002"]
+    assert summarize(dataset)["validation"]["ok"] is True
+
+
+def test_prune_missing_cli_preserves_existing_audit_when_no_rows_are_pruned(tmp_path):
+    dataset = _write_dataset(tmp_path, [_row(1), _row(2)])
+    audit_path = tmp_path / "pruned_missing_icons.json"
+    audit_path.write_text(json.dumps({"previous": True}) + "\n")
+
+    exit_code = main([
+        "--dataset",
+        str(dataset),
+        "prune-missing",
+        "--write-json",
+        str(audit_path),
+    ])
+
+    assert exit_code == 0
+    assert json.loads(audit_path.read_text()) == {"previous": True}
 
 
 def test_apply_label_updates_one_row_and_keeps_jsonl_valid(tmp_path):

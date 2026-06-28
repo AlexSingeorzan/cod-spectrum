@@ -59,7 +59,7 @@ Supporting invariants (already the discipline in the v0 code, now made universal
 
 FastAPI + SQLAlchemy + SQLite, CPU-only, Python 3.12.13 in the local virtualenv.
 `main` branch, **no git remote configured**. Baseline after the Phase 0/1/2 work
-currently in this repository: **127 tests passing**.
+currently in this repository: **141 tests passing**.
 
 ### 3.1 What exists and is real
 
@@ -117,8 +117,9 @@ currently in this repository: **127 tests passing**.
   `KillEvent`/`DeathEvent`/kill-type `WeaponEvent`/`TradeEvent`.
 - **Kill-type recognition scaffold exists:** `KillTypeRecognizer` compares
   independent killfeed icon crops with template and histogram nearest-neighbour
-  baselines. The real dataset has `120` crops and `0` labels, so no real
-  accuracy claim is made.
+  baselines. The real dataset has `61` curated crops and `0` labels after
+  pruning `59` visually rejected/missing crop rows, so no real accuracy claim is
+  made.
 - **Still unlabeled for real killfeed content:** the LAT/VAN scaffold has `245`
   candidates but `0` attacker/victim/kill_type labels, so the content reader
   reports no real accuracy claim until those labels exist.
@@ -282,7 +283,7 @@ never skip tests; never invent data.
 | **2** ✅ | Emit pipeline: score/break outputs persist as `GameEvent`s in `game_events`; report + API + dashboard read the unified stream; flat `events` table retired | done — byte-for-byte report parity (JSON/MD/HTML) vs pre-migration baseline |
 | **3** ✅ | Score OCR baseline on labelled CDL scorebars (`CdlScorebarOcrEngine`) | done for baseline — dataset, eval, tests, docs, sample output; not promoted to default because LOO exact score accuracy is `0.4762` |
 | **4** 🟢 | Kills → `KillEvent`/`DeathEvent` (+ killfeed `WeaponEvent`/`TradeEvent`) | **kill spine done + ground-truth-verified**: `PanelKillCounter` is exact vs the post-game card (8/8, 106/79); `KillfeedDetector` + onset tracking + annotation scaffold + eval done (corroboration, ~56% prec / ~80% recall); `KillfeedSegmenter` Stage B field crops done (`120/245` complete core rows); `KillfeedContentReader` + content eval + synthetic event sample done. **Real content accuracy remains blocked by labels** (`0` labelled LAT/VAN rows). |
-| **5** 🟢 | Kill-type recognition scaffold independent from OCR | dataset builder + `120` real icon crops + template/histogram baseline evaluator + synthetic kill-type sample done; **real accuracy blocked by `0` kill-type labels** |
+| **5** 🟢 | Kill-type recognition scaffold independent from OCR | dataset builder + `61` curated real icon crops + template/histogram baseline evaluator + synthetic kill-type sample done; `59` stale/misleading crop rows pruned; **real accuracy blocked by `0` kill-type labels** |
 | **6** | Minimap → player-resolved `PositionEvent` (YOLO) with visibility discipline | mAP on labelled minimap set |
 | **7** | Event fusion graph over score/killfeed/minimap/objective/clock/comms | causal event graph with evidence-backed state transitions |
 | **8** | Objective/spawn tracking → `ObjectiveEvent`/`SpawnFlipEvent` from pixels | agreement with verified hill timeline |

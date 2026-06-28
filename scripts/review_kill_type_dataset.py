@@ -70,6 +70,10 @@ def write_rows(dataset_dir: Path, rows: list[dict[str, Any]]) -> None:
     )
 
 
+def write_manifest(dataset_dir: Path, manifest: dict[str, Any]) -> None:
+    (dataset_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+
+
 def _bool_or_none(value: Any) -> bool:
     return value is True or value is False or value is None
 
@@ -91,8 +95,13 @@ def validate_dataset(dataset_dir: Path) -> ValidationReport:
         errors.append(
             f"manifest categories differ from canonical categories: {categories} != {expected_categories}"
         )
+    if manifest.get("icon_count") is not None and manifest.get("icon_count") != len(rows):
+        errors.append(
+            f"manifest icon_count={manifest.get('icon_count')} does not match annotation rows={len(rows)}"
+        )
 
     seen_ids: set[str] = set()
+    referenced_icons: set[Path] = set()
     for index, row in enumerate(rows, start=1):
         row_id = str(row.get("id") or f"row_{index}")
         prefix = f"{row_id}: "
@@ -150,6 +159,7 @@ def validate_dataset(dataset_dir: Path) -> ValidationReport:
             errors.append(prefix + "unclear=true must not be a valid training row")
 
         icon_path = _row_icon_path(dataset_dir, row)
+        referenced_icons.add(icon_path.resolve())
         if not icon_path.exists():
             errors.append(prefix + f"missing icon crop: {_rel(icon_path)}")
         elif icon_path.stat().st_size == 0:
@@ -159,6 +169,12 @@ def validate_dataset(dataset_dir: Path) -> ValidationReport:
             warnings.append(prefix + "missing segment_box evidence")
         if row.get("segment_confidence") is None:
             warnings.append(prefix + "missing segment_confidence")
+
+    icons_dir = dataset_dir / "icons"
+    if icons_dir.exists():
+        for icon_path in sorted(icons_dir.glob("*.png")):
+            if icon_path.resolve() not in referenced_icons:
+                warnings.append(f"unreferenced icon crop: {_rel(icon_path)}")
 
     return ValidationReport(dataset=dataset_dir, rows=rows, errors=errors, warnings=warnings)
 
@@ -259,6 +275,52 @@ def summarize(dataset_dir: Path) -> dict[str, Any]:
             "warnings": report.warnings,
         },
     }
+
+
+def prune_missing_crops(dataset_dir: Path, *, dry_run: bool = False) -> dict[str, Any]:
+    manifest, rows = load_dataset(dataset_dir)
+    kept: list[dict[str, Any]] = []
+    pruned: list[dict[str, Any]] = []
+    for row in rows:
+        if _row_icon_path(dataset_dir, row).exists():
+            kept.append(row)
+        else:
+            pruned.append({
+                "id": row.get("id"),
+                "icon_image": row.get("icon_image"),
+                "video_timestamp_seconds": row.get("video_timestamp_seconds"),
+                "source_crop_path": row.get("source_crop_path"),
+                "source_row_image": row.get("source_row_image"),
+                "segment_box": row.get("segment_box"),
+                "segment_confidence": row.get("segment_confidence"),
+            })
+
+    result = {
+        "dataset": _rel(dataset_dir),
+        "dry_run": dry_run,
+        "original_rows": len(rows),
+        "kept_rows": len(kept),
+        "pruned_rows": len(pruned),
+        "pruned_ids": [str(row["id"]) for row in pruned],
+        "pruned": pruned,
+    }
+    if dry_run or not pruned:
+        result["written"] = False
+        return result
+
+    manifest["icon_count"] = len(kept)
+    manifest["label_status"] = "labeled" if labeled_kill_type_rows(kept) else "unlabeled"
+    manifest["pruned_missing_icon_count"] = len(pruned)
+    manifest["pruned_missing_icon_ids"] = result["pruned_ids"]
+    manifest["honesty_note"] = (
+        "Icon crops are evidence only. Rows whose crop evidence was removed during "
+        "manual visual cleanup are pruned rather than restored or guessed. No "
+        "kill-type classifier accuracy is claimed until remaining rows are human-labelled."
+    )
+    write_rows(dataset_dir, kept)
+    write_manifest(dataset_dir, manifest)
+    result["written"] = True
+    return result
 
 
 def select_rows(dataset_dir: Path, status: RowStatus, limit: int | None = None) -> list[dict[str, Any]]:
@@ -381,6 +443,18 @@ def print_summary(summary: dict[str, Any]) -> None:
             print(f"- {error}")
 
 
+def print_prune_result(result: dict[str, Any]) -> None:
+    print("# Kill-Type Missing Crop Prune")
+    print(f"- dataset: {result['dataset']}")
+    print(f"- original rows: {result['original_rows']}")
+    print(f"- kept rows: {result['kept_rows']}")
+    print(f"- pruned rows: {result['pruned_rows']}")
+    print(f"- dry run: {result['dry_run']}")
+    print(f"- written: {result['written']}")
+    if result["pruned_ids"]:
+        print(f"- pruned ids: {', '.join(result['pruned_ids'])}")
+
+
 def _parse_bool(value: str) -> bool:
     normalized = value.lower()
     if normalized in {"true", "1", "yes", "y"}:
@@ -399,6 +473,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     summary.add_argument("--write-json", type=Path)
 
     sub.add_parser("validate", help="Validate annotation schema and crop evidence")
+
+    prune = sub.add_parser("prune-missing", help="Remove annotation rows whose icon crop evidence is missing")
+    prune.add_argument("--dry-run", action="store_true")
+    prune.add_argument("--write-json", type=Path)
 
     list_cmd = sub.add_parser("list", help="List selected rows")
     list_cmd.add_argument("--status", choices=["all", "unreviewed", "reviewed", "labelled", "unclear", "invalid", "missing_crop"], default="unreviewed")
@@ -443,6 +521,17 @@ def main(argv: list[str] | None = None) -> int:
         for error in report.errors:
             print(f"- {error}")
         return 2
+    if args.command == "prune-missing":
+        result = prune_missing_crops(dataset, dry_run=args.dry_run)
+        print_prune_result(result)
+        if args.write_json:
+            should_write = args.dry_run or result["pruned_rows"] > 0 or not args.write_json.exists()
+            if should_write:
+                args.write_json.parent.mkdir(parents=True, exist_ok=True)
+                args.write_json.write_text(json.dumps(result, indent=2) + "\n")
+            else:
+                print(f"preserved existing audit JSON: {_rel(args.write_json)}")
+        return 0
     if args.command == "list":
         rows = select_rows(dataset, args.status, args.limit)
         if args.json:

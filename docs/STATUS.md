@@ -1,6 +1,6 @@
 # COD Spectrum Status
 
-Last audited: 2026-06-27
+Last audited: 2026-06-28
 
 This is the current engineering status after Phase 5 kill-type-recognition
 scaffolding. It is the checkpoint required before continuing Phase 6+ work.
@@ -34,11 +34,13 @@ scaffolding. It is the checkpoint required before continuing Phase 6+ work.
   OCR, compares template and histogram nearest-neighbour baselines, returns
   `kill_type=null` when labels/confidence are insufficient, and can emit
   evidence-backed events from accepted predictions.
-- Kill-type icon dataset: `data/kill_type_dataset/` contains `120` Stage B
-  killfeed icon crops copied only from manifest-referenced segment metadata.
+- Kill-type icon dataset: `data/kill_type_dataset/` was generated from `120`
+  Stage B killfeed icon crops copied only from manifest-referenced segment
+  metadata. After manual visual cleanup, `61` crop files remain on disk.
 - Kill-type review tooling: `scripts/review_kill_type_dataset.py` validates
   annotations, summarizes readiness, lists review rows, applies one reviewed
-  label at a time, and generates `data/kill_type_dataset/review_contact_sheet.png`.
+  label at a time, prunes rows whose crop evidence has been removed, and
+  generates `data/kill_type_dataset/review_contact_sheet.png`.
 - Synthetic kill-type recognition sample: demonstrates event emission and
   baseline comparison without claiming real broadcast accuracy.
 - Minimap classical baseline: localises some minimap markers and writes
@@ -60,11 +62,9 @@ scaffolding. It is the checkpoint required before continuing Phase 6+ work.
   - Stage E event builder exists for labelled or model-read content only.
 - Killfeed real dataset: `data/killfeed_dataset/` has `245` candidate rows, but
   `0` content-labelled rows, so content accuracy cannot be measured yet.
-- Kill-type real dataset: `data/kill_type_dataset/` has `120` icon crops, but
-  `0` labelled kill-type classes, so real kill-type accuracy cannot be measured
-  yet. The generated contact sheet shows some Stage B icon crops are actually
-  name fragments or other HUD pieces; those must be reviewed as invalid/unclear,
-  not forced into a kill-type class.
+- Kill-type real dataset: `data/kill_type_dataset/` has `61` curated icon crops,
+  `59` stale/misleading crop rows pruned, and `0` labelled kill-type classes, so
+  real kill-type accuracy cannot be measured yet.
 - Minimap intelligence: dataset scaffold has six labelled images and a classical
   detector, but no trained player-resolved model, trajectories, velocity,
   heading, or map-control graph.
@@ -84,8 +84,8 @@ scaffolding. It is the checkpoint required before continuing Phase 6+ work.
   `data/kill_type_dataset/annotations.jsonl` contains reviewed labels and
   evaluation metrics.
 - Killfeed segmentation readiness is partial: `120/245` rows have complete
-  attacker+weapon+victim boxes. The remaining rows stay null, and the review
-  contact sheet shows some accepted weapon/icon boxes are mis-segmented.
+  attacker+weapon+victim boxes. The remaining rows stay null until segmentation
+  review or a stronger segmenter improves field-box coverage.
 - Model metadata is inconsistent across older systems. The prompt requires
   every model to expose training dataset, latency, failure reason,
   fallback_used, and evaluation metrics; newer modules expose versions and
@@ -120,6 +120,7 @@ Fresh verification:
 ```bash
 make scorebar-ocr-eval
 make killfeed-content-eval
+make kill-type-prune-missing
 make kill-type-eval
 make kill-type-review
 .venv/bin/python -m pytest -q
@@ -127,7 +128,7 @@ make kill-type-review
 
 Current result:
 
-- `139 passed`
+- `141 passed`
 - Scorebar OCR eval: operational gallery `21/21`, leave-one-out `10/21`
   (`0.4762`), temporal leave-one-out `11/21` (`0.5238`).
 - Killfeed segmentation eval: `120/245` rows with complete attacker+weapon+
@@ -135,10 +136,10 @@ Current result:
   no real accuracy claim.
 - Killfeed content eval: `245` candidates, `0` content-labelled rows,
   no content-reader accuracy claim.
-- Kill-type eval: `120` icon crops, `0` labelled kill-type icons,
+- Kill-type prune: `120` original rows, `61` kept rows, `59` pruned rows.
+- Kill-type eval: `61` curated icon crops, `0` labelled kill-type icons,
   no kill-type-recognition accuracy claim.
-- Kill-type review: `120` rows, `0` reviewed, `0` missing crops,
-  validation OK.
+- Kill-type review: `61` rows, `0` reviewed, `0` missing crops, validation OK.
 
 Coverage exists for:
 
@@ -148,8 +149,8 @@ Coverage exists for:
 - killfeed detector/evaluator scaffold
 - killfeed content reader and synthetic event expansion
 - kill-type dataset builder, recognizer abstention, synthetic baseline
-  comparison, killstreak support, review tooling, contact-sheet generation, and
-  event emission
+  comparison, killstreak support, review tooling, missing-crop pruning,
+  contact-sheet generation, and event emission
 - panel kill spine
 - minimap classical detector
 - processor/report/dashboard contracts
@@ -190,8 +191,8 @@ Do not touch the panel kill spine.
 
 The next build is **real kill-type icon labelling and classifier evaluation**:
 
-1. Open `data/kill_type_dataset/review_contact_sheet.png` and review the `120`
-   crops.
+1. Open `data/kill_type_dataset/review_contact_sheet.png` and review the `61`
+   remaining crops.
 2. Use `scripts/review_kill_type_dataset.py set-label` to fill
    `valid_kill_type`, `kill_type`, and `unclear` in
    `data/kill_type_dataset/annotations.jsonl`. `exact_weapon` is optional

@@ -1,8 +1,8 @@
 {
   "dataset": "data/kill_type_dataset",
-  "total_rows": 120,
+  "total_rows": 61,
   "reviewed_rows": 0,
-  "unreviewed_rows": 120,
+  "unreviewed_rows": 61,
   "labelled_training_rows": 0,
   "unclear_rows": 0,
   "missing_crops": 0,

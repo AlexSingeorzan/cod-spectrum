@@ -96,7 +96,7 @@ Tables: `sources`, `broadcasts`, `processing_jobs`, `matches`, `maps`, `game_eve
 - Evaluated scorebar OCR baseline: `--ocr-engine cdl` uses `CdlScorebarOcrEngine`, a CPU k-NN digit-gallery model trained from human-verified LAT/VAN scorebar crops. It is versioned (`0.1.0-knn`) and confidence-capped by leave-one-crop-out evaluation. Current result: 21/21 operational gallery self-check, but only 10/21 leave-one-out exact score matches (`0.4762`) and 11/21 with temporal decoding (`0.5238`). This is not production-ready OCR.
 - **Scoreboard kill counter (Phase 4, the kill spine)** — `PanelKillCounter` (`panel_kill_counter@0.1.0`) reads each player's running kills/deaths from the top team panels and emits `KillEvent` (attacker) + `DeathEvent` (victim) facts from **monotonic** increments. Scored against the **human-verified post-game card** it is **exact: 8/8 players, 0.0 mean kill error, team totals 106/79, and the 505 s checkpoint 73/61** (`make panel-eval`, offline from the cached readings). Tesseract reads the clean panel font reliably. This is the authoritative kill count + who; see **Scoreboard kill counter** below.
 - Killfeed detection/content baseline (Phase 4): `KillfeedDetector` (`killfeed_classical@0.1.0`) localises kill-notification rows and a positional tracker collapses flicker into candidate kill onsets — `KillEvent` facts with evidence, confidence, and `identity_unread`. It is the **corroboration layer**, not the kill-count source: measured against panel-counter ground truth it runs at **~56% precision / ~80% recall**. `KillfeedSegmenter` (`killfeed_segmenter_classical@0.1.0`) now separates row crops into attacker/weapon-icon/victim/headshot evidence regions when the layout is clear; current readiness is **120/245** rows with all core boxes. `KillfeedContentReader` (`killfeed_content_knn@0.1.0`) is wired to train from labelled row crops and emit `KillEvent`/`DeathEvent`/kill-type `WeaponEvent`/`TradeEvent`, but the real LAT/VAN scaffold still has **0 content-labelled rows**, so it makes **no real content accuracy claim** yet. See **Killfeed detection and content** below.
-- Kill-type recognition scaffold (Phase 5): `KillTypeRecognizer` compares independent killfeed icon crops with template and histogram nearest-neighbour baselines. The real dataset at `data/kill_type_dataset/` contains **120** icon crops and **0** labels, so `make kill-type-eval` reports **no accuracy claim**. The synthetic fixture proves `kill_type` event emission only. See **Kill-type recognition** below.
+- Kill-type recognition scaffold (Phase 5): `KillTypeRecognizer` compares independent killfeed icon crops with template and histogram nearest-neighbour baselines. The real dataset at `data/kill_type_dataset/` contains **61** manually curated icon crops and **0** labels, so `make kill-type-eval` reports **no accuracy claim**. The synthetic fixture proves `kill_type` event emission only. See **Kill-type recognition** below.
 - Optional OCR experiment: `TesseractOcrEngine` is wired behind `--ocr-engine tesseract`. Install the Tesseract binary and run `.venv/bin/pip install -r requirements-ocr.txt`, then calibrate the scorebar profile before trusting output. It is intentionally not in the base environment.
 - Deferred: real-labelled killfeed content accuracy, transition-card/mode classification, deep SnD/Control analytics, and minimap object detection.
 
@@ -186,18 +186,21 @@ Two CPU baselines are wired for comparison:
 make kill-type-dataset  # build data/kill_type_dataset from Stage B segment crops
 make kill-type-eval     # real dataset readiness; no accuracy claim until labelled
 make kill-type-review   # validate/summarize annotation readiness
+make kill-type-prune-missing
 make kill-type-contact-sheet
 make kill-type-sample   # synthetic kill_type event contract sample
 ```
 
-Current real status: `120` icon crops, `0` labelled kill-type classes, no real
-accuracy claim. The synthetic sample writes
+Current real status: `61` curated icon crops, `59` stale/misleading crop rows
+pruned after visual review, `0` labelled kill-type classes, and no real accuracy
+claim. The synthetic sample writes
 `data/fixtures/kill_type_recognition_sample/` and demonstrates the `kill_type`
 payload path with `weapon=null`.
 
 Use `scripts/review_kill_type_dataset.py` for safe labelling instead of editing
-JSONL directly. It can validate labels, list unreviewed crops, apply one reviewed
-label, and write a contact sheet for visual review.
+JSONL directly. It can validate labels, prune rows whose crop evidence was
+removed, list unreviewed crops, apply one reviewed label, and write a contact
+sheet for visual review.
 
 ## Scoreboard kill counter
 
