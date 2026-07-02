@@ -1,0 +1,202 @@
+{
+  "dataset": {
+    "path": "data/killfeed_dataset",
+    "detector": "killfeed_classical@0.1.0",
+    "manifest_detector": "killfeed_classical@0.1.0",
+    "source_url": "https://www.youtube.com/watch?v=lat-van-hacienda-hp",
+    "candidates": 245,
+    "label_status": "unlabeled"
+  },
+  "metrics": {
+    "detection": {
+      "auto_candidates": 245,
+      "labeled": 245,
+      "true_positives": 110,
+      "false_positives": 135,
+      "false_negatives": 0,
+      "precision": 0.449,
+      "recall": null,
+      "recall_note": "no manual_added misses recorded \u2014 see panel_spine.spine_recall",
+      "f1": null,
+      "status": "labeled"
+    },
+    "panel_spine": {
+      "status": "measured",
+      "ground_truth": "panel_kill_counter@0.1.0 kill events (exact vs verified post-game card)",
+      "panel_kills": 172,
+      "labeled_unique_killfeed_kills": 80,
+      "matched": 53,
+      "spine_recall": 0.3081,
+      "labeled_rows_not_matching_spine": 27,
+      "window_seconds": 10.0,
+      "unmatched_examples": [
+        {
+          "t": 92.0,
+          "attacker": "abezy",
+          "victim": "mamba"
+        },
+        {
+          "t": 93.0,
+          "attacker": "nero",
+          "victim": "nium"
+        },
+        {
+          "t": 94.0,
+          "attacker": "hydra",
+          "victim": "nero"
+        },
+        {
+          "t": 108.0,
+          "attacker": "abezy",
+          "victim": "nero"
+        },
+        {
+          "t": 111.0,
+          "attacker": "mamba",
+          "victim": "abezy"
+        },
+        {
+          "t": 117.0,
+          "attacker": "nium",
+          "victim": "none"
+        },
+        {
+          "t": 117.0,
+          "attacker": "craze",
+          "victim": "none"
+        },
+        {
+          "t": 128.0,
+          "attacker": "nero",
+          "victim": "none"
+        },
+        {
+          "t": 130.0,
+          "attacker": "hydra",
+          "victim": "nero"
+        },
+        {
+          "t": 151.0,
+          "attacker": "hydra",
+          "victim": "none"
+        }
+      ],
+      "note": "spine_recall = share of verified panel kills that have a labelled, identity-matching killfeed row within the window. The killfeed is a corroboration/metadata layer, not the counting spine."
+    },
+    "content_readiness": {
+      "valid_kills": 110,
+      "with_attacker": 107,
+      "with_victim": 109,
+      "with_kill_type": 107,
+      "with_weapon": 1,
+      "note": "counts of human-read fields on real kills; these train the future content reader. Use eval_killfeed_content.py for reader accuracy once labelled."
+    }
+  },
+  "false_positive_examples": [
+    {
+      "id": "kf_0003_82",
+      "video_timestamp_seconds": 82.0,
+      "detector_confidence": 0.56
+    },
+    {
+      "id": "kf_0004_84",
+      "video_timestamp_seconds": 84.5,
+      "detector_confidence": 0.508
+    },
+    {
+      "id": "kf_0005_88",
+      "video_timestamp_seconds": 88.0,
+      "detector_confidence": 0.594
+    },
+    {
+      "id": "kf_0006_88",
+      "video_timestamp_seconds": 88.0,
+      "detector_confidence": 0.544
+    },
+    {
+      "id": "kf_0011_95",
+      "video_timestamp_seconds": 95.0,
+      "detector_confidence": 0.504
+    },
+    {
+      "id": "kf_0012_101",
+      "video_timestamp_seconds": 101.0,
+      "detector_confidence": 0.85
+    },
+    {
+      "id": "kf_0013_101",
+      "video_timestamp_seconds": 101.0,
+      "detector_confidence": 0.85
+    },
+    {
+      "id": "kf_0014_101",
+      "video_timestamp_seconds": 101.0,
+      "detector_confidence": 0.767
+    },
+    {
+      "id": "kf_0015_102",
+      "video_timestamp_seconds": 102.0,
+      "detector_confidence": 0.654
+    },
+    {
+      "id": "kf_0017_108",
+      "video_timestamp_seconds": 108.0,
+      "detector_confidence": 0.573
+    },
+    {
+      "id": "kf_0018_108",
+      "video_timestamp_seconds": 108.5,
+      "detector_confidence": 0.85
+    },
+    {
+      "id": "kf_0019_108",
+      "video_timestamp_seconds": 108.5,
+      "detector_confidence": 0.839
+    },
+    {
+      "id": "kf_0020_111",
+      "video_timestamp_seconds": 111.0,
+      "detector_confidence": 0.461
+    },
+    {
+      "id": "kf_0021_111",
+      "video_timestamp_seconds": 111.0,
+      "detector_confidence": 0.457
+    },
+    {
+      "id": "kf_0023_118",
+      "video_timestamp_seconds": 118.0,
+      "detector_confidence": 0.477
+    },
+    {
+      "id": "kf_0026_128",
+      "video_timestamp_seconds": 128.0,
+      "detector_confidence": 0.718
+    },
+    {
+      "id": "kf_0029_138",
+      "video_timestamp_seconds": 138.5,
+      "detector_confidence": 0.634
+    },
+    {
+      "id": "kf_0030_146",
+      "video_timestamp_seconds": 145.5,
+      "detector_confidence": 0.616
+    },
+    {
+      "id": "kf_0031_150",
+      "video_timestamp_seconds": 149.5,
+      "detector_confidence": 0.57
+    },
+    {
+      "id": "kf_0033_157",
+      "video_timestamp_seconds": 157.0,
+      "detector_confidence": 0.675
+    }
+  ],
+  "notes": [
+    "Detection precision/recall is onset-level kill detection by classical CV; it is a baseline, not production OCR.",
+    "Recall requires the labeller to add missed kills as detector='manual_added'.",
+    "content_readiness is not accuracy \u2014 run eval_killfeed_content.py once attacker/victim/kill_type labels exist."
+  ]
+}

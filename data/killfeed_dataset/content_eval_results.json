@@ -1,25 +1,738 @@
 {
   "dataset": {
     "path": "data/killfeed_dataset",
-    "model": "killfeed_content_knn@0.1.0",
+    "model": "killfeed_content_knn@0.2.0",
     "manifest_detector": "killfeed_classical@0.1.0",
     "source_url": "https://www.youtube.com/watch?v=lat-van-hacienda-hp",
     "candidates": 245,
-    "content_labeled_rows": 0,
-    "label_status": "unlabeled"
+    "content_labeled_rows": 107,
+    "label_status": "labeled"
   },
   "metrics": {
     "content_readiness": {
-      "valid_kills_with_identity": 0,
-      "with_weapon": 0,
-      "with_kill_type": 0,
-      "with_headshot": 0,
-      "with_trade": 0
+      "valid_kills_with_identity": 107,
+      "with_weapon": 1,
+      "with_kill_type": 105,
+      "with_headshot": 107,
+      "with_trade": 107
+    },
+    "manual_label_events": {
+      "readable_rows": 107,
+      "source": "manual_label"
     },
     "reader": {
-      "status": "unlabeled \u2014 no content-reader accuracy claim",
-      "operational_gallery": null,
-      "leave_one_out": null
+      "status": "labeled",
+      "operational_gallery": {
+        "samples": 107,
+        "exact_matches": 107,
+        "exact_accuracy": 1.0,
+        "field_accuracy": {
+          "attacker": 1.0,
+          "victim": 1.0,
+          "kill_type": 1.0,
+          "weapon": 1.0,
+          "headshot": 1.0,
+          "is_trade": 1.0
+        },
+        "abstentions": 0,
+        "mean_confidence": 1.0,
+        "failures": [],
+        "training_samples": 107
+      },
+      "leave_one_out": {
+        "samples": 107,
+        "exact_matches": 0,
+        "exact_accuracy": 0.0,
+        "field_accuracy": {
+          "attacker": 0.0,
+          "victim": 0.0,
+          "kill_type": 0.0,
+          "weapon": 0.0,
+          "headshot": 0.0,
+          "is_trade": 0.0
+        },
+        "abstentions": 107,
+        "mean_confidence": 0.0,
+        "failures": [
+          {
+            "id": "kf_0000_80",
+            "timestamp": 80.0,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "ABEZY",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": true,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0001_80",
+            "timestamp": 80.0,
+            "expected": {
+              "attacker": "LUNARZ",
+              "victim": "SCRAP",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0002_80",
+            "timestamp": 80.0,
+            "expected": {
+              "attacker": "NIUM",
+              "victim": "CRAZE",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0007_88",
+            "timestamp": 88.5,
+            "expected": {
+              "attacker": "HYDRA",
+              "victim": "LUNARZ",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0008_89",
+            "timestamp": 89.0,
+            "expected": {
+              "attacker": "HYDRA",
+              "victim": "LUNARZ",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0009_92",
+            "timestamp": 91.5,
+            "expected": {
+              "attacker": "HYDRA",
+              "victim": "LUNARZ",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0010_92",
+            "timestamp": 92.5,
+            "expected": {
+              "attacker": "HYDRA",
+              "victim": "LUNARZ",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0016_106",
+            "timestamp": 106.0,
+            "expected": {
+              "attacker": "LUNARZ",
+              "victim": "HYDRA",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0022_117",
+            "timestamp": 117.0,
+            "expected": {
+              "attacker": "MAMBA",
+              "victim": "HYDRA",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0024_124",
+            "timestamp": 123.5,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "ABEZY",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": true,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0025_124",
+            "timestamp": 123.5,
+            "expected": {
+              "attacker": "MAMBA",
+              "victim": "SCRAP",
+              "kill_type": "gun",
+              "weapon": "pistol",
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0027_130",
+            "timestamp": 130.0,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0028_137",
+            "timestamp": 137.0,
+            "expected": {
+              "attacker": "SCRAP",
+              "victim": "CRAZE",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0032_151",
+            "timestamp": 151.0,
+            "expected": {
+              "attacker": "HYDRA",
+              "victim": "MAMBA",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0035_164",
+            "timestamp": 163.5,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0036_171",
+            "timestamp": 171.0,
+            "expected": {
+              "attacker": "ABEZY",
+              "victim": "CRAZE",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0038_175",
+            "timestamp": 175.0,
+            "expected": {
+              "attacker": "ABEZY",
+              "victim": "CRAZE",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0039_179",
+            "timestamp": 179.0,
+            "expected": {
+              "attacker": "MAMBA",
+              "victim": "HYDRA",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0041_184",
+            "timestamp": 184.0,
+            "expected": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          },
+          {
+            "id": "kf_0042_184",
+            "timestamp": 184.5,
+            "expected": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": null
+          }
+        ]
+      },
+      "leave_one_out_forced": {
+        "samples": 107,
+        "exact_matches": 15,
+        "exact_accuracy": 0.1402,
+        "field_accuracy": {
+          "attacker": 0.3645,
+          "victim": 0.3925,
+          "kill_type": 0.981,
+          "weapon": 0.0,
+          "headshot": 0.8785,
+          "is_trade": 0.8879
+        },
+        "abstentions": 0,
+        "mean_confidence": 0.0649,
+        "failures": [
+          {
+            "id": "kf_0000_80",
+            "timestamp": 80.0,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "ABEZY",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": true,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0001_80",
+            "timestamp": 80.0,
+            "expected": {
+              "attacker": "LUNARZ",
+              "victim": "SCRAP",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0002_80",
+            "timestamp": 80.0,
+            "expected": {
+              "attacker": "NIUM",
+              "victim": "CRAZE",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "LUNARZ",
+              "victim": "SCRAP",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0009_92",
+            "timestamp": 91.5,
+            "expected": {
+              "attacker": "HYDRA",
+              "victim": "LUNARZ",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "NIUM",
+              "victim": "LUNARZ",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0016_106",
+            "timestamp": 106.0,
+            "expected": {
+              "attacker": "LUNARZ",
+              "victim": "HYDRA",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0024_124",
+            "timestamp": 123.5,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "ABEZY",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": true,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "LUNARZ",
+              "victim": "ABEZY",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0025_124",
+            "timestamp": 123.5,
+            "expected": {
+              "attacker": "MAMBA",
+              "victim": "SCRAP",
+              "kill_type": "gun",
+              "weapon": "pistol",
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0027_130",
+            "timestamp": 130.0,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "LUNARZ",
+              "victim": "ABEZY",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0028_137",
+            "timestamp": 137.0,
+            "expected": {
+              "attacker": "SCRAP",
+              "victim": "CRAZE",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "SCRAP",
+              "victim": "NERO",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0032_151",
+            "timestamp": 151.0,
+            "expected": {
+              "attacker": "HYDRA",
+              "victim": "MAMBA",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "ABEZY",
+              "victim": "MAMBA",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0035_164",
+            "timestamp": 163.5,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0036_171",
+            "timestamp": 171.0,
+            "expected": {
+              "attacker": "ABEZY",
+              "victim": "CRAZE",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "SCRAP",
+              "victim": "CRAZE",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0045_189",
+            "timestamp": 189.0,
+            "expected": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "CRAZE",
+              "victim": "SCRAP",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0047_200",
+            "timestamp": 200.5,
+            "expected": {
+              "attacker": "LUNARZ",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0048_206",
+            "timestamp": 205.5,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "SCRAP",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0050_210",
+            "timestamp": 210.0,
+            "expected": {
+              "attacker": "LUNARZ",
+              "victim": "ABEZY",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0052_214",
+            "timestamp": 213.5,
+            "expected": {
+              "attacker": "LUNARZ",
+              "victim": "ABEZY",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "LUNARZ",
+              "victim": "SCRAP",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0057_222",
+            "timestamp": 222.0,
+            "expected": {
+              "attacker": "NERO",
+              "victim": "HYDRA",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "MAMBA",
+              "victim": "HYDRA",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0058_236",
+            "timestamp": 236.5,
+            "expected": {
+              "attacker": "SCRAP",
+              "victim": "LUNARZ",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "NIUM",
+              "victim": "LUNARZ",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          },
+          {
+            "id": "kf_0059_236",
+            "timestamp": 236.5,
+            "expected": {
+              "attacker": "MAMBA",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            },
+            "predicted": {
+              "attacker": "LUNARZ",
+              "victim": "NIUM",
+              "kill_type": "gun",
+              "weapon": null,
+              "headshot": false,
+              "is_trade": false
+            }
+          }
+        ]
+      }
     }
   },
   "notes": [

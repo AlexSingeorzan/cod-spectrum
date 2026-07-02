@@ -10,6 +10,15 @@ and enforced here: no label means no read. Once ``data/killfeed_dataset/
 annotations.jsonl`` contains human labels, this module can train a tiny
 nearest-neighbour baseline and evaluate it honestly. Until then it only emits
 events from labelled rows or deterministic synthetic fixtures.
+
+Version history:
+
+* 0.1.0 — margin confidence vs the nearest *other gallery row*. Flaw: duplicate
+  onsets of the same kill (near-identical crops with identical content) crushed
+  the margin and forced abstention exactly when the gallery had good coverage.
+* 0.2.0 — margin confidence vs the nearest gallery row with *different content*
+  (the six read fields). Multiple examples of the same kill now reinforce the
+  read instead of suppressing it.
 """
 from __future__ import annotations
 
@@ -34,7 +43,7 @@ from ..events import (
 )
 
 MODEL_NAME = "killfeed_content_knn"
-MODEL_VERSION = "0.1.0"
+MODEL_VERSION = "0.2.0"
 IMAGE_SIZE = (192, 32)  # width, height
 DEFAULT_CONFIDENCE_THRESHOLD = 0.60
 
@@ -167,14 +176,40 @@ def _row_vector(image: np.ndarray) -> np.ndarray:
     return hsv.reshape(-1)
 
 
-def _confidence_from_distances(distances: np.ndarray, best_index: int) -> float:
+def _content_key(label: "KillfeedContentLabel") -> tuple:
+    """The six fields a read reports — rows sharing all six are the same content."""
+    return (
+        (label.attacker or "").lower(),
+        (label.victim or "").lower(),
+        label.kill_type,
+        label.weapon,
+        label.headshot,
+        label.is_trade,
+    )
+
+
+def _confidence_from_distances(
+    distances: np.ndarray, best_index: int, labels: list["KillfeedContentLabel"]
+) -> float:
+    """Margin between the best match and the nearest row with different content.
+
+    Duplicate onsets of the same kill are near-identical crops with identical
+    labels; measuring the margin against them (0.1.0 behaviour) suppressed
+    confidence exactly when the gallery had the best coverage. What matters for
+    the read is how much closer the best match is than the nearest row that
+    would change the answer.
+    """
     if len(distances) == 0:
         return 0.0
     best = float(distances[best_index])
-    if len(distances) == 1:
-        return 1.0
-    others = np.delete(distances, best_index)
-    nearest_other = float(others.min()) if len(others) else best + 1.0
+    best_key = _content_key(labels[best_index])
+    other = [
+        float(d) for d, label in zip(distances, labels)
+        if _content_key(label) != best_key
+    ]
+    if not other:
+        return 1.0  # every gallery row agrees on the content
+    nearest_other = min(other)
     margin = (nearest_other - best) / max(nearest_other, 1e-6)
     return round(max(0.0, min(1.0, margin)), 4)
 
@@ -228,7 +263,7 @@ class KillfeedContentReader:
         vector = _row_vector(image)
         distances = np.linalg.norm(self.vectors - vector, axis=1)
         best_index = int(np.argmin(distances))
-        confidence = _confidence_from_distances(distances, best_index)
+        confidence = _confidence_from_distances(distances, best_index, self.labels)
         if confidence < self.confidence_threshold:
             return None
         label = self.labels[best_index]

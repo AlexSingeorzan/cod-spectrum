@@ -11,7 +11,7 @@
   "sample_fps": 2.0,
   "frames_sampled": 1221,
   "onsets": 245,
-  "label_status": "unlabeled",
+  "label_status": "labeled",
   "labeled_by": null,
   "honesty_note": "Detections are unverified classical-CV candidates. attacker/victim/weapon are NOT read by the detector \u2014 every label starts null. Fill labels by hand (valid_kill true/false + identities), and add any MISSED kills as rows with detector='manual_added' so recall is measurable, before making any accuracy claim.",
   "label_schema": {
@@ -21,5 +21,17 @@
     "weapon": "weapon name or icon class (feeds WeaponEvent)",
     "headshot": "bool if a headshot marker is shown",
     "is_trade": "bool if this kill traded a recent teammate death (feeds TradeEvent)"
+  },
+  "labels": {
+    "labeled_rows": 245,
+    "valid_kill_rows": 110,
+    "false_positive_rows": 135,
+    "content_rows_attacker_victim": 107,
+    "unique_kill_families": 83,
+    "duplicate_onset_rows": 27,
+    "headshot_rows": 12,
+    "trade_families": 10,
+    "labeled_by": "Claude (Fable 5) \u2014 visual transcription of 4x-upscaled row crops, 2026-07-01",
+    "method": "every row crop upscaled 4x and read visually via contact sheets; teams from the verified roster; is_trade computed from the labelled kill sequence (6s window); duplicate onsets marked duplicate_onset_of"
   }
 }

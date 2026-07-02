@@ -115,13 +115,15 @@ def _evaluate_gallery(dataset_dir: Path, rows: list[dict[str, Any]]) -> dict[str
     return metrics
 
 
-def _evaluate_leave_one_out(dataset_dir: Path, rows: list[dict[str, Any]]) -> dict[str, Any]:
+def _evaluate_leave_one_out(
+    dataset_dir: Path, rows: list[dict[str, Any]], confidence_threshold: float | None = None
+) -> dict[str, Any]:
     reads = []
     for row in rows:
-        reader = KillfeedContentReader(
-            dataset_dir=dataset_dir,
-            exclude_sample_ids={row["id"]},
-        )
+        kwargs: dict[str, Any] = {"exclude_sample_ids": {row["id"]}}
+        if confidence_threshold is not None:
+            kwargs["confidence_threshold"] = confidence_threshold
+        reader = KillfeedContentReader(dataset_dir=dataset_dir, **kwargs)
         reads.append(reader.read_annotation(row))
     return _score_rows(rows, reads)
 
@@ -171,6 +173,9 @@ def evaluate(dataset_dir: Path) -> dict[str, Any]:
         "status": "labeled",
         "operational_gallery": _evaluate_gallery(dataset_dir, labeled),
         "leave_one_out": _evaluate_leave_one_out(dataset_dir, labeled),
+        # Diagnostic only: what the nearest neighbour would answer if forced
+        # (threshold 0). Deployment behaviour is the gated leave_one_out above.
+        "leave_one_out_forced": _evaluate_leave_one_out(dataset_dir, labeled, confidence_threshold=0.0),
     }
     return result
 
@@ -195,7 +200,7 @@ def print_report(result: dict[str, Any]) -> None:
     print("## reader")
     print(f"- status: {reader['status']}")
     if reader["status"] == "labeled":
-        for name in ("operational_gallery", "leave_one_out"):
+        for name in ("operational_gallery", "leave_one_out", "leave_one_out_forced"):
             m = reader[name]
             print(f"- {name}: exact={m['exact_matches']}/{m['samples']} "
                   f"acc={m['exact_accuracy']} abstain={m['abstentions']} conf={m['mean_confidence']}")

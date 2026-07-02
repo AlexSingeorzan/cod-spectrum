@@ -27,3 +27,4 @@ data/killfeed_dataset/regions/
 # panel counter: evidence panel crops rebuild from the VOD; keep readings cache +
 # events + manifest + eval so the eval runs offline
 data/panel_counter/crops/
+.vercel

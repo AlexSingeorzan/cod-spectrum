@@ -76,21 +76,30 @@ Current committed readiness:
 - Real segmentation accuracy: no claim yet, because there are no human-labelled
   field boxes.
 
-## Honesty
+## Labels (2026-07-01)
 
-This is **not** verified kill data yet. It is unverified classical-CV candidates plus
-empty label slots. The detector localises kill rows (timing/count). The Phase-4
-content reader (`KillfeedContentReader`, `killfeed_content_knn@0.1.0`) is now wired
-to train from these labels and emit real `DeathEvent` / `WeaponEvent` / `TradeEvent`
-facts, but it abstains until labels exist.
+All 245 rows are labelled: every crop was upscaled 4x and read visually (contact
+sheets), teams assigned from the verified roster, `is_trade` computed from the
+labelled kill sequence (6 s window — rule recorded per row), and re-detections of
+a persisting row marked `duplicate_onset_of`. Labeller recorded per row.
 
-Current committed status:
+- Valid kill rows: `110` (135 false positives) → detector precision **0.449**
+- Unique kills (dedup families): `83` — 3 with unreadable attacker names
+- Content rows (attacker+victim readable): `107`; headshot rows `12`; trade kills `10`;
+  one grenade kill (`kf_0188_559`)
+- **Recall vs the verified panel kill spine: 0.3081** (53/172 panel kills have an
+  identity-matching labelled row within ±10 s) — `eval_killfeed.py --panel-events`
 
-- Detection candidates: `245`
-- Complete core segments: `120`
-- Content-labelled rows: `0`
-- Content-reader accuracy: no claim
+Measured content-reader baseline (`killfeed_content_knn@0.2.0`, leave-one-out):
 
-Until `annotations.jsonl` is labelled, `eval_killfeed.py` and
-`eval_killfeed_content.py` report no real accuracy. Until field boxes are manually
-reviewed, `eval_killfeed_segments.py` reports readiness only.
+- At the 0.6 deployment threshold the reader **abstains on all 107 rows** — the raw
+  HSV row embedding is background-dominated, so unseen-row identity reads are not
+  trustworthy and the gate correctly holds.
+- Forced-read diagnostic (threshold 0): attacker `0.36`, victim `0.39`,
+  kill_type `0.98`, headshot `0.88`, is_trade `0.89`.
+- The labels themselves (via `manual_read_from_row`) are the production path for
+  this match's `KillEvent`/`DeathEvent`/`WeaponEvent`/`TradeEvent` enrichment; a
+  text/icon-crop OCR model is the upgrade path for auto-reading new VODs.
+
+The panel counter remains the kill-count spine; the killfeed layer contributes
+identity corroboration, kill-type, headshot, and trade structure.
